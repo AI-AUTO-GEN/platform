@@ -565,14 +565,51 @@ function StepFreestyle({ data, onChange }) {
     } catch (e) { console.error(e) } finally { setExecuting(false) }
   }
 
-  // Safe converter for Google Drive previews
+  const [downloadingZip, setDownloadingZip] = useState(false);
+
+  // Safe converter for Google Drive previews using external CDN proxy to bypass CORS/Hotlink Blocks
   const getDriveDisplayUrl = (url) => {
     if (!url) return '';
     if (url.includes('unsplash.com')) return url;
     const match = url.match(/id=([^&]+)/);
-    // return `https://drive.google.com/uc?id=${match[1]}`; works for inline viewing in most cases without 403 errors
-    if (match) return `https://drive.google.com/uc?id=${match[1]}`;
+    if (match) {
+      const gDriveUrl = `https://drive.google.com/uc?id=${match[1]}`;
+      // Bypass Google's anti-hotlinking by passing through standard image proxy
+      return `https://wsrv.nl/?url=${encodeURIComponent(gDriveUrl)}&output=webp`;
+    }
     return url;
+  };
+
+  const handleBulkDownload = async () => {
+    const readyItems = results.filter(r => r.status === 'ready' && r.url);
+    if (!readyItems.length) return alert('No loaded results available to download.');
+    
+    setDownloadingZip(true);
+    try {
+      const { default: JSZip } = await import('jszip');
+      const { saveAs } = await import('file-saver');
+      const zip = new JSZip();
+      
+      const fetchPromises = readyItems.map(async (r, i) => {
+         const match = r.url.match(/id=([^&]+)/);
+         if (!match) return;
+         const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(`https://drive.google.com/uc?id=${match[1]}`)}&output=webp`;
+         const res = await fetch(proxyUrl);
+         if (!res.ok) throw new Error('Fetch failed');
+         const blob = await res.blob();
+         const num = String(i + 1).padStart(2, '0');
+         zip.file(`Freestyle_Asset_${num}.webp`, blob);
+      });
+      
+      await Promise.all(fetchPromises);
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, `Freestyle_Batch.zip`);
+    } catch (e) {
+      console.error(e);
+      alert('Hubo un error aglomerando el ZIP. Puede que algunas imágenes pesen demasiado.');
+    } finally {
+      setDownloadingZip(false);
+    }
   };
 
   return (
@@ -580,7 +617,12 @@ function StepFreestyle({ data, onChange }) {
       <div className="step-header">
         <div className="header-with-action">
           <h2>Freestyle <span className="gradient-text">Laboratory</span></h2>
-          <button className="btn-mini-refresh" onClick={refreshResults}>↻ Refresh</button>
+          <div className="action-group" style={{ display: 'flex', gap: '10px' }}>
+             <button className="btn-mini-refresh" onClick={handleBulkDownload} disabled={downloadingZip}>
+               {downloadingZip ? '⏳ Zipping...' : '📦 Download All (ZIP)'}
+             </button>
+             <button className="btn-mini-refresh" onClick={refreshResults}>↻ Refresh</button>
+          </div>
         </div>
       </div>
       <div className="sandbox-grid-v2">
