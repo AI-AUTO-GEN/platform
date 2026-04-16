@@ -3,9 +3,20 @@ import './App.css'
 import { supabase } from './supabase'
 
 // ─── Constants & Helpers ────────────────────────
-
 const N8N_MEDIA_WEBHOOK = 'https://nsk404.app.n8n.cloud/webhook/media-discovery'
 const N8N_WEBHOOK_URL = 'https://nsk404.app.n8n.cloud/webhook/track-and-generate'
+
+// Safe converter for Google Drive previews using external CDN proxy to bypass CORS/Hotlink Blocks
+const getDriveDisplayUrl = (url) => {
+  if (!url) return '';
+  if (url.includes('unsplash.com')) return url;
+  const match = url.match(/id=([^&]+)/);
+  if (match) {
+    const gDriveUrl = `https://drive.google.com/uc?id=${match[1]}`;
+    return `https://wsrv.nl/?url=${encodeURIComponent(gDriveUrl)}&output=webp`;
+  }
+  return url;
+};
 
 const SHOT_SIZES = ['EWS', 'WS', 'MWS', 'MS', 'MCU', 'CU', 'ECU', 'INSERT']
 const CAMERA_MOVES = [
@@ -95,6 +106,36 @@ function ModelPicker({ type, value, onChange }) {
   )
 }
 
+function AlchemyProgress({ status, onComplete }) {
+  const [percent, setPercent] = useState(0)
+  
+  useEffect(() => {
+    if (status === 'processing') {
+      const interval = setInterval(() => {
+        setPercent(prev => {
+          if (prev < 92) return prev + Math.random() * 2;
+          return prev;
+        });
+      }, 800);
+      return () => clearInterval(interval);
+    } else if (status === 'ready') {
+      setPercent(100);
+    } else {
+      setPercent(0);
+    }
+  }, [status])
+
+  if (status !== 'processing' && status !== 'ready') return null;
+  if (status === 'ready' && percent === 100) return null;
+
+  return (
+    <div className="alchemy-progress-ring">
+      <div className="progress-value mono">{Math.floor(percent)}%</div>
+      <div className="progress-label tiny-label">TRANSFORMING REALITY</div>
+    </div>
+  )
+}
+
 function genId(prefix) {
   return `${prefix}___${Date.now()}_${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 }
@@ -169,14 +210,18 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
 
   return (
     <div className={`entity-task-card glass ${hasChanges ? 'modified' : ''} slide-in`}>
-      <div className="task-header">
-        <div className="task-id-zone">
-          <span className={`entity-badge ${badge?.toLowerCase()}`}>{badge}</span>
-          <span className="task-id mono">{id}</span>
+      <div className="task-header-v2">
+        <div className="header-top-row">
+           <div className="id-badge-group">
+              <span className={`entity-badge ${badge?.toLowerCase()}`}>{badge}</span>
+              <span className="task-id-mono">{id}</span>
+           </div>
+           <button className={`btn-gen-circle ${hasChanges ? 'pulse-gold' : ''}`} onClick={() => onGenerate({ ...data, prompt })}>
+              <span className="icon">⚡</span>
+           </button>
         </div>
-        <div className="task-actions">
+        <div className="header-tool-row">
            <ModelPicker type={badge === 'SHOT' ? 'video' : 'image'} value={data.modelId} onChange={(v) => onUpdate('modelId', v)} />
-           <button className={`btn-mini-gen ${hasChanges ? 'pulse' : ''}`} onClick={() => onGenerate({ ...data, prompt })}>⚡</button>
         </div>
       </div>
 
@@ -184,22 +229,22 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
           {activeVariant ? (
             activeVariant.status === 'processing' ? (
               <div className="processing-placeholder">
+                <AlchemyProgress status="processing" />
                 <div className="spinner-center"></div>
-                <span className="tiny-label">ALCHEMY IN PROGRESS...</span>
               </div>
             ) : (
-              <img src={activeVariant.thumbnailLink?.replace('=s220', '=s800')} className="official-render" alt={name} />
+              <img src={getDriveDisplayUrl(activeVariant.thumbnailLink)} className="official-render" alt={name} />
             )
           ) : (
              <div className="empty-render">
-                <span className="empty-state-text">OFFICIAL RENDER NOT SELECTED</span>
+                <span className="empty-state-text">NO RENDER ASSET FOUND</span>
              </div>
           )}
           
-          <div className="variant-strip-overlay">
-            {variants.slice(0, 6).map(v => (
-              <div key={v.id} className={`variant-mini-box ${v.id === activeVariant?.id ? 'active' : ''} ${v.status === 'processing' ? 'busy' : ''}`} onClick={() => onSelectVersion(v)}>
-                {v.status === 'processing' ? <div className="spinner-xs"></div> : <img src={v.thumbnailLink} alt="v" />}
+          <div className="variant-strip-v2">
+            {variants.slice(0, 8).map(v => (
+              <div key={v.id} className={`variant-mini-v2 ${v.id === activeVariant?.id ? 'active' : ''} ${v.status === 'processing' ? 'busy' : ''}`} onClick={() => onSelectVersion(v)}>
+                {v.status === 'processing' ? <div className="spinner-xs"></div> : <img src={getDriveDisplayUrl(v.thumbnailLink)} alt="v" />}
               </div>
             ))}
           </div>
@@ -211,7 +256,7 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
           className="input-prompt" 
           rows={3} 
           value={prompt} 
-          placeholder="Enter prompt refinement..."
+          placeholder="Refine visual instructions..."
           onChange={(e) => {
             setPrompt(e.target.value);
             onUpdate('prompt', e.target.value);
@@ -219,14 +264,14 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
         />
       </div>
 
-      <div className="task-card-footer">
-        <div className="task-usage-info">
-          {data.usageCount > 0 && <span className="usage-pill">Used in {data.usageCount} Shots</span>}
+      <div className="task-card-footer-v2">
+        <div className="footer-left">
+           <span className="file-name-tag">{name?.toUpperCase().replace(/\s+/g, '_') || id}.png</span>
+           {data.usageCount > 0 && <span className="usage-count">In {data.usageCount} Shots</span>}
         </div>
-        <span className="file-name mono">{name?.toUpperCase().replace(/\s+/g, '_') || id}.png</span>
-        <span className={`status-badge ${hasChanges ? 'modified' : ''}`}>
-          {hasChanges ? '● Unsaved Changes' : '✓ Synced'}
-        </span>
+        <div className={`sync-status ${hasChanges ? 'alert' : 'clean'}`}>
+           {hasChanges ? '● Unsaved' : '✓ Synced'}
+        </div>
       </div>
     </div>
   )
@@ -355,6 +400,20 @@ function StepCharacters({ data, onChange }) {
         <div className="header-with-action">
           <h2>Character <span className="gradient-text">Production</span></h2>
           <div className="header-btns">
+            <button className="btn-mini-refresh" onClick={async () => {
+                const { default: JSZip } = await import('jszip');
+                const { saveAs } = await import('file-saver');
+                const zip = new JSZip();
+                const ready = media.filter(m => m.status === 'ready');
+                if(!ready.length) return alert('No ready assets to download.');
+                for(let i=0; i<ready.length; i++) {
+                   const res = await fetch(`https://wsrv.nl/?url=${encodeURIComponent(ready[i].webViewLink)}`);
+                   const blob = await res.blob();
+                   zip.file(`${ready[i].name || 'asset'}.webp`, blob);
+                }
+                const c = await zip.generateAsync({type:'blob'});
+                saveAs(c, `Production_Batch_${data.projectName}.zip`);
+            }}>📦 ZIP Production</button>
             <div className="master-model-zone">
               <span className="tiny-label">MASTER MODEL</span>
               <ModelPicker type="image" value={chars[0]?.modelId || 'fal-ai/flux-pro/v1.1'} onChange={(v) => {
@@ -362,7 +421,7 @@ function StepCharacters({ data, onChange }) {
                 onChange({ ...data, characters: u })
               }} />
             </div>
-            <button className={`btn-refresh ${loading ? 'spinning' : ''}`} onClick={refresh}>↻ Refresh Renders</button>
+            <button className={`btn-refresh ${loading ? 'spinning' : ''}`} onClick={refresh}>↻ Sync</button>
           </div>
         </div>
       </div>
