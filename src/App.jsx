@@ -568,8 +568,10 @@ function StepFreestyle({ data, onChange }) {
   // Safe converter for Google Drive previews
   const getDriveDisplayUrl = (url) => {
     if (!url) return '';
+    if (url.includes('unsplash.com')) return url;
     const match = url.match(/id=([^&]+)/);
-    if (match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1600`;
+    // return `https://drive.google.com/uc?id=${match[1]}`; works for inline viewing in most cases without 403 errors
+    if (match) return `https://drive.google.com/uc?id=${match[1]}`;
     return url;
   };
 
@@ -591,8 +593,8 @@ function StepFreestyle({ data, onChange }) {
            <div className="results-scroll-grid">
               {results.map(r => (
                 <div key={r.id} className="result-card">
-                   <div className="result-preview" onClick={() => r.status === 'ready' && setFullscreenImage(r)} style={{ cursor: r.status === 'ready' ? 'pointer' : 'default'}}>
-                     {r.status === 'processing' ? <div className="processing-overlay"><div className="spinner-sm"></div></div> : <img src={getDriveDisplayUrl(r.thumbnailLink)} alt="res" className="clickable-img" />}
+                   <div className="result-preview" onClick={() => { if(r.status === 'ready') setFullscreenImage(r) }} style={{ cursor: r.status === 'ready' ? 'pointer' : 'default'}}>
+                     {r.status === 'processing' ? <div className="processing-overlay"><div className="spinner-sm"></div></div> : <img src={getDriveDisplayUrl(r.thumbnailLink)} alt="result" className="clickable-img" referrerPolicy="no-referrer" />}
                    </div>
                 </div>
               ))}
@@ -610,7 +612,7 @@ function StepFreestyle({ data, onChange }) {
             </a>
           </div>
           <div className="lightbox-img-wrapper">
-             <img src={getDriveDisplayUrl(fullscreenImage.thumbnailLink)} onClick={(e) => e.stopPropagation()} />
+             <img src={getDriveDisplayUrl(fullscreenImage.thumbnailLink)} onClick={(e) => e.stopPropagation()} referrerPolicy="no-referrer" alt="fullscreen" />
           </div>
         </div>
       )}
