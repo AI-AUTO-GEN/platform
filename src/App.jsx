@@ -9,7 +9,9 @@ const N8N_WEBHOOK_URL = 'https://nsk404.app.n8n.cloud/webhook/track-and-generate
 // Safe converter for Google Drive previews using external CDN proxy to bypass CORS/Hotlink Blocks
 const getDriveDisplayUrl = (url) => {
   if (!url) return '';
-  if (url.includes('unsplash.com')) return url;
+  // Si ya es una URL de Supabase o Unsplash, la servimos directa
+  if (url.includes('supabase.co') || url.includes('unsplash.com')) return url;
+  
   const match = url.match(/id=([^&]+)/);
   if (match) {
     const gDriveUrl = `https://drive.google.com/uc?id=${match[1]}`;
@@ -167,8 +169,8 @@ function useDriveMedia(projectNameOrId, category) {
       const formatted = (outputs || []).map(o => ({
         id: o.id,
         name: o.file_name || o.task_id,
-        webViewLink: o.url || '#',
-        thumbnailLink: o.url || '#',
+        webViewLink: o.hq_url || o.url || '#',
+        thumbnailLink: o.thumbnail_url || o.url || '#',
         mimeType: o.kind?.includes('video') ? 'video/mp4' : 'image/png',
         status: o.status
       }));
