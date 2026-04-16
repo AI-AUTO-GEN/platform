@@ -1468,3 +1468,83 @@ select.input-field { cursor: pointer; appearance: auto; }
   justify-content: center;
 }
 
+
+
+/* --- LIGHTBOX MODAL --- */
+.lightbox-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: zoom-out;
+}
+
+.lightbox-controls {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 10000;
+}
+
+.btn-close-lightbox, .btn-download-lightbox {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-download-lightbox {
+  background: var(--accent-gradient);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+}
+
+.btn-close-lightbox:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-download-lightbox:hover {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+}
+
+.lightbox-img-wrapper {
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-img-wrapper img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  cursor: default;
+}
+
+.clickable-img {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.clickable-img:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}

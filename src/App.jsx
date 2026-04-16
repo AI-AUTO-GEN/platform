@@ -140,7 +140,21 @@ function useDriveMedia(projectNameOrId, category) {
     }
   }, [projectNameOrId, category])
 
-  useEffect(() => { refresh() }, [refresh])
+  useEffect(() => { 
+    refresh() 
+    
+    // Conectar telemetría en tiempo real para las imágenes
+    const channel = supabase.channel(`media_sync_${category}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'renderfarm_outputs' }, () => {
+        refresh() // Forzar recarga automática cuando n8n avise de que ha terminado
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [refresh, category])
+  
   return { media, loading, refresh }
 }
 
@@ -527,6 +541,7 @@ function StepShots({ data, onChange }) {
 function StepFreestyle({ data, onChange }) {
   const [params, setParams] = useState({ type: 'image', modelId: 'fal-ai/flux-pro/v1.1/ultra', prompt: '', references: [] })
   const [executing, setExecuting] = useState(false)
+  const [fullscreenImage, setFullscreenImage] = useState(null)
   const { media: results, refresh: refreshResults } = useDriveMedia('FREESTYLE_LAB', 'freestyle')
 
   const handleExecute = async () => {
@@ -550,6 +565,14 @@ function StepFreestyle({ data, onChange }) {
     } catch (e) { console.error(e) } finally { setExecuting(false) }
   }
 
+  // Safe converter for Google Drive previews
+  const getDriveDisplayUrl = (url) => {
+    if (!url) return '';
+    const match = url.match(/id=([^&]+)/);
+    if (match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1600`;
+    return url;
+  };
+
   return (
     <div className="step-content fade-in">
       <div className="step-header">
@@ -568,14 +591,29 @@ function StepFreestyle({ data, onChange }) {
            <div className="results-scroll-grid">
               {results.map(r => (
                 <div key={r.id} className="result-card">
-                   <div className="result-preview">
-                     {r.status === 'processing' ? <div className="processing-overlay"><div className="spinner-sm"></div></div> : <img src={r.thumbnailLink} alt="res" />}
+                   <div className="result-preview" onClick={() => r.status === 'ready' && setFullscreenImage(r)} style={{ cursor: r.status === 'ready' ? 'pointer' : 'default'}}>
+                     {r.status === 'processing' ? <div className="processing-overlay"><div className="spinner-sm"></div></div> : <img src={getDriveDisplayUrl(r.thumbnailLink)} alt="res" className="clickable-img" />}
                    </div>
                 </div>
               ))}
            </div>
         </div>
       </div>
+
+      {/* FULLSCREEN MODAL */}
+      {fullscreenImage && (
+        <div className="lightbox-overlay fade-in" onClick={() => setFullscreenImage(null)}>
+          <div className="lightbox-controls">
+            <button className="btn-close-lightbox">✕ Close</button>
+            <a href={fullscreenImage.webViewLink} target="_blank" rel="noreferrer" className="btn-download-lightbox" onClick={(e) => e.stopPropagation()}>
+              ⬇ Download HQ
+            </a>
+          </div>
+          <div className="lightbox-img-wrapper">
+             <img src={getDriveDisplayUrl(fullscreenImage.thumbnailLink)} onClick={(e) => e.stopPropagation()} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
