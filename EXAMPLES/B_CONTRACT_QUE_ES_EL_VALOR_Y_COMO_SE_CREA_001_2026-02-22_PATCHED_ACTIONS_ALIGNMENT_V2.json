@@ -1,0 +1,6929 @@
+{
+  "contract_version": "B_ABI_4.2",
+  "contract_kind": "B_HANDOFF_TO_C",
+  "contract_id": "B__QUE_ES_EL_VALOR_Y_COMO_SE_CREA_001__BD95DE54",
+  "project": {
+    "project_id": "QUE_ES_EL_VALOR_Y_COMO_SE_CREA_001",
+    "title": "Qué es el valor y cómo se crea",
+    "format": "film_essay_montage",
+    "fps": 24,
+    "aspect_ratio": "16:9",
+    "target_runtime_s": 480
+  },
+  "globals": {
+    "style_family": "CINEMATIC_ESSAY_MONTAGE_SOBER",
+    "style_vector": {
+      "palette_tokens": [
+        "neutral",
+        "rain_neon",
+        "tavern_warm",
+        "desert_bleach",
+        "jewelry_cold",
+        "gaslight_warm"
+      ],
+      "contrast_level": "med",
+      "grain_level": "low",
+      "lighting_mood": "motivated",
+      "camera_language": "observational_micro_motion",
+      "texture_notes": "realistic_skin, controlled_highlights, minimal_ui_text"
+    },
+    "camera_language": "observational_micro_motion",
+    "lens_discipline": {
+      "range_mm": [
+        35,
+        50
+      ],
+      "rules": [
+        "no_ultra_wide",
+        "avoid_digital_zoom_on_text",
+        "micro_moves_ok_except_locked_matchcuts"
+      ]
+    },
+    "bans": [
+      "no logos",
+      "no real app UI",
+      "no dense readable text"
+    ]
+  },
+  "registry": {
+    "characters": [
+      {
+        "asset_id": "CHAR___SARA",
+        "name": "SARA",
+        "canonical_description": "Profesional urbana, ropa neutra, actuación contenida. Presente 2026."
+      },
+      {
+        "asset_id": "CHAR___DESCONOCIDO",
+        "name": "DESCONOCIDO",
+        "canonical_description": "Mesa de al lado; pinchazo social; no agresivo."
+      },
+      {
+        "asset_id": "CHAR___SUBASTADOR",
+        "name": "SUBASTADOR",
+        "canonical_description": "Operador del colapso; Haarlem 1637."
+      },
+      {
+        "asset_id": "CHAR___COMERCIANTE",
+        "name": "COMERCIANTE",
+        "canonical_description": "Representa pacto roto; emoción contenida."
+      },
+      {
+        "asset_id": "CHAR___OMAR",
+        "name": "OMAR",
+        "canonical_description": "35; desierto; demostración de utilidad/escasez."
+      },
+      {
+        "asset_id": "CHAR___EDISON",
+        "name": "EDISON",
+        "canonical_description": "Laboratorio 1880; sin diálogo; obsesión técnica."
+      },
+      {
+        "asset_id": "CHAR___WATER_FIGURE",
+        "name": "FIGURA_CON_BOTELLA",
+        "canonical_description": "Figura lejana; ofrece/entrega botella."
+      }
+    ],
+    "props": [
+      {
+        "asset_id": "PROP___PHONE_MAIN",
+        "name": "Móvil principal de Sara",
+        "canonical_description": "Subasta NFT (2026), vibra al corte; apagado en apartamento."
+      },
+      {
+        "asset_id": "PROP___PHONE_OLD_IPHONE",
+        "name": "iPhone viejo",
+        "canonical_description": "Segundo móvil; pantalla agrietada; sale del cajón; falla al encender."
+      },
+      {
+        "asset_id": "PROP___LAPTOP",
+        "name": "Portátil",
+        "canonical_description": "App de compraventa, muestra 150€; sin marca."
+      },
+      {
+        "asset_id": "PROP___DRINK_GLASS",
+        "name": "Vaso con hielo",
+        "canonical_description": "Vaso con hielo y condensación en café 2026."
+      },
+      {
+        "asset_id": "PROP___TULIP_BULB",
+        "name": "Bulbo de tulipán",
+        "canonical_description": "Souvenir→tierra; Semper Augustus 1637; cae en caja en cierre."
+      },
+      {
+        "asset_id": "PROP___SOIL",
+        "name": "Tierra húmeda",
+        "canonical_description": "Residuo del bulbo; portal a agua."
+      },
+      {
+        "asset_id": "PROP___NFT_RECEIPT",
+        "name": "Recibo digital NFT",
+        "canonical_description": "Recibo/confirmación digital; overlay con contratos."
+      },
+      {
+        "asset_id": "PROP___CONTRACT_PAPER",
+        "name": "Contratos papel",
+        "canonical_description": "Taberna 1637; Haarlem colapso; se rompe; overlay con NFT."
+      },
+      {
+        "asset_id": "PROP___PRICE_BOARD",
+        "name": "Tablero de precios",
+        "canonical_description": "Cotizaciones tiza; números grandes; cambia varias veces."
+      },
+      {
+        "asset_id": "PROP___WATER_BOTTLE",
+        "name": "Botella de agua",
+        "canonical_description": "Mismo objeto: desierto (vida) y joyería (50€)."
+      },
+      {
+        "asset_id": "PROP___DIAMOND_RING",
+        "name": "Anillo de diamante",
+        "canonical_description": "Deseo y estatus; eclipsa botella."
+      },
+      {
+        "asset_id": "PROP___FIRST_IPHONE_DISPLAY",
+        "name": "Primer iPhone en vitrina",
+        "canonical_description": "Reliquia; gente lo fotografía; pantalla apagada; sin marca."
+      }
+    ],
+    "locations": [
+      {
+        "asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+        "name": "CAFÉ_2026",
+        "canonical_description": "Café 2026"
+      },
+      {
+        "asset_id": "LOC___AMSTERDAM_1637_EXTERIOR",
+        "name": "AMSTERDAM_1637",
+        "canonical_description": "Amsterdam 1637"
+      },
+      {
+        "asset_id": "LOC___TAVERN_1637_INTERIOR",
+        "name": "TABERNA_1637",
+        "canonical_description": "Taberna 1637"
+      },
+      {
+        "asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+        "name": "HAARLEM_1637",
+        "canonical_description": "Haarlem 1637"
+      },
+      {
+        "asset_id": "LOC___APARTMENT_MORNING_2026",
+        "name": "APARTAMENTO_2026",
+        "canonical_description": "Apartamento 2026"
+      },
+      {
+        "asset_id": "LOC___DESERT_DAY",
+        "name": "DESIERTO",
+        "canonical_description": "Desierto"
+      },
+      {
+        "asset_id": "LOC___JEWELRY_STORE_LUXURY",
+        "name": "JOYERÍA",
+        "canonical_description": "Joyería"
+      },
+      {
+        "asset_id": "LOC___GOLD_MINE_DAWN",
+        "name": "MINA_ORO",
+        "canonical_description": "Mina Oro"
+      },
+      {
+        "asset_id": "LOC___OPEN_FIELD_DAY",
+        "name": "CAMPO",
+        "canonical_description": "Campo"
+      },
+      {
+        "asset_id": "LOC___MODERN_KITCHEN",
+        "name": "COCINA",
+        "canonical_description": "Cocina"
+      },
+      {
+        "asset_id": "LOC___OFFICE_2000_DAY",
+        "name": "OFICINA_2000",
+        "canonical_description": "Oficina 2000"
+      },
+      {
+        "asset_id": "LOC___OFFICE_2000_LATER",
+        "name": "OFICINA_2000_LATER",
+        "canonical_description": "Oficina 2000 Later"
+      },
+      {
+        "asset_id": "LOC___LAB_1880_NIGHT",
+        "name": "LAB_1880",
+        "canonical_description": "Lab 1880"
+      },
+      {
+        "asset_id": "LOC___NY_1882_NIGHT_STREET",
+        "name": "NY_1882",
+        "canonical_description": "Ny 1882"
+      },
+      {
+        "asset_id": "LOC___ROOM_2009_SMALL",
+        "name": "ROOM_2009",
+        "canonical_description": "Room 2009"
+      }
+    ]
+  },
+  "inputs": {
+    "source_contract_id": "ACONTRACT_QUE_ES_EL_VALOR_Y_COMO_SE_CREA_001_V1",
+    "notes": "Derivado de A_CONTRACT_v3.1 + patch de cámara (micro-movimiento)."
+  },
+  "must_show": [
+    {
+      "ms_id": "MS___001",
+      "priority": "P0",
+      "description": "Puja NFT subiendo con pings."
+    },
+    {
+      "ms_id": "MS___002",
+      "priority": "P0",
+      "description": "Sara pulsa CONFIRMAR."
+    },
+    {
+      "ms_id": "MS___003",
+      "priority": "P0",
+      "description": "Pantalla HAS GANADO sin objeto físico."
+    },
+    {
+      "ms_id": "MS___004",
+      "priority": "P0",
+      "description": "Push-in lento al bulbo como diamante."
+    },
+    {
+      "ms_id": "MS___005",
+      "priority": "P0",
+      "description": "Bulbo se deshace y queda tierra húmeda."
+    },
+    {
+      "ms_id": "MS___006",
+      "priority": "P0",
+      "description": "Transición tierra→agua saliendo del agua."
+    },
+    {
+      "ms_id": "MS___007",
+      "priority": "P0",
+      "description": "Placa “AMSTERDAM 1637”."
+    },
+    {
+      "ms_id": "MS___008",
+      "priority": "P0",
+      "description": "Manos firmando y pasando contratos."
+    },
+    {
+      "ms_id": "MS___009",
+      "priority": "P0",
+      "description": "Tablero de precios cambiando."
+    },
+    {
+      "ms_id": "MS___010",
+      "priority": "P0",
+      "description": "Sello CLACK en contrato."
+    },
+    {
+      "ms_id": "MS___011",
+      "priority": "P0",
+      "description": "SUBASTADOR: “¿Nadie…?” con silencio."
+    },
+    {
+      "ms_id": "MS___012",
+      "priority": "P0",
+      "description": "Contrato se rompe en dos despacio."
+    },
+    {
+      "ms_id": "MS___013",
+      "priority": "P0",
+      "description": "Corte seco al móvil de Sara vibrando en 2026."
+    },
+    {
+      "ms_id": "MS___014",
+      "priority": "P0",
+      "description": "Sara saca iPhone viejo del cajón."
+    },
+    {
+      "ms_id": "MS___015",
+      "priority": "P0",
+      "description": "Precio 150€ en app de compraventa."
+    },
+    {
+      "ms_id": "MS___016",
+      "priority": "P0",
+      "description": "V.O. precio vs valor (intacta)."
+    },
+    {
+      "ms_id": "MS___017",
+      "priority": "P0",
+      "description": "Match cut grieta→horizonte del desierto."
+    },
+    {
+      "ms_id": "MS___018",
+      "priority": "P0",
+      "description": "Omar ofrece todo por agua."
+    },
+    {
+      "ms_id": "MS___019",
+      "priority": "P0",
+      "description": "Tarjeta 50€ en joyería."
+    },
+    {
+      "ms_id": "MS___020",
+      "priority": "P0",
+      "description": "Diamante eclipsa la botella."
+    },
+    {
+      "ms_id": "MS___021",
+      "priority": "P0",
+      "description": "Superposición contrato tulipanes ↔ recibo NFT."
+    },
+    {
+      "ms_id": "MS___022",
+      "priority": "P0",
+      "description": "Mina de oro con esfuerzo físico."
+    },
+    {
+      "ms_id": "MS___023",
+      "priority": "P0",
+      "description": "Agua del grifo abundante en cocina."
+    },
+    {
+      "ms_id": "MS___024",
+      "priority": "P0",
+      "description": "Anuncio “PARA SIEMPRE”."
+    },
+    {
+      "ms_id": "MS___025",
+      "priority": "P0",
+      "description": "Primer iPhone en vitrina + gente lo fotografía."
+    },
+    {
+      "ms_id": "MS___026",
+      "priority": "P0",
+      "description": "Oficina meses después: luces apagadas (plano gemelo)."
+    },
+    {
+      "ms_id": "MS___027",
+      "priority": "P0",
+      "description": "Móvil 2021: “Vendido por 2,9 millones.”"
+    },
+    {
+      "ms_id": "MS___028",
+      "priority": "P0",
+      "description": "Móvil 2026: “Oferta actual: menos de 10.000.”"
+    },
+    {
+      "ms_id": "MS___029",
+      "priority": "P0",
+      "description": "Superposición contrato tulipanes ↔ recibo NFT."
+    },
+    {
+      "ms_id": "MS___030",
+      "priority": "P0",
+      "description": "Filamento aguanta: luz sostenida."
+    },
+    {
+      "ms_id": "MS___031",
+      "priority": "P0",
+      "description": "Ventanas encendiéndose en cadena."
+    },
+    {
+      "ms_id": "MS___032",
+      "priority": "P0",
+      "description": "2009: app simple con texto verde."
+    },
+    {
+      "ms_id": "MS___033",
+      "priority": "P0",
+      "description": "V.O. puerta a crypto (intacta)."
+    }
+  ],
+  "action_specs": [
+    {
+      "as_id": "AS___001",
+      "shot_id": "SHOT___001",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "travelling_lateral_slow_on_glass;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___002",
+      "shot_id": "SHOT___002",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_in_OTS;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___003",
+      "shot_id": "SHOT___003",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "near_locked_drift_for_text;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___004",
+      "shot_id": "SHOT___004",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "slider_short_reveal;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___005",
+      "shot_id": "SHOT___005",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_human;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___006",
+      "shot_id": "SHOT___006",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_for_text;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___007",
+      "shot_id": "SHOT___007",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "organic_reframe_follow;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___008",
+      "shot_id": "SHOT___008",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "stabilized_handheld_subtle;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___009",
+      "shot_id": "SHOT___009",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_drift_follow_palm;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___010",
+      "shot_id": "SHOT___010",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "push_in_slow_human;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___011",
+      "shot_id": "SHOT___011",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_effect;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___012",
+      "shot_id": "SHOT___012",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "handheld_micro_breath;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___013",
+      "shot_id": "SHOT___013",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___SOIL;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "zoom_fast_micro_tilt;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_FRAME"
+      ]
+    },
+    {
+      "as_id": "AS___014",
+      "shot_id": "SHOT___014",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:FRAME_GEOMETRY;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "MATCHCUT_LOCKED;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_TEXTURE"
+      ],
+      "matchcut_target_shot_id": "SHOT___015",
+      "matchcut_anchor": "FRAME_GEOMETRY_LOCK"
+    },
+    {
+      "as_id": "AS___015",
+      "shot_id": "SHOT___015",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "locked_for_text;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT",
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___016",
+      "shot_id": "SHOT___016",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "follow_curve_soft;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___017",
+      "shot_id": "SHOT___017",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "slide_short_follow_paper;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___018",
+      "shot_id": "SHOT___018",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "mini_follow_handoff;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___019",
+      "shot_id": "SHOT___019",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_relic;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___020",
+      "shot_id": "SHOT___020",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "near_locked_text_push;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT"
+      ]
+    },
+    {
+      "as_id": "AS___021",
+      "shot_id": "SHOT___021",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "soft_reframe;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___022",
+      "shot_id": "SHOT___022",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "slow_drift_macro;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___023",
+      "shot_id": "SHOT___023",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_impact;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___024",
+      "shot_id": "SHOT___024",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "push_approach_slow;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___025",
+      "shot_id": "SHOT___025",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_drift_locked;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___026",
+      "shot_id": "SHOT___026",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "stabilized_handheld;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___027",
+      "shot_id": "SHOT___027",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_phrase;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___028",
+      "shot_id": "SHOT___028",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "stabilized_handheld_wide;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___029",
+      "shot_id": "SHOT___029",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "tilt_follow_drop;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___030",
+      "shot_id": "SHOT___030",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_drift_paralysis;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___031",
+      "shot_id": "SHOT___031",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "short_push_keep_axis;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_HANDS"
+      ]
+    },
+    {
+      "as_id": "AS___032",
+      "shot_id": "SHOT___032",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_object_constant;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___033",
+      "shot_id": "SHOT___033",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "handheld_micro_emotion;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___034",
+      "shot_id": "SHOT___034",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_drift_centered;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___035",
+      "shot_id": "SHOT___035",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_bridge_to_2026;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___036",
+      "shot_id": "SHOT___036",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "follow_short_1_2_steps;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___037",
+      "shot_id": "SHOT___037",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "push_in_drawer;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___038",
+      "shot_id": "SHOT___038",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "soft_drift_crack;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___039",
+      "shot_id": "SHOT___039",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "near_locked_text_drift;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT"
+      ]
+    },
+    {
+      "as_id": "AS___040",
+      "shot_id": "SHOT___040",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "internal_micro_pans;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___041",
+      "shot_id": "SHOT___041",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "handheld_micro_reframe;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___042",
+      "shot_id": "SHOT___042",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_prematch;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___043",
+      "shot_id": "SHOT___043",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:FRAME_GEOMETRY;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "MATCHCUT_LOCKED;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_FRAME"
+      ],
+      "matchcut_target_shot_id": "SHOT___044",
+      "matchcut_anchor": "FRAME_GEOMETRY_LOCK"
+    },
+    {
+      "as_id": "AS___044",
+      "shot_id": "SHOT___044",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "travelling_lateral_slow;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___045",
+      "shot_id": "SHOT___045",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "follow_parallel;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___046",
+      "shot_id": "SHOT___046",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "push_very_slow;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___047",
+      "shot_id": "SHOT___047",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___WATER_BOTTLE;END_HOLD;exit_pose=present_bottle_center;hands_visible=optional",
+        "STATE": "NO_CHANGE",
+        "CAM": "arc_short_trade;lens_mm=35;angle=eye;timing=0-5s;end_hold=yes;exit_vector=slide_short_place;axis=A;screen=L2R"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_FRAME"
+      ],
+      "matchcut_target_shot_id": "SHOT___050",
+      "matchcut_anchor": "PROP___WATER_BOTTLE"
+    },
+    {
+      "as_id": "AS___048",
+      "shot_id": "SHOT___048",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE;PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_sip;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___049",
+      "shot_id": "SHOT___049",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "gimbal_entry_cold;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___050",
+      "shot_id": "SHOT___050",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;MATCHCUT_RECEIVE_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___WATER_BOTTLE;ENTRY_HOLD;matchcut_lock_geometry",
+        "STATE": "NO_CHANGE",
+        "CAM": "slide_short_place;lens_mm=35;angle=eye;timing=0-5s;end_hold=no;entry_vector=slide_short_place;matchcut_from=SHOT___047;axis=A;screen=L2R"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___051",
+      "shot_id": "SHOT___051",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:SPECULAR_HIGHLIGHT_ON_PROP___WATER_BOTTLE;END_HOLD;exit_highlight_size=match_ring_sparkle",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_text;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes;exit_vector=micro_push_reveal;matchcut_to=SHOT___054;axis=A;screen=L2R"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT",
+        "R_MATCHCUT_FRAME"
+      ],
+      "matchcut_target_shot_id": "SHOT___054",
+      "matchcut_anchor": "SPECULAR_HIGHLIGHT_ON_PROP___WATER_BOTTLE"
+    },
+    {
+      "as_id": "AS___052",
+      "shot_id": "SHOT___052",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "follow_head_turn;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___053",
+      "shot_id": "SHOT___053",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "soft_reframe_exit;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___054",
+      "shot_id": "SHOT___054",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS;MATCHCUT_RECEIVE_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___DIAMOND_RING;ENTRY_HOLD;receive_matchcut_sparkle",
+        "STATE": "NO_CHANGE",
+        "CAM": "micro_push_reveal;lens_mm=50;angle=eye;timing=0-5s;end_hold=no;entry_vector=micro_push_reveal;matchcut_from=SHOT___051;axis=A;screen=L2R"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___055",
+      "shot_id": "SHOT___055",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "rack_focus_mini_push;lens_mm=35;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___056",
+      "shot_id": "SHOT___056",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "handheld_physical;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___057",
+      "shot_id": "SHOT___057",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "travelling_expansive;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___058",
+      "shot_id": "SHOT___058",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "reveal_short_move_faucet;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___059",
+      "shot_id": "SHOT___059",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_text_print;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT"
+      ]
+    },
+    {
+      "as_id": "AS___060",
+      "shot_id": "SHOT___060",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "handheld_intimate;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___061",
+      "shot_id": "SHOT___061",
+      "event": "REVEAL",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "NO_CHANGE",
+        "CAM": "orbital_soft_display;lens_mm=35;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": []
+    },
+    {
+      "as_id": "AS___062",
+      "shot_id": "SHOT___062",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "follow_loose_euphoria;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___063",
+      "shot_id": "SHOT___063",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "twin_frame_micro_drift;lens_mm=35;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___064",
+      "shot_id": "SHOT___064",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "locked_text;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT",
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___065",
+      "shot_id": "SHOT___065",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS",
+        "POS": "PROP_POSITION_STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "locked_text;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT",
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___066",
+      "shot_id": "SHOT___066",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___CONTRACT_PAPER;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "locked_pattern_read;lens_mm=50;angle=eye;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_FRAME"
+      ],
+      "matchcut_target_shot_id": "SHOT___067",
+      "matchcut_anchor": "FRAME_GEOMETRY_LOCK"
+    },
+    {
+      "as_id": "AS___067",
+      "shot_id": "SHOT___067",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "CHARACTERS_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "handheld_contained_drift;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___068",
+      "shot_id": "SHOT___068",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "micro_push_light;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___069",
+      "shot_id": "SHOT___069",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "travelling_surf_wave;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___070",
+      "shot_id": "SHOT___070",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "near_locked_text_drift;lens_mm=50;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TEXT",
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___071",
+      "shot_id": "SHOT___071",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "internal_motion_rhythmic_cuts;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    },
+    {
+      "as_id": "AS___072",
+      "shot_id": "SHOT___072",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:FRAME_GEOMETRY;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "TOPDOWN_90_LOCKED;lens_mm=50;angle=topdown;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_LOCKED_SCENE8"
+      ],
+      "matchcut_target_shot_id": "SHOT___073",
+      "matchcut_anchor": "FRAME_GEOMETRY_LOCK"
+    },
+    {
+      "as_id": "AS___073",
+      "shot_id": "SHOT___073",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___PHONE_MAIN;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "TOPDOWN_90_LOCKED;lens_mm=50;angle=topdown;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_LOCKED_SCENE8"
+      ],
+      "matchcut_target_shot_id": "SHOT___074",
+      "matchcut_anchor": "FRAME_GEOMETRY_LOCK"
+    },
+    {
+      "as_id": "AS___074",
+      "shot_id": "SHOT___074",
+      "event": "MATCH_CUT",
+      "deltas": {
+        "VIS": "PROPS_VISIBLE;DETAIL_EMPHASIS;MATCHCUT_ANCHOR_FRAMING_LOCKED",
+        "POS": "ANCHOR_LOCK:PROP___TULIP_BULB;END_HOLD",
+        "STATE": "NO_CHANGE",
+        "CAM": "TOPDOWN_90_LOCKED_HOLD;lens_mm=50;angle=topdown;timing=0-5s;end_hold=yes"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_MATCHCUT_LOCKED_SCENE8"
+      ],
+      "matchcut_target_shot_id": "SHOT___075",
+      "matchcut_anchor": "FRAME_GEOMETRY_LOCK"
+    },
+    {
+      "as_id": "AS___075",
+      "shot_id": "SHOT___075",
+      "event": "TRANSFORM",
+      "deltas": {
+        "VIS": "SCENE_VISIBLE",
+        "POS": "STABLE",
+        "STATE": "STATE_CHANGE (transform) — define in prompt",
+        "CAM": "fade_to_black;lens_mm=35;angle=eye;timing=0-5s;end_hold=no"
+      },
+      "observables": [
+        "VIS",
+        "POS",
+        "STATE",
+        "CAM"
+      ],
+      "risk_flags": [
+        "R_TRANSFORMATION"
+      ]
+    }
+  ],
+  "shot_list": [
+    {
+      "shot_id": "SHOT___001",
+      "unit_ref": "U___001",
+      "beat_refs": [
+        "BA___001"
+      ],
+      "coverage_tags": [
+        "EST"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "travelling_lateral_slow_on_glass",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___001"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___002",
+      "unit_ref": "U___001",
+      "beat_refs": [
+        "BA___002"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "micro_push_in_OTS",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___002"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___003",
+      "unit_ref": "U___001",
+      "beat_refs": [
+        "BA___003"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "near_locked_drift_for_text",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___003"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___004",
+      "unit_ref": "U___001",
+      "beat_refs": [
+        "BA___004"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___DRINK_GLASS",
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "slider_short_reveal",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___004"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___005",
+      "unit_ref": "U___001",
+      "beat_refs": [
+        "BA___005"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "micro_push_human",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___005"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___006",
+      "unit_ref": "U___001",
+      "beat_refs": [
+        "BA___006"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_for_text",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___006"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___007",
+      "unit_ref": "U___002",
+      "beat_refs": [
+        "BA___007"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "organic_reframe_follow",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___007"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": true,
+        "lines": [
+          {
+            "speaker_asset_id": "CHAR___DESCONOCIDO",
+            "text": "¿Has pagado… por eso?",
+            "delivery": "bajo, no agresivo",
+            "language": "es"
+          }
+        ]
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___008",
+      "unit_ref": "U___002",
+      "beat_refs": [
+        "BA___008"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "CU",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "stabilized_handheld_subtle",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___008"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___009",
+      "unit_ref": "U___002",
+      "beat_refs": [
+        "BA___009"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_drift_follow_palm",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___009"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___010",
+      "unit_ref": "U___002",
+      "beat_refs": [
+        "BA___010"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "CU",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "push_in_slow_human",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___010"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___011",
+      "unit_ref": "U___002",
+      "beat_refs": [
+        "BA___011"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___CAFE_MODERN_NIGHT_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_effect",
+        "framing_notes": "ESC_1: ver tabla actualizada (café 2026).",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___011"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_1: ver tabla actualizada (café 2026).",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___012",
+      "unit_ref": "U___003",
+      "beat_refs": [
+        "BA___012"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___SOIL"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "handheld_micro_breath",
+        "framing_notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___012"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___013",
+      "unit_ref": "U___003",
+      "beat_refs": [
+        "BA___013"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___SOIL"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "zoom_fast_micro_tilt",
+        "framing_notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___013"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___014",
+      "unit_ref": "U___003",
+      "beat_refs": [
+        "BA___014"
+      ],
+      "coverage_tags": [
+        "CUT"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "MATCHCUT_LOCKED",
+        "framing_notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___014"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_TEXTURE"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___015",
+      "unit_ref": "U___003",
+      "beat_refs": [
+        "BA___015"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_for_text",
+        "framing_notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___015"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___016",
+      "unit_ref": "U___003",
+      "beat_refs": [
+        "BA___016"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___AMSTERDAM_1637_EXTERIOR",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "follow_curve_soft",
+        "framing_notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___016"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_2: portal tierra→agua→Amsterdam 1637.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___017",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___017"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [
+        "CHAR___COMERCIANTE"
+      ],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "slide_short_follow_paper",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___017"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___018",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___018"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [
+        "CHAR___COMERCIANTE"
+      ],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "mini_follow_handoff",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___018"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___019",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___019"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_push_relic",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___019"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___020",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___020"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___PRICE_BOARD"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "near_locked_text_push",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___020"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___021",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___021"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [
+        "CHAR___COMERCIANTE"
+      ],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "soft_reframe",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___021"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___022",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___022"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "slow_drift_macro",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___022"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___023",
+      "unit_ref": "U___004",
+      "beat_refs": [
+        "BA___023"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___TAVERN_1637_INTERIOR",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_push_impact",
+        "framing_notes": "ESC_3: taberna 1637, contratos como objeto.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___023"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_3: taberna 1637, contratos como objeto.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___024",
+      "unit_ref": "U___005",
+      "beat_refs": [
+        "BA___024"
+      ],
+      "coverage_tags": [
+        "EST"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "push_approach_slow",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___024"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___025",
+      "unit_ref": "U___005",
+      "beat_refs": [
+        "BA___025"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_drift_locked",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___025"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___026",
+      "unit_ref": "U___005",
+      "beat_refs": [
+        "BA___026"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [
+        "CHAR___SUBASTADOR"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "stabilized_handheld",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___026"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___027",
+      "unit_ref": "U___005",
+      "beat_refs": [
+        "BA___027"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [
+        "CHAR___SUBASTADOR"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "micro_push_phrase",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___027"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": true,
+        "lines": [
+          {
+            "speaker_asset_id": "CHAR___SUBASTADOR",
+            "text": "¿Nadie…?",
+            "delivery": "corta, expectante",
+            "language": "es"
+          }
+        ]
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___028",
+      "unit_ref": "U___005",
+      "beat_refs": [
+        "BA___028"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "stabilized_handheld_wide",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___028"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___029",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___029"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "tilt_follow_drop",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___029"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___030",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___030"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_drift_paralysis",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___030"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___031",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___031"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "short_push_keep_axis",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___031"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_HANDS"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___032",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___032"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_object_constant",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___032"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___033",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___033"
+      ],
+      "coverage_tags": [
+        "RXN"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [
+        "CHAR___COMERCIANTE"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "handheld_micro_emotion",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___033"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___034",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___034"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___HAARLEM_AUCTION_HALL_1637",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_drift_centered",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___034"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___035",
+      "unit_ref": "U___006",
+      "beat_refs": [
+        "BA___035"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_bridge_to_2026",
+        "framing_notes": "ESC_4: Haarlem colapso + corte a 2026.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___035"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_4: Haarlem colapso + corte a 2026.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___036",
+      "unit_ref": "U___007",
+      "beat_refs": [
+        "BA___036"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "follow_short_1_2_steps",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___036"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___037",
+      "unit_ref": "U___007",
+      "beat_refs": [
+        "BA___037"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_OLD_IPHONE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "push_in_drawer",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___037"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___038",
+      "unit_ref": "U___007",
+      "beat_refs": [
+        "BA___038"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_OLD_IPHONE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "soft_drift_crack",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___038"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___039",
+      "unit_ref": "U___007",
+      "beat_refs": [
+        "BA___039"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___LAPTOP"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "near_locked_text_drift",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___039"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___040",
+      "unit_ref": "U___007",
+      "beat_refs": [
+        "BA___040"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_OLD_IPHONE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "internal_micro_pans",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___040"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___041",
+      "unit_ref": "U___007",
+      "beat_refs": [
+        "BA___041"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [
+        "CHAR___SARA"
+      ],
+      "props_in_shot": [
+        "PROP___PHONE_OLD_IPHONE"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "handheld_micro_reframe",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___041"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___042",
+      "unit_ref": "U___008",
+      "beat_refs": [
+        "BA___042"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___APARTMENT_MORNING_2026",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___PHONE_OLD_IPHONE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_push_prematch",
+        "framing_notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___042"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_5: apartamento 2026, iPhone viejo y 150€.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___043",
+      "unit_ref": "U___008",
+      "beat_refs": [
+        "BA___043"
+      ],
+      "coverage_tags": [
+        "CUT"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___DESERT_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "MATCHCUT_LOCKED",
+        "framing_notes": "ESC_6: desierto, utilidad extrema.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___043"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_FRAME"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_6: desierto, utilidad extrema.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___044",
+      "unit_ref": "U___009",
+      "beat_refs": [
+        "BA___044"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___DESERT_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "travelling_lateral_slow",
+        "framing_notes": "ESC_6: desierto, utilidad extrema.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___044"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_6: desierto, utilidad extrema.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___045",
+      "unit_ref": "U___009",
+      "beat_refs": [
+        "BA___045"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___DESERT_DAY",
+      "characters_in_shot": [
+        "CHAR___OMAR"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "follow_parallel",
+        "framing_notes": "ESC_6: desierto, utilidad extrema.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___045"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_6: desierto, utilidad extrema.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___046",
+      "unit_ref": "U___009",
+      "beat_refs": [
+        "BA___046"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___DESERT_DAY",
+      "characters_in_shot": [
+        "CHAR___WATER_FIGURE"
+      ],
+      "props_in_shot": [
+        "PROP___WATER_BOTTLE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "push_very_slow",
+        "framing_notes": "ESC_6: desierto, utilidad extrema.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___046"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_6: desierto, utilidad extrema.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___047",
+      "unit_ref": "U___009",
+      "beat_refs": [
+        "BA___047"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___DESERT_DAY",
+      "characters_in_shot": [
+        "CHAR___OMAR"
+      ],
+      "props_in_shot": [
+        "PROP___WATER_BOTTLE"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "arc_short_trade",
+        "framing_notes": "ESC_6: desierto, utilidad extrema.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___047"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_FRAME"
+        ],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_6: desierto, utilidad extrema.",
+      "locks": [
+        "END_HOLD_12F",
+        "MATCHCUT_LOCKED_GEOMETRY"
+      ],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___048",
+      "unit_ref": "U___009",
+      "beat_refs": [
+        "BA___048"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___DESERT_DAY",
+      "characters_in_shot": [
+        "CHAR___OMAR"
+      ],
+      "props_in_shot": [
+        "PROP___WATER_BOTTLE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_push_sip",
+        "framing_notes": "ESC_6: desierto, utilidad extrema.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___048"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_6: desierto, utilidad extrema.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___049",
+      "unit_ref": "U___010",
+      "beat_refs": [
+        "BA___049"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "gimbal_entry_cold",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___049"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___050",
+      "unit_ref": "U___010",
+      "beat_refs": [
+        "BA___050"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___WATER_BOTTLE"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "slide_short_place",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___050"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___051",
+      "unit_ref": "U___010",
+      "beat_refs": [
+        "BA___051"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___WATER_BOTTLE"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_text",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___051"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT",
+          "R_MATCHCUT_FRAME"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [
+        "END_HOLD_12F",
+        "MATCHCUT_LOCKED_GEOMETRY"
+      ],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___052",
+      "unit_ref": "U___010",
+      "beat_refs": [
+        "BA___052"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [
+        "CHAR___OMAR"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "follow_head_turn",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___052"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___053",
+      "unit_ref": "U___010",
+      "beat_refs": [
+        "BA___053"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "soft_reframe_exit",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___053"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___054",
+      "unit_ref": "U___011",
+      "beat_refs": [
+        "BA___054"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___DIAMOND_RING"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_push_reveal",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___054"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___055",
+      "unit_ref": "U___011",
+      "beat_refs": [
+        "BA___055"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___DIAMOND_RING"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "rack_focus_mini_push",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___055"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___056",
+      "unit_ref": "U___012",
+      "beat_refs": [
+        "BA___056"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___GOLD_MINE_DAWN",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "handheld_physical",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___056"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___057",
+      "unit_ref": "U___012",
+      "beat_refs": [
+        "BA___057"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OPEN_FIELD_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "travelling_expansive",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___057"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___058",
+      "unit_ref": "U___013",
+      "beat_refs": [
+        "BA___058"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___MODERN_KITCHEN",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "reveal_short_move_faucet",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___058"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___059",
+      "unit_ref": "U___014",
+      "beat_refs": [
+        "BA___059"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_text_print",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___059"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___060",
+      "unit_ref": "U___014",
+      "beat_refs": [
+        "BA___060"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___DIAMOND_RING"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "handheld_intimate",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___060"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___061",
+      "unit_ref": "U___015",
+      "beat_refs": [
+        "BA___061"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___JEWELRY_STORE_LUXURY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___FIRST_IPHONE_DISPLAY"
+      ],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "orbital_soft_display",
+        "framing_notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___061"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "i2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_7: joyería + pilares escasez/utilidad/deseo.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___062",
+      "unit_ref": "U___016",
+      "beat_refs": [
+        "BA___062"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "follow_loose_euphoria",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___062"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___063",
+      "unit_ref": "U___016",
+      "beat_refs": [
+        "BA___063"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_LATER",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "twin_frame_micro_drift",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___063"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___064",
+      "unit_ref": "U___016",
+      "beat_refs": [
+        "BA___064"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_text",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___064"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___065",
+      "unit_ref": "U___016",
+      "beat_refs": [
+        "BA___065"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_text",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___065"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___066",
+      "unit_ref": "U___017",
+      "beat_refs": [
+        "BA___066"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___CONTRACT_PAPER",
+        "PROP___NFT_RECEIPT"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "locked_pattern_read",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___066"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_FRAME"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___067",
+      "unit_ref": "U___018",
+      "beat_refs": [
+        "BA___067"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___LAB_1880_NIGHT",
+      "characters_in_shot": [
+        "CHAR___EDISON"
+      ],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "handheld_contained_drift",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___067"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___068",
+      "unit_ref": "U___018",
+      "beat_refs": [
+        "BA___068"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___LAB_1880_NIGHT",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "micro_push_light",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___068"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___069",
+      "unit_ref": "U___019",
+      "beat_refs": [
+        "BA___069"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___NY_1882_NIGHT_STREET",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "WS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "travelling_surf_wave",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___069"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___070",
+      "unit_ref": "U___020",
+      "beat_refs": [
+        "BA___070"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___ROOM_2009_SMALL",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "eye",
+        "lens_mm": 50,
+        "camera_height": "eye",
+        "camera_move": "near_locked_text_drift",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___070"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_TEXT"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___071",
+      "unit_ref": "U___020",
+      "beat_refs": [
+        "BA___071"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "internal_motion_rhythmic_cuts",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___071"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___072",
+      "unit_ref": "U___021",
+      "beat_refs": [
+        "BA___072"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "topdown",
+        "lens_mm": 50,
+        "camera_height": "overhead",
+        "camera_move": "TOPDOWN_90_LOCKED",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___072"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_LOCKED_SCENE8"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [
+        {
+          "id": "LOCK___SCENE8_MATCHCUT",
+          "text": "TOPDOWN_90 CU 40–60% centro clavado; motion up-to-down 12–16f + hold; top light soft uniforme; gesto índice limpio; shape_match rect vertical; planB microblack+click.",
+          "scope": "shot"
+        }
+      ],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___073",
+      "unit_ref": "U___021",
+      "beat_refs": [
+        "BA___073"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___PHONE_MAIN"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "topdown",
+        "lens_mm": 50,
+        "camera_height": "overhead",
+        "camera_move": "TOPDOWN_90_LOCKED",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___073"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_LOCKED_SCENE8"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [
+        {
+          "id": "LOCK___SCENE8_MATCHCUT",
+          "text": "TOPDOWN_90 CU 40–60% centro clavado; motion up-to-down 12–16f + hold; top light soft uniforme; gesto índice limpio; shape_match rect vertical; planB microblack+click.",
+          "scope": "shot"
+        }
+      ],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___074",
+      "unit_ref": "U___021",
+      "beat_refs": [
+        "BA___074"
+      ],
+      "coverage_tags": [
+        "INS"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [
+        "PROP___TULIP_BULB"
+      ],
+      "shot_spec": {
+        "shot_size": "INSERT",
+        "angle": "topdown",
+        "lens_mm": 50,
+        "camera_height": "overhead",
+        "camera_move": "TOPDOWN_90_LOCKED_HOLD",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___074"
+      ],
+      "ai": {
+        "risk_flags": [
+          "R_MATCHCUT_LOCKED_SCENE8"
+        ],
+        "complexity_score": 3
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": true,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [
+        {
+          "id": "LOCK___SCENE8_MATCHCUT",
+          "text": "TOPDOWN_90 CU 40–60% centro clavado; motion up-to-down 12–16f + hold; top light soft uniforme; gesto índice limpio; shape_match rect vertical; planB microblack+click.",
+          "scope": "shot"
+        }
+      ],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    },
+    {
+      "shot_id": "SHOT___075",
+      "unit_ref": "U___021",
+      "beat_refs": [
+        "BA___075"
+      ],
+      "coverage_tags": [
+        "COV"
+      ],
+      "duration_sec": 5,
+      "location_asset_id": "LOC___OFFICE_2000_DAY",
+      "characters_in_shot": [],
+      "props_in_shot": [],
+      "shot_spec": {
+        "shot_size": "MS",
+        "angle": "eye",
+        "lens_mm": 35,
+        "camera_height": "eye",
+        "camera_move": "fade_to_black",
+        "framing_notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+        "lighting": {
+          "motivated_source": "practical",
+          "key_direction": "var",
+          "key_temperature": "var",
+          "contrast": "med",
+          "notes": "motivated; mantener texto mínimo cuando aplique"
+        }
+      },
+      "axis": {
+        "axis_bin": "A",
+        "screen_direction": "L2R",
+        "eyeline": "LEVEL"
+      },
+      "continuity_snapshots": {
+        "in_state": {},
+        "out_state": {}
+      },
+      "action_spec_refs": [
+        "AS___075"
+      ],
+      "ai": {
+        "risk_flags": [],
+        "complexity_score": 2
+      },
+      "render_intent": {
+        "preferred_video_kind": "r2v",
+        "endframe_needed": false,
+        "view_anchors_needed": []
+      },
+      "notes": "ESC_8: burbujas, overlay, innovación, confianza, triple matchcut.",
+      "locks": [],
+      "dialogue": {
+        "has_dialogue": false,
+        "lines": []
+      },
+      "audio_policy": {
+        "generate_audio": true,
+        "notes": "Mantener pings/clicks y ambientes; no música con marca."
+      }
+    }
+  ],
+  "coverage": {
+    "summary": {
+      "must_show_total": 33,
+      "must_show_covered": 33,
+      "must_show_covered_pct": 100,
+      "gaps": []
+    },
+    "mapping": [
+      {
+        "ms_id": "MS___001",
+        "shot_id": "SHOT___003",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___002",
+        "shot_id": "SHOT___005",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___003",
+        "shot_id": "SHOT___006",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___004",
+        "shot_id": "SHOT___010",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___005",
+        "shot_id": "SHOT___011",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___006",
+        "shot_id": "SHOT___014",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___007",
+        "shot_id": "SHOT___015",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___008",
+        "shot_id": "SHOT___017",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___009",
+        "shot_id": "SHOT___020",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___010",
+        "shot_id": "SHOT___023",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___011",
+        "shot_id": "SHOT___027",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___012",
+        "shot_id": "SHOT___031",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___013",
+        "shot_id": "SHOT___035",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___014",
+        "shot_id": "SHOT___037",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___015",
+        "shot_id": "SHOT___039",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___016",
+        "shot_id": "SHOT___040",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___017",
+        "shot_id": "SHOT___043",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___018",
+        "shot_id": "SHOT___047",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___019",
+        "shot_id": "SHOT___051",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___020",
+        "shot_id": "SHOT___055",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___021",
+        "shot_id": "SHOT___066",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___022",
+        "shot_id": "SHOT___056",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___023",
+        "shot_id": "SHOT___058",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___024",
+        "shot_id": "SHOT___059",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___025",
+        "shot_id": "SHOT___061",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___026",
+        "shot_id": "SHOT___063",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___027",
+        "shot_id": "SHOT___064",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___028",
+        "shot_id": "SHOT___065",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___029",
+        "shot_id": "SHOT___066",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___030",
+        "shot_id": "SHOT___068",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___031",
+        "shot_id": "SHOT___069",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___032",
+        "shot_id": "SHOT___070",
+        "coverage_type": "DIRECT"
+      },
+      {
+        "ms_id": "MS___033",
+        "shot_id": "SHOT___075",
+        "coverage_type": "DIRECT"
+      }
+    ]
+  },
+  "continuity": {
+    "ledger_global": {
+      "invariants": [
+        "Presente contemporáneo en 2026 para SARA.",
+        "Texto/UI mínimo, sin marcas; números simples.",
+        "ESC_8 triple match cut bloqueado TOPDOWN_90, CU 40–60%, centro clavado, click idéntico."
+      ],
+      "tracked_fields": [
+        "time_epoch",
+        "location",
+        "integrity",
+        "screen_state",
+        "possession",
+        "visibility"
+      ],
+      "initial_states": {
+        "CHAR___SARA": {
+          "time_epoch": "2026",
+          "emotion_state": "FOCUSED",
+          "wardrobe_variant": "neutral"
+        },
+        "PROP___TULIP_BULB": {
+          "integrity": "INTACT_OBJECT",
+          "location": "ON_TABLE",
+          "semantic": "TRINKET"
+        },
+        "PROP___PHONE_MAIN": {
+          "screen_state": "AUCTION_RUNNING",
+          "location": "IN_HAND"
+        }
+      }
+    },
+    "per_shot_notes": [
+      {
+        "shot_id": "SHOT___014",
+        "note": "Match cut tierra→agua: mantener encuadre/centro idéntico; evitar elementos nuevos."
+      },
+      {
+        "shot_id": "SHOT___043",
+        "note": "Match cut grieta→desierto: continuidad de línea y textura; evitar cambio de dirección."
+      },
+      {
+        "shot_id": "SHOT___072",
+        "note": "LOCK ESC_8: TOPDOWN_90 CU; gesto índice limpio; click idéntico; plan B microblack+click."
+      }
+    ]
+  },
+  "execution_plan": {
+    "anchors": {
+      "characters": [
+        "CHAR___SARA",
+        "CHAR___DESCONOCIDO",
+        "CHAR___SUBASTADOR",
+        "CHAR___COMERCIANTE",
+        "CHAR___OMAR",
+        "CHAR___EDISON",
+        "CHAR___WATER_FIGURE"
+      ],
+      "props": [
+        "PROP___PHONE_MAIN",
+        "PROP___PHONE_OLD_IPHONE",
+        "PROP___LAPTOP",
+        "PROP___DRINK_GLASS",
+        "PROP___TULIP_BULB",
+        "PROP___SOIL",
+        "PROP___NFT_RECEIPT",
+        "PROP___CONTRACT_PAPER",
+        "PROP___PRICE_BOARD",
+        "PROP___WATER_BOTTLE",
+        "PROP___DIAMOND_RING",
+        "PROP___FIRST_IPHONE_DISPLAY"
+      ],
+      "locations": [
+        "LOC___CAFE_MODERN_NIGHT_2026",
+        "LOC___AMSTERDAM_1637_EXTERIOR",
+        "LOC___TAVERN_1637_INTERIOR",
+        "LOC___HAARLEM_AUCTION_HALL_1637",
+        "LOC___APARTMENT_MORNING_2026",
+        "LOC___DESERT_DAY",
+        "LOC___JEWELRY_STORE_LUXURY",
+        "LOC___GOLD_MINE_DAWN",
+        "LOC___OPEN_FIELD_DAY",
+        "LOC___MODERN_KITCHEN",
+        "LOC___OFFICE_2000_DAY",
+        "LOC___OFFICE_2000_LATER",
+        "LOC___LAB_1880_NIGHT",
+        "LOC___NY_1882_NIGHT_STREET",
+        "LOC___ROOM_2009_SMALL"
+      ]
+    },
+    "view_anchors_needed": [],
+    "endframe_policy": {
+      "shots": [
+        "SHOT___011",
+        "SHOT___014",
+        "SHOT___031",
+        "SHOT___035",
+        "SHOT___039",
+        "SHOT___043",
+        "SHOT___047",
+        "SHOT___051",
+        "SHOT___055",
+        "SHOT___059",
+        "SHOT___061",
+        "SHOT___063",
+        "SHOT___066",
+        "SHOT___072",
+        "SHOT___073",
+        "SHOT___074"
+      ],
+      "reason": "cambios de estado/texto/matchcuts y cierres simbólicos"
+    },
+    "split_suggestions": {
+      "shots": [
+        "SHOT___014",
+        "SHOT___043"
+      ],
+      "reason": "si match cut no queda limpio, separar antes/después"
+    },
+    "render_policy": {
+      "prefer": "i2v",
+      "use_r2v_when": [
+        "MATCHCUT_LOCKED_SCENE8",
+        "TRANSFORMATION",
+        "complexity_score>=4",
+        "text_critical"
+      ]
+    },
+    "notes_for_C": [
+      "Priorizar estabilidad en inserts con texto; micro-movimiento permitido en planos sin texto.",
+      "En ESC_8, triple match cut: respetar locks; plan B microblack 2–3f + click idéntico."
+    ]
+  },
+  "qa_report": {
+    "gates": [
+      {
+        "name": "coverage",
+        "status": "PASS",
+        "reason": "All P0 must_show items mapped DIRECT; 100%."
+      },
+      {
+        "name": "continuity",
+        "status": "PASS",
+        "reason": "Locks preservados (matchcuts), invariants y props clave coherentes."
+      },
+      {
+        "name": "filmability",
+        "status": "PASS",
+        "reason": "Shot_spec incluye tamaño/óptica/movimiento/iluminación mínima y render_intent."
+      }
+    ],
+    "errors": [],
+    "warnings": [
+      {
+        "code": "W_TEXT_UI",
+        "msg": "Mantener texto mínimo y cámara casi estable en inserts con cifras/rótulos."
+      },
+      {
+        "code": "W_MATCHCUT",
+        "msg": "Match cuts requieren encuadre idéntico; ESC_8 bajo lock estricto."
+      }
+    ]
+  },
+  "change_log": [
+    {
+      "date": "2026-02-22",
+      "change": "Patch: reemplazar cámara fija constante por micro-movimientos; locks de matchcuts preservados."
+    }
+  ],
+  "sequences": [
+    {
+      "sequence_id": "SEQ___001",
+      "name": "Secuencia 1",
+      "visual_mode": "cinematic_author",
+      "director_preference_vector": {
+        "visual_energy": "medium",
+        "camera_presence": "observational",
+        "composition_bias": "designed",
+        "rhythm_bias": "breathing",
+        "clarity_vs_mystery": "balanced",
+        "insert_bias": "balanced",
+        "risk_tolerance": "medium"
+      },
+      "sequence_invariants": [
+        "Presente contemporáneo en 2026 para SARA.",
+        "Texto/UI mínimo, sin marcas; números simples.",
+        "ESC_8 triple match cut bloqueado TOPDOWN_90, CU 40–60%, centro clavado, click idéntico."
+      ],
+      "locks": [
+        {
+          "id": "LOCK___SCENE8_MATCHCUT",
+          "text": "ESC_8 triple match cut TOPDOWN_90 CU 40–60%, centro clavado, click idéntico.",
+          "scope": "sequence",
+          "shot_id": "SHOT___072"
+        }
+      ],
+      "knife_shot_id": "SHOT___010",
+      "formal_risk_moment_shot_id": "SHOT___014",
+      "shot_ids": [
+        "SHOT___001",
+        "SHOT___002",
+        "SHOT___003",
+        "SHOT___004",
+        "SHOT___005",
+        "SHOT___006",
+        "SHOT___007",
+        "SHOT___008",
+        "SHOT___009",
+        "SHOT___010",
+        "SHOT___011",
+        "SHOT___012",
+        "SHOT___013",
+        "SHOT___014",
+        "SHOT___015",
+        "SHOT___016",
+        "SHOT___017",
+        "SHOT___018",
+        "SHOT___019",
+        "SHOT___020",
+        "SHOT___021",
+        "SHOT___022",
+        "SHOT___023",
+        "SHOT___024",
+        "SHOT___025",
+        "SHOT___026",
+        "SHOT___027",
+        "SHOT___028",
+        "SHOT___029",
+        "SHOT___030",
+        "SHOT___031",
+        "SHOT___032",
+        "SHOT___033",
+        "SHOT___034",
+        "SHOT___035",
+        "SHOT___036",
+        "SHOT___037",
+        "SHOT___038",
+        "SHOT___039",
+        "SHOT___040",
+        "SHOT___041",
+        "SHOT___042",
+        "SHOT___043",
+        "SHOT___044",
+        "SHOT___045",
+        "SHOT___046",
+        "SHOT___047",
+        "SHOT___048",
+        "SHOT___049",
+        "SHOT___050",
+        "SHOT___051",
+        "SHOT___052",
+        "SHOT___053",
+        "SHOT___054",
+        "SHOT___055",
+        "SHOT___056",
+        "SHOT___057",
+        "SHOT___058",
+        "SHOT___059",
+        "SHOT___060",
+        "SHOT___061",
+        "SHOT___062",
+        "SHOT___063",
+        "SHOT___064",
+        "SHOT___065",
+        "SHOT___066",
+        "SHOT___067",
+        "SHOT___068",
+        "SHOT___069",
+        "SHOT___070",
+        "SHOT___071",
+        "SHOT___072",
+        "SHOT___073",
+        "SHOT___074",
+        "SHOT___075"
+      ]
+    }
+  ]
+}
