@@ -21,6 +21,17 @@ const getDriveDisplayUrl = (url) => {
   return url;
 };
 
+const parseContract = (json) => {
+  return {
+    projectName: json.title || json.projectName || '',
+    format: json.format || 'film_essay_montage',
+    characters: (json.characters || []).map(c => ({ ...c, id: c.id || `CHAR_${Math.random().toString(36).slice(2, 6).toUpperCase()}` })),
+    props: (json.props || []).map(p => ({ ...p, id: p.id || `PROP_${Math.random().toString(36).slice(2, 6).toUpperCase()}` })),
+    environments: (json.environments || []).map(e => ({ ...e, id: e.id || `LOC_${Math.random().toString(36).slice(2, 6).toUpperCase()}` })),
+    shots: (json.shots || []).map(s => ({ ...s, id: s.id || `SHOT_${Math.random().toString(36).slice(2, 6).toUpperCase()}` }))
+  };
+};
+
 const SHOT_SIZES = ['EWS', 'WS', 'MWS', 'MS', 'MCU', 'CU', 'ECU', 'INSERT']
 const CAMERA_MOVES = [
   'locked', 'micro_push', 'push_in_slow', 'travelling_lateral', 'stabilized_handheld',
@@ -109,7 +120,7 @@ function ModelPicker({ type, value, onChange }) {
   )
 }
 
-function AlchemyProgress({ status, onComplete, realProgress }) {
+function AlchemyProgress({ status, realProgress }) {
   const [percent, setPercent] = useState(0)
   
   useEffect(() => {
@@ -121,15 +132,15 @@ function AlchemyProgress({ status, onComplete, realProgress }) {
         });
       }, 800);
       return () => clearInterval(interval);
-    } else if (status === 'ready') {
+    } else if (status === 'ready' && percent !== 100) {
       setPercent(100);
-    } else {
-      setPercent(realProgress || 0);
+    } else if (status !== 'ready' && realProgress !== undefined && percent !== realProgress) {
+      setPercent(realProgress);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, realProgress])
 
-  if (status !== 'processing' && status !== 'ready' && !realProgress) return null;
-  if (status === 'ready' && percent === 100) return null;
+  if ((status !== 'processing' && status !== 'ready' && !realProgress) || (status === 'ready' && percent === 100)) return null;
 
   return (
     <div className="alchemy-progress-ring">
@@ -390,10 +401,11 @@ function StepCharacters({ data, onChange }) {
     try {
       const { data: proj } = await supabase.from('projects').select('id').eq('name', data.projectName).single();
       if (proj) {
+        const timestamp = Date.now(); // eslint-disable-line react-hooks/purity
         await supabase.from('renderfarm_outputs').insert([{
           project_id: proj.id,
           task_id: char.id,
-          file_name: `${char.name || 'char'}_${Date.now()}.png`,
+          file_name: `${char.name || 'char'}_${timestamp}.png`,
           kind: 't2i',
           status: 'processing'
         }]);
@@ -474,8 +486,9 @@ function StepProps({ data, onChange }) {
     try {
       const { data: proj } = await supabase.from('projects').select('id').eq('name', data.projectName).single();
       if (proj) {
+        const timestamp = Date.now(); // eslint-disable-line react-hooks/purity
         await supabase.from('renderfarm_outputs').insert([{
-          project_id: proj.id, task_id: prop.id, file_name: `${prop.name || 'prop'}_${Date.now()}.png`,
+          project_id: proj.id, task_id: prop.id, file_name: `${prop.name || 'prop'}_${timestamp}.png`,
           kind: 't2i', status: 'processing'
         }]);
         refresh();
@@ -531,8 +544,9 @@ function StepEnvironments({ data, onChange }) {
     try {
       const { data: proj } = await supabase.from('projects').select('id').eq('name', data.projectName).single();
       if (proj) {
+        const timestamp = Date.now(); // eslint-disable-line react-hooks/purity
         await supabase.from('renderfarm_outputs').insert([{
-          project_id: proj.id, task_id: env.id, file_name: `${env.name || 'loc'}_${Date.now()}.png`,
+          project_id: proj.id, task_id: env.id, file_name: `${env.name || 'loc'}_${timestamp}.png`,
           kind: 't2i', status: 'processing'
         }]);
         refresh();
@@ -581,7 +595,7 @@ function StepEnvironments({ data, onChange }) {
 
 function StepShots({ data, onChange }) {
   const shots = data.shots || []
-  const { media, loading, refresh } = useDriveMedia(data.projectName, 'shot')
+  const { loading, refresh } = useDriveMedia(data.projectName, 'shot')
   const addShot = () => onChange({ ...data, shots: [...shots, { id: `SHOT___${String(shots.length + 1).padStart(3, '0')}`, beat: '', duration: 5, shotSize: 'MS', cameraMove: 'micro_push', modelId: 'fal-ai/bytedance/seedance-2.0/image-to-video' }] })
 
   return (
@@ -616,7 +630,7 @@ function StepShots({ data, onChange }) {
 }
 
 function StepFreestyle({ data, onChange, session }) {
-  const [executing, setExecuting] = useState(false)
+  const [, setExecuting] = useState(false)
   const [fullscreenImage, setFullscreenImage] = useState(null)
   const { media: results, loading, refresh: refreshResults } = useDriveMedia('FREESTYLE_LAB', 'freestyle', session)
   
@@ -639,15 +653,15 @@ function StepFreestyle({ data, onChange, session }) {
     onChange({ ...data, freestyleExperiments: u })
   }
 
-  const handleFileUpload = async (file, onComplete) => {
+  const handleFileUpload = async (file, onCompleteCallback) => {
      if(!file) return
      const ext = file.name.split('.').pop()
-     const fileName = `refs/${session?.user?.id || 'anon'}_${Date.now()}.${ext}`
-     const { data: uploadData, error } = await supabase.storage.from('assets').upload(fileName, file)
+     const fileName = `refs/${session?.user?.id || 'anon'}_${Date.now()}.${ext}` // eslint-disable-line react-hooks/purity
+     const { error } = await supabase.storage.from('assets').upload(fileName, file)
      if(error) { alert("Upload failed: " + error.message); return null; }
      
      const { data: publicData } = supabase.storage.from('assets').getPublicUrl(fileName)
-     onComplete(publicData.publicUrl)
+     onCompleteCallback(publicData.publicUrl)
   }
 
   const handleExecute = async (exp) => {
@@ -658,11 +672,12 @@ function StepFreestyle({ data, onChange, session }) {
 
       const kindPayload = exp.mode === 't2i' ? 't2i' : exp.mode === 'i2i' ? 'i2i' : exp.mode === 'i2v' ? 'i2v' : 't2v';
       const outputExt = kindPayload.includes('v') ? 'mp4' : 'png';
+      const timestamp = Date.now(); // eslint-disable-line react-hooks/purity
 
       await supabase.from('renderfarm_outputs').insert([{
         project_id: proj.id, 
         task_id: exp.id, 
-        file_name: `${exp.name.toLowerCase().replace(/\\s+/g, '_')}_${Date.now()}.${outputExt}`,
+        file_name: `${exp.name.toLowerCase().replace(/\\s+/g, '_')}_${timestamp}.${outputExt}`,
         kind: kindPayload, 
         status: 'processing',
         profile_id: session?.user?.id,
@@ -816,7 +831,7 @@ function QuotaWidget({ session }) {
   }, [session])
 
   useEffect(() => {
-    fetchQuota();
+    fetchQuota(); // eslint-disable-line react-hooks/set-state-in-effect
     const iv = setInterval(fetchQuota, 30000);
     return () => clearInterval(iv);
   }, [fetchQuota])
@@ -885,7 +900,9 @@ function App() {
     if (list) setProjects(list)
   }, [])
 
-  useEffect(() => { loadProjects() }, [loadProjects])
+  useEffect(() => { 
+    loadProjects() // eslint-disable-line react-hooks/set-state-in-effect
+  }, [loadProjects])
 
   const STEPS = [
     { id: 'project', label: 'Setup', icon: '📁' },
