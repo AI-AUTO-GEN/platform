@@ -683,8 +683,8 @@ function StepFreestyle({ data, onChange, session }) {
             kind: kindPayload, 
             freestyle: true,
             user_id: session?.user?.id,
-            ref_image: exp.ref_image,
-            ref_video: exp.ref_video
+            ref_image: kindPayload === 'v2v' ? null : exp.ref_image,
+            ref_video: kindPayload === 'v2v' ? exp.ref_image : null
           } 
         })
       });
@@ -768,13 +768,16 @@ function StepFreestyle({ data, onChange, session }) {
                 placeholder="Describe generation..."
                 onChange={e => updateExperiment(idx, 'prompt', e.target.value)}
               />
-              {(exp.mode === 'i2i' || exp.mode === 'i2v') && (
+              {(['i2i', 'i2v', 'v2v'].includes(exp.mode)) && (
                  <div className="upload-ref-box">
-                    <label className="tiny-label">Reference Image (Start Frame)</label>
+                    <label className="tiny-label">{exp.mode === 'v2v' ? 'Reference Video' : 'Reference Image'}</label>
                     {exp.ref_image ? (
-                        <div className="ref-preview"><img src={exp.ref_image} height={40}/><button onClick={()=>updateExperiment(idx, 'ref_image', null)}>x</button></div>
+                        <div className="ref-preview">
+                           {exp.ref_image.includes('.mp4') ? <video src={exp.ref_image} height={40} muted/> : <img src={exp.ref_image} height={40}/>}
+                           <button onClick={()=>updateExperiment(idx, 'ref_image', null)}>x</button>
+                        </div>
                     ) : (
-                      <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e.target.files[0], url => updateExperiment(idx, 'ref_image', url))} />
+                      <input type="file" accept={exp.mode === 'v2v' ? 'video/*' : 'image/*'} onChange={(e) => handleFileUpload(e.target.files[0], url => updateExperiment(idx, 'ref_image', url))} />
                     )}
                  </div>
               )}
