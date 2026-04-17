@@ -108,11 +108,11 @@ function ModelPicker({ type, value, onChange }) {
   )
 }
 
-function AlchemyProgress({ status, onComplete }) {
+function AlchemyProgress({ status, onComplete, realProgress }) {
   const [percent, setPercent] = useState(0)
   
   useEffect(() => {
-    if (status === 'processing') {
+    if (status === 'processing' && !realProgress) {
       const interval = setInterval(() => {
         setPercent(prev => {
           if (prev < 92) return prev + Math.random() * 2;
@@ -123,16 +123,16 @@ function AlchemyProgress({ status, onComplete }) {
     } else if (status === 'ready') {
       setPercent(100);
     } else {
-      setPercent(0);
+      setPercent(realProgress || 0);
     }
-  }, [status])
+  }, [status, realProgress])
 
-  if (status !== 'processing' && status !== 'ready') return null;
+  if (status !== 'processing' && status !== 'ready' && !realProgress) return null;
   if (status === 'ready' && percent === 100) return null;
 
   return (
     <div className="alchemy-progress-ring">
-      <div className="progress-value mono">{Math.floor(percent)}%</div>
+      <div className="progress-value mono">{Math.floor(realProgress || percent)}%</div>
       <div className="progress-label tiny-label">TRANSFORMING REALITY</div>
     </div>
   )
@@ -175,6 +175,7 @@ function useDriveMedia(projectNameOrId, category) {
         status: o.status,
         createdAt: o.created_at,
         updatedAt: o.updated_at,
+        progress: o.progress || 0,
         metadata: o.metadata || {}
       }));
 
@@ -234,7 +235,7 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
           {activeVariant ? (
             activeVariant.status === 'processing' ? (
               <div className="processing-placeholder">
-                <AlchemyProgress status="processing" />
+                <AlchemyProgress status="processing" realProgress={activeVariant.progress} />
                 <div className="spinner-center"></div>
               </div>
             ) : (
