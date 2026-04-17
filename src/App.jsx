@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import './App.css'
 import { supabase } from './supabase'
+import Auth from './Auth'
 
 // ─── Constants & Helpers ────────────────────────
 const N8N_MEDIA_WEBHOOK = 'https://nsk404.app.n8n.cloud/webhook/media-discovery'
@@ -142,7 +143,7 @@ function genId(prefix) {
   return `${prefix}___${Date.now()}_${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 }
 
-function useDriveMedia(projectNameOrId, category) {
+function useDriveMedia(projectNameOrId, category, session) {
   const [media, setMedia] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -158,11 +159,17 @@ function useDriveMedia(projectNameOrId, category) {
         if (proj) pId = proj.id;
       }
 
-      const { data: outputs, error } = await supabase
+      let query = supabase
         .from('renderfarm_outputs')
         .select('*')
-        .eq('project_id', pId)
-        .order('created_at', { ascending: false });
+        
+      if (category === 'freestyle' && session?.user?.id) {
+         query = query.eq('profile_id', session.user.id)
+      } else {
+         query = query.eq('project_id', pId)
+      }
+
+      const { data: outputs, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -185,7 +192,7 @@ function useDriveMedia(projectNameOrId, category) {
     } finally {
       setLoading(false)
     }
-  }, [projectNameOrId, category])
+  }, [projectNameOrId, category, session])
 
   useEffect(() => { 
     refresh() 
@@ -608,12 +615,11 @@ function StepShots({ data, onChange }) {
   )
 }
 
-function StepFreestyle({ data, onChange }) {
+function StepFreestyle({ data, onChange, session }) {
   const [executing, setExecuting] = useState(false)
   const [fullscreenImage, setFullscreenImage] = useState(null)
-  const { media: results, loading, refresh: refreshResults } = useDriveMedia('FREESTYLE_LAB', 'freestyle')
+  const { media: results, loading, refresh: refreshResults } = useDriveMedia('FREESTYLE_LAB', 'freestyle', session)
   
-  // Freestyle units are stored in the main 'data' to persist between tab switches
   const experiments = data.freestyleExperiments || []
 
   const addExperiment = () => {
@@ -622,7 +628,7 @@ function StepFreestyle({ data, onChange }) {
       ...data, 
       freestyleExperiments: [
         ...experiments, 
-        { id, name: 'New Experiment', prompt: '', modelId: 'fal-ai/flux-pro/v1.1/ultra', type: 'image' }
+        { id, name: 'New Experiment', prompt: '', modelId: 'fal-ai/flux-pro/v1.1/ultra', mode: 't2i', ref_image: null, ref_video: null }
       ] 
     })
   }
@@ -633,19 +639,34 @@ function StepFreestyle({ data, onChange }) {
     onChange({ ...data, freestyleExperiments: u })
   }
 
+  const handleFileUpload = async (file, onComplete) => {
+     if(!file) return
+     const ext = file.name.split('.').pop()
+     const fileName = `refs/${session?.user?.id || 'anon'}_${Date.now()}.${ext}`
+     const { data: uploadData, error } = await supabase.storage.from('assets').upload(fileName, file)
+     if(error) { alert("Upload failed: " + error.message); return null; }
+     
+     const { data: publicData } = supabase.storage.from('assets').getPublicUrl(fileName)
+     onComplete(publicData.publicUrl)
+  }
+
   const handleExecute = async (exp) => {
     setExecuting(true)
     try {
       const { data: proj } = await supabase.from('projects').select('id').eq('name', 'FREESTYLE_LAB').single();
       if (!proj) return alert('FREESTYLE_LAB project not found in database.');
 
+      const kindPayload = exp.mode === 't2i' ? 't2i' : exp.mode === 'i2i' ? 'i2i' : exp.mode === 'i2v' ? 'i2v' : 't2v';
+      const outputExt = kindPayload.includes('v') ? 'mp4' : 'png';
+
       await supabase.from('renderfarm_outputs').insert([{
         project_id: proj.id, 
         task_id: exp.id, 
-        file_name: `${exp.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.png`,
-        kind: exp.type === 'image' ? 't2i' : 'i2v', 
+        file_name: `${exp.name.toLowerCase().replace(/\\s+/g, '_')}_${Date.now()}.${outputExt}`,
+        kind: kindPayload, 
         status: 'processing',
-        metadata: { prompt: exp.prompt, modelId: exp.modelId }
+        profile_id: session?.user?.id,
+        metadata: { prompt: exp.prompt, modelId: exp.modelId, mode: exp.mode }
       }]);
       
       refreshResults();
@@ -659,13 +680,15 @@ function StepFreestyle({ data, onChange }) {
             id: exp.id, 
             prompt: exp.prompt, 
             modelId: exp.modelId, 
-            kind: exp.type === 'image' ? 't2i' : 'i2v', 
-            freestyle: true 
+            kind: kindPayload, 
+            freestyle: true,
+            user_id: session?.user?.id,
+            ref_image: exp.ref_image,
+            ref_video: exp.ref_video
           } 
         })
       });
       
-      // Update last generated prompt to sync status
       const idx = experiments.findIndex(e => e.id === exp.id)
       if (idx !== -1) updateExperiment(idx, 'lastGeneratedPrompt', exp.prompt)
 
@@ -689,20 +712,79 @@ function StepFreestyle({ data, onChange }) {
       </div>
 
       <div className="tasks-grid">
-        {experiments.map((exp, idx) => (
-          <EntityTaskCard 
-            key={exp.id}
-            badge="EXP"
-            name={exp.name}
-            id={exp.id}
-            data={exp}
-            driveMedia={results}
-            onUpdate={(f, v) => updateExperiment(idx, f, v)}
-            onGenerate={() => handleExecute(exp)}
-            onSelectVersion={(v) => updateExperiment(idx, 'selectedVersionId', v.id)}
-            selectedVersion={results.find(m => m.id === exp.selectedVersionId)}
-          />
-        ))}
+        {experiments.map((exp, idx) => {
+          const variants = results?.filter(m => m.name.includes(exp.id)) || []
+          const activeVariant = results?.find(m => m.id === exp.selectedVersionId) || variants[0]
+          
+          return (
+          <div key={exp.id} className="entity-task-card glass slide-in">
+            <div className="task-header-v2">
+              <div className="header-top-row">
+                 <div className="id-badge-group">
+                    <span className="entity-badge exp">EXP</span>
+                    <input type="text" className="tab-input-name" value={exp.name} onChange={e => updateExperiment(idx, 'name', e.target.value)} />
+                 </div>
+                 <button className="btn-gen-circle" onClick={() => handleExecute(exp)}>
+                    <span className="icon">⚡</span>
+                 </button>
+              </div>
+              <div className="header-tool-row">
+                 <select className="select-mini" value={exp.mode} onChange={e => {
+                    updateExperiment(idx, 'mode', e.target.value);
+                    updateExperiment(idx, 'modelId', e.target.value.includes('v') ? 'fal-ai/kling-video/v3/pro/image-to-video' : 'fal-ai/flux-pro/v1.1/ultra');
+                 }}>
+                   <option value="t2i">Text to Image</option>
+                   <option value="i2i">Image to Image</option>
+                   <option value="t2v">Text to Video</option>
+                   <option value="i2v">Image to Video (Frame)</option>
+                   <option value="v2v">Video to Video</option>
+                 </select>
+                 <ModelPicker type={exp.mode?.includes('v') ? 'video' : 'image'} value={exp.modelId} onChange={(v) => updateExperiment(idx, 'modelId', v)} />
+              </div>
+            </div>
+
+            <div className="render-preview-zone">
+                {activeVariant ? (
+                  activeVariant.status === 'processing' ? (
+                    <div className="processing-placeholder">
+                      <AlchemyProgress status="processing" realProgress={activeVariant.progress} />
+                      <div className="spinner-center"></div>
+                    </div>
+                  ) : (
+                    activeVariant.mimeType?.includes('video') 
+                      ? <video src={getDriveDisplayUrl(activeVariant.webViewLink)} controls className="official-render" autoPlay loop muted />
+                      : <img src={getDriveDisplayUrl(activeVariant.thumbnailLink)} className="official-render" alt={exp.name} onClick={() => setFullscreenImage(activeVariant)} />
+                  )
+                ) : (
+                   <div className="empty-render"><span className="empty-state-text">NO RENDER ASSET FOUND</span></div>
+                )}
+            </div>
+
+            <div className="task-body">
+              <textarea 
+                className="input-prompt" 
+                rows={2} 
+                value={exp.prompt} 
+                placeholder="Describe generation..."
+                onChange={e => updateExperiment(idx, 'prompt', e.target.value)}
+              />
+              {(exp.mode === 'i2i' || exp.mode === 'i2v') && (
+                 <div className="upload-ref-box">
+                    <label className="tiny-label">Reference Image (Start Frame)</label>
+                    {exp.ref_image ? (
+                        <div className="ref-preview"><img src={exp.ref_image} height={40}/><button onClick={()=>updateExperiment(idx, 'ref_image', null)}>x</button></div>
+                    ) : (
+                      <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e.target.files[0], url => updateExperiment(idx, 'ref_image', url))} />
+                    )}
+                 </div>
+              )}
+            </div>
+            
+            <div className="task-card-footer-v2">
+               <span className="telemetry-tag">{variants.length} Variants</span>
+            </div>
+          </div>
+        )})}
         <div className="add-task-placeholder glass" onClick={addExperiment}>
           + Register New Freestyle Unit
         </div>
@@ -718,6 +800,7 @@ function StepFreestyle({ data, onChange }) {
     </div>
   )
 }
+
 
 function LogMonitor() {
   const [logs, setLogs] = useState([])
@@ -736,9 +819,24 @@ function LogMonitor() {
 }
 
 function App() {
+  const [session, setSession] = useState(null)
   const [step, setStep] = useState(0)
   const [projects, setProjects] = useState([])
   const [data, setData] = useState({ projectName: '', characters: [], props: [], environments: [], shots: [], freestyleExperiments: [] })
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const loadProjects = useCallback(async () => {
     const { data: list } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
@@ -763,13 +861,22 @@ function App() {
     <StepProps data={data} onChange={setData} />,
     <StepEnvironments data={data} onChange={setData} />,
     <StepShots data={data} onChange={setData} />,
-    <StepFreestyle data={data} onChange={setData} />,
+    <StepFreestyle data={data} onChange={setData} session={session} />,
     <div className="step-content"><h2>Export</h2></div>
   ]
 
   return (
     <div className="app-shell">
-      <header className="topbar glass"><h1 className="brand">AI <span className="gradient-text">AUTO GEN</span></h1></header>
+      <Auth session={session} />
+      <header className="topbar glass">
+         <h1 className="brand">AI <span className="gradient-text">AUTO GEN</span></h1>
+         {session && (
+           <div className="user-profile-widget">
+             <span className="tiny-label">{session.user.email}</span>
+             <button className="logout-btn" onClick={() => supabase.auth.signOut()}>Logout</button>
+           </div>
+         )}
+      </header>
       <div className="main-layout">
         <nav className="step-nav glass">
           {STEPS.map((s, idx) => <button key={s.id} className={`step-btn ${idx === step ? 'active' : ''}`} onClick={() => setStep(idx)}>{s.icon} {s.label}</button>)}
