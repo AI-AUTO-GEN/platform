@@ -172,7 +172,10 @@ function useDriveMedia(projectNameOrId, category) {
         webViewLink: o.hq_url || o.url || '#',
         thumbnailLink: o.thumbnail_url || o.url || '#',
         mimeType: o.kind?.includes('video') ? 'video/mp4' : 'image/png',
-        status: o.status
+        status: o.status,
+        createdAt: o.created_at,
+        updatedAt: o.updated_at,
+        metadata: o.metadata || {}
       }));
 
       setMedia(formatted)
@@ -270,6 +273,11 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
         <div className="footer-left">
            <span className="file-name-tag">{name?.toUpperCase().replace(/\s+/g, '_') || id}.png</span>
            {data.usageCount > 0 && <span className="usage-count">In {data.usageCount} Shots</span>}
+           {activeVariant?.status === 'ready' && activeVariant.updatedAt && (
+             <span className="telemetry-tag">
+               ⏱️ {Math.round((new Date(activeVariant.updatedAt) - new Date(activeVariant.createdAt)) / 1000)}s
+             </span>
+           )}
         </div>
         <div className={`sync-status ${hasChanges ? 'alert' : 'clean'}`}>
            {hasChanges ? '● Unsaved' : '✓ Synced'}
@@ -600,122 +608,109 @@ function StepShots({ data, onChange }) {
 }
 
 function StepFreestyle({ data, onChange }) {
-  const [params, setParams] = useState({ type: 'image', modelId: 'fal-ai/flux-pro/v1.1/ultra', prompt: '', references: [] })
   const [executing, setExecuting] = useState(false)
   const [fullscreenImage, setFullscreenImage] = useState(null)
-  const { media: results, refresh: refreshResults } = useDriveMedia('FREESTYLE_LAB', 'freestyle')
+  const { media: results, loading, refresh: refreshResults } = useDriveMedia('FREESTYLE_LAB', 'freestyle')
+  
+  // Freestyle units are stored in the main 'data' to persist between tab switches
+  const experiments = data.freestyleExperiments || []
 
-  const handleExecute = async () => {
-    setExecuting(true)
-    const logId = `SB_${Date.now().toString().slice(-4)}`;
-    try {
-      const { data: proj } = await supabase.from('projects').select('id').eq('name', 'FREESTYLE_LAB').single();
-      if (proj) {
-        await supabase.from('renderfarm_outputs').insert([{
-          project_id: proj.id, task_id: `TASK_${logId}`, file_name: `freestyle_${logId}.png`,
-          kind: params.type === 'image' ? 't2i' : 'i2v', status: 'processing'
-        }]);
-        refreshResults();
-      }
-
-      await fetch(N8N_WEBHOOK_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ project: { title: 'FREESTYLE_LAB' }, task: { id: `TASK_${logId}`, prompt: params.prompt, modelId: params.modelId, references: params.references, kind: params.type === 'image' ? 't2i' : 'i2v', freestyle: true } })
-      });
-      setTimeout(refreshResults, 12000);
-    } catch (e) { console.error(e) } finally { setExecuting(false) }
+  const addExperiment = () => {
+    const id = genId('EXP')
+    onChange({ 
+      ...data, 
+      freestyleExperiments: [
+        ...experiments, 
+        { id, name: 'New Experiment', prompt: '', modelId: 'fal-ai/flux-pro/v1.1/ultra', type: 'image' }
+      ] 
+    })
   }
 
-  const [downloadingZip, setDownloadingZip] = useState(false);
+  const updateExperiment = (idx, field, val) => {
+    const u = [...experiments]
+    u[idx] = { ...u[idx], [field]: val }
+    onChange({ ...data, freestyleExperiments: u })
+  }
 
-  // Safe converter for Google Drive previews using external CDN proxy to bypass CORS/Hotlink Blocks
-  const getDriveDisplayUrl = (url) => {
-    if (!url) return '';
-    if (url.includes('unsplash.com')) return url;
-    const match = url.match(/id=([^&]+)/);
-    if (match) {
-      const gDriveUrl = `https://drive.google.com/uc?id=${match[1]}`;
-      // Bypass Google's anti-hotlinking by passing through standard image proxy
-      return `https://wsrv.nl/?url=${encodeURIComponent(gDriveUrl)}&output=webp`;
-    }
-    return url;
-  };
-
-  const handleBulkDownload = async () => {
-    const readyItems = results.filter(r => r.status === 'ready' && r.url);
-    if (!readyItems.length) return alert('No loaded results available to download.');
-    
-    setDownloadingZip(true);
+  const handleExecute = async (exp) => {
+    setExecuting(true)
     try {
-      const { default: JSZip } = await import('jszip');
-      const { saveAs } = await import('file-saver');
-      const zip = new JSZip();
+      const { data: proj } = await supabase.from('projects').select('id').eq('name', 'FREESTYLE_LAB').single();
+      if (!proj) return alert('FREESTYLE_LAB project not found in database.');
+
+      await supabase.from('renderfarm_outputs').insert([{
+        project_id: proj.id, 
+        task_id: exp.id, 
+        file_name: `${exp.name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.png`,
+        kind: exp.type === 'image' ? 't2i' : 'i2v', 
+        status: 'processing',
+        metadata: { prompt: exp.prompt, modelId: exp.modelId }
+      }]);
       
-      const fetchPromises = readyItems.map(async (r, i) => {
-         const match = r.url.match(/id=([^&]+)/);
-         if (!match) return;
-         const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(`https://drive.google.com/uc?id=${match[1]}`)}&output=webp`;
-         const res = await fetch(proxyUrl);
-         if (!res.ok) throw new Error('Fetch failed');
-         const blob = await res.blob();
-         const num = String(i + 1).padStart(2, '0');
-         zip.file(`Freestyle_Asset_${num}.webp`, blob);
+      refreshResults();
+
+      await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          project: { title: 'FREESTYLE_LAB' }, 
+          task: { 
+            id: exp.id, 
+            prompt: exp.prompt, 
+            modelId: exp.modelId, 
+            kind: exp.type === 'image' ? 't2i' : 'i2v', 
+            freestyle: true 
+          } 
+        })
       });
       
-      await Promise.all(fetchPromises);
-      const content = await zip.generateAsync({ type: 'blob' });
-      saveAs(content, `Freestyle_Batch.zip`);
-    } catch (e) {
-      console.error(e);
-      alert('Hubo un error aglomerando el ZIP. Puede que algunas imágenes pesen demasiado.');
-    } finally {
-      setDownloadingZip(false);
+      // Update last generated prompt to sync status
+      const idx = experiments.findIndex(e => e.id === exp.id)
+      if (idx !== -1) updateExperiment(idx, 'lastGeneratedPrompt', exp.prompt)
+
+    } catch (e) { 
+      console.error(e) 
+      alert('Error initiating alchemy: ' + e.message)
+    } finally { 
+      setExecuting(false) 
     }
-  };
+  }
 
   return (
     <div className="step-content fade-in">
       <div className="step-header">
         <div className="header-with-action">
           <h2>Freestyle <span className="gradient-text">Laboratory</span></h2>
-          <div className="action-group" style={{ display: 'flex', gap: '10px' }}>
-             <button className="btn-mini-refresh" onClick={handleBulkDownload} disabled={downloadingZip}>
-               {downloadingZip ? '⏳ Zipping...' : '📦 Download All (ZIP)'}
-             </button>
-             <button className="btn-mini-refresh" onClick={refreshResults}>↻ Refresh</button>
+          <div className="action-group">
+             <button className={`btn-refresh ${loading ? 'spinning' : ''}`} onClick={refreshResults}>↻ Refresh</button>
           </div>
-        </div>
-      </div>
-      <div className="sandbox-grid-v2">
-        <div className="sandbox-controls glass">
-          <ModelPicker type={params.type} value={params.modelId} onChange={(v) => setParams({...params, modelId: v})} />
-          <textarea className="input-prompt" rows={5} value={params.prompt} onChange={(e) => setParams({...params, prompt: e.target.value})} />
-          <button className="btn-primary full-width" onClick={handleExecute} disabled={executing}>EXECUTE ALCHEMY</button>
-        </div>
-        <div className="sandbox-results glass">
-           <div className="results-scroll-grid">
-              {results.map(r => (
-                <div key={r.id} className="result-card">
-                   <div className="result-preview" onClick={() => { if(r.status === 'ready') setFullscreenImage(r) }} style={{ cursor: r.status === 'ready' ? 'pointer' : 'default'}}>
-                     {r.status === 'processing' ? <div className="processing-overlay"><div className="spinner-sm"></div></div> : <img src={getDriveDisplayUrl(r.thumbnailLink)} alt="result" className="clickable-img" referrerPolicy="no-referrer" />}
-                   </div>
-                </div>
-              ))}
-           </div>
         </div>
       </div>
 
-      {/* FULLSCREEN MODAL */}
+      <div className="tasks-grid">
+        {experiments.map((exp, idx) => (
+          <EntityTaskCard 
+            key={exp.id}
+            badge="EXP"
+            name={exp.name}
+            id={exp.id}
+            data={exp}
+            driveMedia={results}
+            onUpdate={(f, v) => updateExperiment(idx, f, v)}
+            onGenerate={() => handleExecute(exp)}
+            onSelectVersion={(v) => updateExperiment(idx, 'selectedVersionId', v.id)}
+            selectedVersion={results.find(m => m.id === exp.selectedVersionId)}
+          />
+        ))}
+        <div className="add-task-placeholder glass" onClick={addExperiment}>
+          + Register New Freestyle Unit
+        </div>
+      </div>
+
       {fullscreenImage && (
         <div className="lightbox-overlay fade-in" onClick={() => setFullscreenImage(null)}>
-          <div className="lightbox-controls">
-            <button className="btn-close-lightbox">✕ Close</button>
-            <a href={fullscreenImage.webViewLink} target="_blank" rel="noreferrer" className="btn-download-lightbox" onClick={(e) => e.stopPropagation()}>
-              ⬇ Download HQ
-            </a>
-          </div>
           <div className="lightbox-img-wrapper">
-             <img src={getDriveDisplayUrl(fullscreenImage.thumbnailLink)} onClick={(e) => e.stopPropagation()} referrerPolicy="no-referrer" alt="fullscreen" />
+             <img src={getDriveDisplayUrl(fullscreenImage.thumbnailLink)} onClick={(e) => e.stopPropagation()} alt="fullscreen" />
           </div>
         </div>
       )}
@@ -742,7 +737,7 @@ function LogMonitor() {
 function App() {
   const [step, setStep] = useState(0)
   const [projects, setProjects] = useState([])
-  const [data, setData] = useState({ projectName: '', characters: [], props: [], environments: [], shots: [] })
+  const [data, setData] = useState({ projectName: '', characters: [], props: [], environments: [], shots: [], freestyleExperiments: [] })
 
   const loadProjects = useCallback(async () => {
     const { data: list } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
