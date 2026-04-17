@@ -186,6 +186,7 @@ function useDriveMedia(projectNameOrId, category, session) {
 
       const formatted = (outputs || []).map(o => ({
         id: o.id,
+        task_id: o.task_id,
         name: o.file_name || o.task_id,
         webViewLink: o.hq_url || o.url || '#',
         thumbnailLink: o.thumbnail_url || o.url || '#',
@@ -307,7 +308,7 @@ function EntityTaskCard({ badge, name, id, data, onGenerate, onUpdate, driveMedi
 }
 
 
-function StepProject({ data, projects, loadingProjects, onSelectProject, onNewProject, onChange }) {
+function StepProject({ data, projects, loadingProjects, onSelectProject, onNewProject, onChange, isSaving }) {
   const fileRef = useRef()
   const handleImportContract = (e) => {
     const file = e.target.files[0]
@@ -328,6 +329,9 @@ function StepProject({ data, projects, loadingProjects, onSelectProject, onNewPr
       <div className="step-header">
         <h2>Project <span className="gradient-text">Selector</span></h2>
         <p>Choose an existing production or start a new cinematic project.</p>
+        <div className={`sync-status-global ${isSaving ? 'saving' : 'synced'}`}>
+          {isSaving ? '● Autosaving...' : '✓ Database Synced'}
+        </div>
       </div>
 
       <div className="project-selector-zone glass">
@@ -732,7 +736,7 @@ function StepFreestyle({ data, onChange, session }) {
 
       <div className="tasks-grid">
         {experiments.map((exp, idx) => {
-          const variants = results?.filter(m => m.name.includes(exp.id)) || []
+          const variants = results?.filter(m => m.task_id === exp.id) || []
           const activeVariant = results?.find(m => m.id === exp.selectedVersionId) || variants[0]
           
           return (
@@ -885,7 +889,8 @@ function App() {
   const [session, setSession] = useState(null)
   const [step, setStep] = useState(0)
   const [projects, setProjects] = useState([])
-  const [data, setData] = useState({ projectName: '', characters: [], props: [], environments: [], shots: [], freestyleExperiments: [] })
+  const [data, setData] = useState({ projectName: '', format: 'film_essay_montage', characters: [], props: [], environments: [], shots: [], freestyleExperiments: [] })
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -907,8 +912,53 @@ function App() {
   }, [])
 
   useEffect(() => { 
-    loadProjects() // eslint-disable-line react-hooks/set-state-in-effect
+    loadProjects()
   }, [loadProjects])
+
+  // Handle Project Selection & Data Loading
+  const handleSelectProject = useCallback(async (proj) => {
+    if (!proj) return
+    const { data: fullProj } = await supabase.from('projects').select('*').eq('id', proj.id).single()
+    if (fullProj) {
+      const contract = fullProj.contract || {}
+      setData({
+        projectName: fullProj.name,
+        format: contract.format || 'film_essay_montage',
+        characters: contract.characters || [],
+        props: contract.props || [],
+        environments: contract.environments || [],
+        shots: contract.shots || [],
+        freestyleExperiments: contract.freestyleExperiments || []
+      })
+    }
+  }, [])
+
+  // Auto-save logic
+  useEffect(() => {
+    if (!data.projectName) return
+    const timer = setTimeout(async () => {
+      setIsSaving(true)
+      try {
+        await supabase.from('projects')
+          .update({ 
+            contract: {
+              format: data.format,
+              characters: data.characters,
+              props: data.props,
+              environments: data.environments,
+              shots: data.shots,
+              freestyleExperiments: data.freestyleExperiments
+            } 
+          })
+          .eq('name', data.projectName)
+      } catch (e) {
+        console.error('Failed to auto-save:', e)
+      } finally {
+        setIsSaving(false)
+      }
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [data])
 
   const STEPS = [
     { id: 'project', label: 'Setup', icon: '📁' },
@@ -921,7 +971,7 @@ function App() {
   ]
 
   const views = [
-    <StepProject data={data} projects={projects} onSelectProject={(p) => setData({...data, projectName: p.name})} onNewProject={async (n) => { await supabase.from('projects').insert([{ name: n }]); loadProjects() }} onChange={setData} />,
+    <StepProject data={data} projects={projects} isSaving={isSaving} onSelectProject={handleSelectProject} onNewProject={async (n) => { await supabase.from('projects').insert([{ name: n }]); loadProjects() }} onChange={setData} />,
     <StepCharacters data={data} onChange={setData} />,
     <StepProps data={data} onChange={setData} />,
     <StepEnvironments data={data} onChange={setData} />,
