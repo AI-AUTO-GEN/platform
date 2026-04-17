@@ -647,9 +647,13 @@ function StepFreestyle({ data, onChange, session }) {
     })
   }
 
-  const updateExperiment = (idx, field, val) => {
+  const updateExperiment = (idx, fieldOrUpdates, val) => {
     const u = [...experiments]
-    u[idx] = { ...u[idx], [field]: val }
+    if (typeof fieldOrUpdates === 'object') {
+      u[idx] = { ...u[idx], ...fieldOrUpdates }
+    } else {
+      u[idx] = { ...u[idx], [fieldOrUpdates]: val }
+    }
     onChange({ ...data, freestyleExperiments: u })
   }
 
@@ -745,8 +749,10 @@ function StepFreestyle({ data, onChange, session }) {
               </div>
               <div className="header-tool-row">
                  <select className="select-mini" value={exp.mode} onChange={e => {
-                    updateExperiment(idx, 'mode', e.target.value);
-                    updateExperiment(idx, 'modelId', e.target.value.includes('v') ? 'fal-ai/kling-video/v3/pro/image-to-video' : 'fal-ai/flux-pro/v1.1/ultra');
+                    updateExperiment(idx, {
+                      mode: e.target.value,
+                      modelId: e.target.value.includes('v') ? 'fal-ai/kling-video/v3/pro/image-to-video' : 'fal-ai/flux-pro/v1.1/ultra'
+                    });
                  }}>
                    <option value="t2i">Text to Image</option>
                    <option value="i2i">Image to Image</option>
