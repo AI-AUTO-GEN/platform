@@ -5,7 +5,7 @@ import Auth from './Auth'
 
 // ─── Constants & Helpers ────────────────────────
 const N8N_MEDIA_WEBHOOK = 'https://nsk404.app.n8n.cloud/webhook/media-discovery'
-const N8N_WEBHOOK_URL = 'https://nsk404.app.n8n.cloud/webhook/track-and-generate'
+const N8N_WEBHOOK_URL = 'https://nsk404.app.n8n.cloud/webhook/ai-renderfarm'
 
 // Safe converter for Google Drive previews using external CDN proxy to bypass CORS/Hotlink Blocks
 const getDriveDisplayUrl = (url) => {
