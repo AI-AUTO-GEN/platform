@@ -1,11 +1,11 @@
-/* ─── App Shell ──────────────────────────────── */
+/* âââ App Shell ââââââââââââââââââââââââââââââââ */
 .app-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* ─── Top Bar ────────────────────────────────── */
+/* âââ Top Bar ââââââââââââââââââââââââââââââââââ */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -29,7 +29,7 @@
   background-clip: text;
 }
 
-/* ─── Main Layout ────────────────────────────── */
+/* âââ Main Layout ââââââââââââââââââââââââââââââ */
 .main-layout {
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -37,7 +37,7 @@
   gap: 0;
 }
 
-/* ─── Step Nav (Sidebar) ─────────────────────── */
+/* âââ Step Nav (Sidebar) âââââââââââââââââââââââ */
 .step-nav {
   padding: 24px 16px;
   display: flex;
@@ -80,7 +80,7 @@
   border-radius: 0 4px 4px 0;
 }
 
-/* ─── Content Area ───────────────────────────── */
+/* âââ Content Area âââââââââââââââââââââââââââââ */
 .content-area {
   padding: 40px 50px;
   max-width: 900px;
@@ -90,7 +90,7 @@
 .step-header h2 { font-size: 2rem; margin-bottom: 6px; }
 .step-header p { color: var(--text-secondary); font-size: 0.95rem; }
 
-/* ─── Forms ──────────────────────────────────── */
+/* âââ Forms ââââââââââââââââââââââââââââââââââââ */
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-group > label, .field-full > label, .field-half > label {
   font-size: 0.8rem;
@@ -131,7 +131,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 }
 .script-textarea:focus { border-color: var(--border-active); outline: none; }
 
-/* ─── Upload Zone ────────────────────────────── */
+/* âââ Upload Zone ââââââââââââââââââââââââââââââ */
 .upload-zone {
   display: flex;
   align-items: center;
@@ -148,7 +148,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 .upload-zone .icon { font-size: 1.5rem; }
 .upload-done { display: flex; align-items: center; gap: 10px; color: var(--text-accent); }
 
-/* ─── Panel Grid ─────────────────────────────── */
+/* âââ Panel Grid âââââââââââââââââââââââââââââââ */
 .panel-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -189,7 +189,7 @@ select.input-field { cursor: pointer; appearance: auto; }
   justify-content: center;
 }
 
-/* ─── Entity Cards ───────────────────────────── */
+/* âââ Entity Cards âââââââââââââââââââââââââââââ */
 .entity-card {
   padding: 24px;
   display: flex;
@@ -230,7 +230,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 }
 .btn-icon-sm:hover { border-color: #ff4444; color: #ff4444; }
 
-/* ─── Chips ──────────────────────────────────── */
+/* âââ Chips ââââââââââââââââââââââââââââââââââââ */
 .chip-selector { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
   background: rgba(255,255,255,0.04);
@@ -250,7 +250,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 }
 .chip:hover { border-color: var(--accent); }
 
-/* ─── Mini Panels (Shot Builder) ─────────────── */
+/* âââ Mini Panels (Shot Builder) âââââââââââââââ */
 .shot-panel-selector { display: flex; flex-direction: column; gap: 6px; }
 .shot-panel-selector > label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.08em; }
 .mini-panels { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -270,7 +270,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 .shot-duration { display: flex; align-items: center; gap: 6px; }
 .shot-duration label { font-size: 0.75rem; color: var(--text-muted); }
 
-/* ─── Buttons ────────────────────────────────── */
+/* âââ Buttons ââââââââââââââââââââââââââââââââââ */
 .btn-primary {
   background: var(--gradient-main);
   color: white;
@@ -334,7 +334,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 .btn-add:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .btn-add span { font-size: 1.2rem; }
 
-/* ─── Step Actions (Bottom Nav) ──────────────── */
+/* âââ Step Actions (Bottom Nav) ââââââââââââââââ */
 .step-actions {
   display: flex;
   justify-content: flex-end;
@@ -344,7 +344,7 @@ select.input-field { cursor: pointer; appearance: auto; }
   border-top: 1px solid var(--border-subtle);
 }
 
-/* ─── Export Page ─────────────────────────────── */
+/* âââ Export Page âââââââââââââââââââââââââââââââ */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -394,13 +394,13 @@ select.input-field { cursor: pointer; appearance: auto; }
 .mono { font-family: var(--font-mono); }
 .text-muted { color: var(--text-muted); }
 
-/* ─── Form Grids ─────────────────────────────── */
+/* âââ Form Grids âââââââââââââââââââââââââââââââ */
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .form-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
 .mt-8 { margin-top: 8px; }
 
-/* ─── Import Section ─────────────────────────── */
+/* âââ Import Section âââââââââââââââââââââââââââ */
 .import-section { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
 .import-header { display: flex; align-items: center; gap: 12px; }
 .upload-zone.compact { padding: 18px; }
@@ -412,7 +412,7 @@ select.input-field { cursor: pointer; appearance: auto; }
   content: ''; flex: 1; height: 1px; background: var(--border-subtle);
 }
 
-/* ─── Event Tags ─────────────────────────────── */
+/* âââ Event Tags âââââââââââââââââââââââââââââââ */
 .event-tag {
   font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;
   text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--font-mono);
@@ -423,7 +423,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 
 .shot-meta-row { display: flex; align-items: center; gap: 10px; }
 
-/* ─── Extended Badges ────────────────────────── */
+/* âââ Extended Badges ââââââââââââââââââââââââââ */
 .entity-badge.prop { background: rgba(255, 183, 77, 0.1); color: #ffb74d; }
 .chip.prop.active { background: rgba(255, 183, 77, 0.15); border-color: #ffb74d; color: #ffb74d; }
 .chip.small { font-size: 0.7rem; padding: 3px 10px; }
@@ -432,7 +432,7 @@ select.input-field { cursor: pointer; appearance: auto; }
 .text-accent { color: var(--text-accent); }
 .text-secondary { color: var(--text-secondary); font-size: 0.85rem; }
 
-/* ─── Responsive ─────────────────────────────── */
+/* âââ Responsive âââââââââââââââââââââââââââââââ */
 @media (max-width: 1024px) {
   .main-layout { grid-template-columns: 1fr; }
   .step-nav {
@@ -452,7 +452,7 @@ select.input-field { cursor: pointer; appearance: auto; }
   .form-grid-2, .form-grid-3, .form-grid-4 { grid-template-columns: 1fr; }
 }
 
-/* ─── Vision & Media Hub Updates ──────────────── */
+/* âââ Vision & Media Hub Updates ââââââââââââââââ */
 
 .header-with-action {
   display: flex;
@@ -1562,98 +1562,98 @@ select.input-field { cursor: pointer; appearance: auto; }
   margin-left: 8px;
 }
 
- / *   A U T H   S C R E E N   * / 
- . a u t h - o v e r l a y   { 
-     p o s i t i o n :   f i x e d ; 
-     i n s e t :   0 ; 
-     d i s p l a y :   f l e x ; 
-     j u s t i f y - c o n t e n t :   c e n t e r ; 
-     a l i g n - i t e m s :   c e n t e r ; 
-     z - i n d e x :   9 9 9 9 ; 
-     b a c k g r o u n d :   r a d i a l - g r a d i e n t ( c i r c l e   a t   c e n t e r ,   v a r ( - - b g - s u r f a c e )   0 % ,   # 0 0 0   1 0 0 % ) ; 
-     b a c k d r o p - f i l t e r :   b l u r ( 1 0 p x ) ; 
- } 
- 
- . a u t h - c a r d   { 
-     b a c k g r o u n d :   v a r ( - - b g - p a n e l ) ; 
-     b o r d e r :   1 p x   s o l i d   v a r ( - - b o r d e r - c o l o r ) ; 
-     p a d d i n g :   4 0 p x ; 
-     b o r d e r - r a d i u s :   v a r ( - - r a d i u s ) ; 
-     w i d t h :   1 0 0 % ; 
-     m a x - w i d t h :   4 0 0 p x ; 
-     d i s p l a y :   f l e x ; 
-     f l e x - d i r e c t i o n :   c o l u m n ; 
-     g a p :   2 0 p x ; 
-     b o x - s h a d o w :   0   2 0 p x   4 0 p x   r g b a ( 0 , 0 , 0 , 0 . 5 ) ; 
- } 
- 
- . b r a n d - t i t l e   { 
-     t e x t - a l i g n :   c e n t e r ; 
-     f o n t - s i z e :   2 4 p x ; 
- } 
- 
- . a u t h - s u b t i t l e   { 
-     t e x t - a l i g n :   c e n t e r ; 
-     c o l o r :   v a r ( - - t e x t - s e c o n d a r y ) ; 
-     f o n t - s i z e :   0 . 9 e m ; 
-     m a r g i n - b o t t o m :   1 0 p x ; 
- } 
- 
- . a u t h - f o r m   { 
-     d i s p l a y :   f l e x ; 
-     f l e x - d i r e c t i o n :   c o l u m n ; 
-     g a p :   1 5 p x ; 
- } 
- 
- . b t n - p r i m a r y   { 
-     b a c k g r o u n d :   v a r ( - - a c c e n t ) ; 
-     c o l o r :   w h i t e ; 
-     b o r d e r :   n o n e ; 
-     p a d d i n g :   1 2 p x ; 
-     b o r d e r - r a d i u s :   6 p x ; 
-     f o n t - w e i g h t :   6 0 0 ; 
-     c u r s o r :   p o i n t e r ; 
-     t r a n s i t i o n :   o p a c i t y   0 . 2 s ; 
- } 
- 
- . b t n - p r i m a r y : h o v e r   { 
-     o p a c i t y :   0 . 8 ; 
- } 
- 
- . s w i t c h - m o d e - b t n   { 
-     b a c k g r o u n d :   n o n e ; 
-     b o r d e r :   n o n e ; 
-     c o l o r :   v a r ( - - a c c e n t ) ; 
-     f o n t - s i z e :   0 . 8 e m ; 
-     c u r s o r :   p o i n t e r ; 
-     m a r g i n - t o p :   1 0 p x ; 
- } 
- 
- . s w i t c h - m o d e - b t n : h o v e r   { 
-     t e x t - d e c o r a t i o n :   u n d e r l i n e ; 
- } 
- 
- . u s e r - p r o f i l e - w i d g e t   { 
-     d i s p l a y :   f l e x ; 
-     a l i g n - i t e m s :   c e n t e r ; 
-     g a p :   1 5 p x ; 
- } 
- 
- . l o g o u t - b t n   { 
-     b a c k g r o u n d :   t r a n s p a r e n t ; 
-     b o r d e r :   1 p x   s o l i d   v a r ( - - b o r d e r - c o l o r ) ; 
-     c o l o r :   v a r ( - - t e x t - s e c o n d a r y ) ; 
-     p a d d i n g :   5 p x   1 2 p x ; 
-     b o r d e r - r a d i u s :   4 p x ; 
-     f o n t - s i z e :   0 . 8 e m ; 
-     c u r s o r :   p o i n t e r ; 
- } 
- . l o g o u t - b t n : h o v e r   { 
-     b a c k g r o u n d :   r g b a ( 2 5 5 , 2 5 5 , 2 5 5 , 0 . 0 5 ) ; 
-     c o l o r :   w h i t e ; 
- } 
-  
- 
+/* AUTH SCREEN */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  background: radial-gradient(circle at center, var(--bg-surface) 0%, #000 100%);
+  backdrop-filter: blur(10px);
+}
+
+.auth-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.brand-title {
+  text-align: center;
+  font-size: 24px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.8;
+}
+
+.switch-mode-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.8em;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.switch-mode-btn:hover {
+  text-decoration: underline;
+}
+
+.user-profile-widget {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+
 .quota-widget { display: flex; align-items: center; gap: 10px; }
 .quota-bar-bg { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
 .quota-bar-fill { height: 100%; transition: width 0.3s; }
