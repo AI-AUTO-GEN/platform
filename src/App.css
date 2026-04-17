@@ -1654,3 +1654,8 @@ select.input-field { cursor: pointer; appearance: auto; }
  } 
   
  
+.quota-widget { display: flex; align-items: center; gap: 10px; }
+.quota-bar-bg { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.quota-bar-fill { height: 100%; transition: width 0.3s; }
+.btn-clear-alert { background: #ff4040; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7em; font-weight: bold; cursor: pointer; animation: pulse-alert 2s infinite; }
+@keyframes pulse-alert { 0% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.8; } }

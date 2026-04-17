@@ -802,6 +802,45 @@ function StepFreestyle({ data, onChange, session }) {
 }
 
 
+function QuotaWidget({ session }) {
+  const [quotaUsed, setQuotaUsed] = useState(0)
+  const MAX_QUOTA = 500 * 1024 * 1024; // 500 MB
+  
+  const fetchQuota = useCallback(async () => {
+    if (!session?.user?.id) return
+    const { data } = await supabase.rpc('get_user_quota', { p_user_id: session.user.id })
+    if (data !== null) setQuotaUsed(Number(data))
+  }, [session])
+
+  useEffect(() => {
+    fetchQuota();
+    const iv = setInterval(fetchQuota, 30000);
+    return () => clearInterval(iv);
+  }, [fetchQuota])
+
+  const handleClearData = async () => {
+    if (window.confirm("You are about to delete ALL your generate files and history from Supabase. Make sure you have downloaded everything via the '📦 ZIP Production' button if needed. Proceed?")) {
+      await supabase.rpc('delete_user_data')
+      setQuotaUsed(0)
+      window.location.reload()
+    }
+  }
+
+  const percent = Math.min((quotaUsed / MAX_QUOTA) * 100, 100);
+  const color = percent > 90 ? '#ff4040' : percent > 75 ? '#ffcc00' : 'var(--accent)';
+
+  return (
+    <div className="quota-widget" title={`${(quotaUsed/1024/1024).toFixed(1)} MB / 500 MB Used`}>
+      <div className="quota-bar-bg">
+         <div className="quota-bar-fill" style={{ width: `${percent}%`, backgroundColor: color }}></div>
+      </div>
+      {percent >= 90 && (
+         <button className="btn-clear-alert" onClick={handleClearData}>Storage Full! Clear Data &rarr;</button>
+      )}
+    </div>
+  )
+}
+
 function LogMonitor() {
   const [logs, setLogs] = useState([])
   useEffect(() => {
@@ -872,6 +911,7 @@ function App() {
          <h1 className="brand">AI <span className="gradient-text">AUTO GEN</span></h1>
          {session && (
            <div className="user-profile-widget">
+             <QuotaWidget session={session} />
              <span className="tiny-label">{session.user.email}</span>
              <button className="logout-btn" onClick={() => supabase.auth.signOut()}>Logout</button>
            </div>
