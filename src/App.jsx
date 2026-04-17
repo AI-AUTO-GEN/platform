@@ -120,7 +120,7 @@ function ModelPicker({ type, value, onChange }) {
   )
 }
 
-function AlchemyProgress({ status, realProgress }) {
+function AlchemyProgress({ status, realProgress, statusMessage }) {
   const [percent, setPercent] = useState(0)
   
   useEffect(() => {
@@ -145,7 +145,7 @@ function AlchemyProgress({ status, realProgress }) {
   return (
     <div className="alchemy-progress-ring">
       <div className="progress-value mono">{Math.floor(realProgress || percent)}%</div>
-      <div className="progress-label tiny-label">TRANSFORMING REALITY</div>
+      <div className="progress-label tiny-label">{statusMessage || 'TRANSFORMING REALITY'}</div>
     </div>
   )
 }
@@ -195,6 +195,7 @@ function useDriveMedia(projectNameOrId, category, session) {
         createdAt: o.created_at,
         updatedAt: o.updated_at,
         progress: o.progress || 0,
+        statusMessage: o.status_message,
         metadata: o.metadata || {}
       }));
 
@@ -772,7 +773,7 @@ function StepFreestyle({ data, onChange, session }) {
                 {activeVariant ? (
                   activeVariant.status === 'processing' ? (
                     <div className="processing-placeholder">
-                      <AlchemyProgress status="processing" realProgress={activeVariant.progress} />
+                      <AlchemyProgress status="processing" realProgress={activeVariant.progress} statusMessage={activeVariant.statusMessage} />
                       <div className="spinner-center"></div>
                     </div>
                   ) : (
