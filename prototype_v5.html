@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI AUTO GEN — V5 Silicone Neumorphism Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+/* ==========================================
+   DESIGN SYSTEM: Matte Silicone Neumorphism (V5)
+   ========================================== */
+:root {
+  /* Matte Silicone Base Colors - Low Contrast */
+  --silicone-base: #28282C;
+  --silicone-darker: #242428;
+  --silicone-lighter: #2c2c31;
+  
+  /* Super Soft Matte Shadows (Even softer, lower contrast for true silicone feel) */
+  --shadow-silicone-out: 
+    -2px -2px 6px rgba(255, 255, 255, 0.015), 
+    3px 3px 10px rgba(0, 0, 0, 0.15);
+    
+  /* Edge highlight mimicking physical silicone material */
+  --edge-silicone:
+    inset 1px 1px 2px rgba(255, 255, 255, 0.02),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+
+  /* Deep but soft inset for pressed states or wells */
+  --shadow-silicone-in: 
+    inset -2px -2px 6px rgba(255, 255, 255, 0.01), 
+    inset 3px 3px 8px rgba(0, 0, 0, 0.2);
+
+  /* Accents */
+  --accent-purple: #8B80D9; /* Softer, less saturated */
+  --accent-purple-glow: rgba(139, 128, 217, 0.15); /* Much softer glow */
+  
+  /* Text */
+  --text-1: rgba(255, 255, 255, 0.85); /* Slightly muted white for matte feel */
+  --text-2: rgba(255, 255, 255, 0.45);
+  --text-3: rgba(255, 255, 255, 0.25);
+
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-digital: 'DotGothic16', monospace;
+
+  /* Pillowy Radii */
+  --r-sm: 12px;
+  --r-md: 20px;
+  --r-lg: 32px;
+  --r-xl: 48px;
+  --r-full: 999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: #1E1E22; /* Slightly darker surrounding frame to make the silicone base pop */
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* Container acting as the "Screen" */
+.screen {
+  width: 100%;
+  max-width: 1200px;
+  height: 800px;
+  background: var(--silicone-base);
+  border-radius: var(--r-xl);
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6); /* Drop shadow from screen to desk */
+  overflow: hidden;
+}
+
+/* ==========================================
+   SIDEBAR / WIDGET AREA
+   ========================================== */
+.widget-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Widget Card - Silicone bump */
+.widget-card {
+  background: var(--silicone-base);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-silicone-out), var(--edge-silicone);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-2);
+}
+
+.badge-count {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-full);
+  background: var(--silicone-base);
+  box-shadow: var(--shadow-silicone-in);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--accent-purple);
+  font-weight: 600;
+}
+
+/* Task Item */
+.task-item {
+  background: var(--accent-purple);
+  border-radius: var(--r-md);
+  padding: 16px;
+  color: #111;
+  box-shadow: 0 4px 12px var(--accent-purple-glow), var(--edge-silicone);
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item.secondary {
+  background: var(--silicone-base);
+  color: var(--text-1);
+  box-shadow: var(--shadow-silicone-in);
+}
+
+.task-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.task-time { font-size: 12px; opacity: 0.7; font-weight: 500; }
+
+.avatars {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+}
+.avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-purple);
+  background: #000;
+  margin-left: -8px;
+}
+.task-item.secondary .avatar { border-color: var(--silicone-darker); }
+
+/* Zen Mode / Status */
+.zen-widget {
+  background: #E8E8EB; /* Very soft matte light grey */
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: 
+    -4px -4px 10px rgba(255,255,255,0.05), 
+    6px 6px 14px rgba(0,0,0,0.1); /* Lighter shadow for the light widget */
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.zen-orb-container {
+  background: #323236; /* Soft dark grey for contrast */
+  border-radius: var(--r-lg);
+  padding: 24px;
+  width: 100%;
+  box-shadow: 
+    inset 2px 2px 5px rgba(0,0,0,0.1),
+    -4px -4px 12px rgba(255,255,255,0.8),
+    4px 4px 12px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.zen-orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--silicone-base);
+  /* Perfect matte silicone well */
+  box-shadow: 
+    inset 8px 8px 16px rgba(0,0,0,0.4),
+    inset -4px -4px 12px rgba(255,255,255,0.05),
+    4px 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zen-moon {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border-radius: 50%;
+  box-shadow: -10px 8px 0 0 var(--accent-purple);
+  filter: drop-shadow(0 0 10px var(--accent-purple-glow));
+}
+
+.zen-text {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 16px;
+  color: #fff;
+}
+.zen-title { font-weight: 600; font-size: 15px; }
+.zen-status { font-size: 11px; color: var(--text-2); }
+
+/* ==========================================
+   MAIN DASHBOARD AREA (The Digital Mixing)
+   ========================================== */
+.dashboard-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Soft Purple Panel */
+.digital-panel {
+  background: var(--accent-purple);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  box-shadow: 
+    -4px -4px 10px rgba(255,255,255,0.02), 
+    6px 6px 14px rgba(0,0,0,0.2), 
+    inset 1px 1px 2px rgba(255,255,255,0.3); /* Subtle edge highlight */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* The Dot-Matrix Digital Display */
+.digital-marquee {
+  font-family: var(--font-digital);
+  font-size: 32px;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.digital-marquee span { opacity: 0.4; }
+
+/* Inset Media/Render Area */
+.media-inset {
+  background: var(--silicone-darker);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: 
+    inset -2px -2px 6px rgba(255,255,255,0.05),
+    inset 2px 2px 8px rgba(0,0,0,0.4);
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Neumorphic Record / Loading Orb */
+.render-orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--silicone-base);
+  box-shadow: 
+    -2px -2px 8px rgba(255,255,255,0.03),
+    4px 4px 12px rgba(0,0,0,0.3),
+    inset -1px -1px 4px rgba(0,0,0,0.5),
+    inset 1px 1px 4px rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.render-orb-inner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--silicone-darker);
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.6);
+}
+.render-orb::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg 300deg, var(--accent-purple) 360deg);
+  opacity: 0.15;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Controls Info */
+.render-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.render-title { font-weight: 600; font-size: 16px; color: var(--text-1); }
+.render-sub { font-size: 12px; color: var(--text-2); }
+
+.progress-track {
+  height: 8px;
+  background: #1E1E22;
+  border-radius: var(--r-full);
+  box-shadow: inset 1px 1px 4px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 65%;
+  background: var(--accent-purple);
+  border-radius: var(--r-full);
+}
+
+.render-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.digital-time {
+  font-family: var(--font-digital);
+  font-size: 20px;
+  color: var(--text-1);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.digital-time small { font-size: 12px; color: var(--text-3); }
+
+/* Quick Actions Cards */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.action-card {
+  background: var(--silicone-base);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-silicone-out), var(--edge-silicone);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-card:hover {
+  background: var(--silicone-lighter);
+}
+
+.action-card:active {
+  box-shadow: var(--shadow-silicone-in);
+}
+
+.action-card:active > * {
+  transform: translateY(1.5px);
+  transition: transform 0.05s;
+}
+
+.action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--silicone-base);
+  box-shadow: var(--shadow-silicone-in);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--accent-purple);
+}
+
+.action-text {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-1);
+}
+
+/* Soft Neumorphic Button */
+.soft-btn {
+  background: var(--silicone-base);
+  border: none;
+  padding: 12px;
+  border-radius: var(--r-full);
+  color: var(--text-2);
+  font-weight: 600;
+  box-shadow: var(--shadow-silicone-out), var(--edge-silicone);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.soft-btn:hover {
+  color: var(--accent-purple);
+  background: var(--silicone-lighter);
+}
+
+.soft-btn:active {
+  box-shadow: var(--shadow-silicone-in);
+}
+.soft-btn:active > * {
+  transform: translateY(1.5px);
+  transition: transform 0.05s;
+}
+
+</style>
+</head>
+<body>
+
+<div class="screen">
+  
+  <!-- WIDGET COLUMN -->
+  <div class="widget-col">
+    
+    <!-- Tasks Widget -->
+    <div class="widget-card">
+      <div class="widget-header">
+        <span>Today</span>
+        <div class="badge-count">2</div>
+      </div>
+      
+      <div class="task-item">
+        <div class="task-title">Generate Characters</div>
+        <div class="task-time">12:30 - 12:50</div>
+        <div class="avatars">
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=1') center/cover;"></div>
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=2') center/cover;"></div>
+        </div>
+      </div>
+      
+      <div class="task-item secondary">
+        <div class="task-title">Review Env renders</div>
+        <div class="task-time">14:00 - 15:00</div>
+        <div class="avatars">
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=3') center/cover;"></div>
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=4') center/cover;"></div>
+        </div>
+      </div>
+      
+      <button class="soft-btn" style="margin-top: 8px;">
+        <span style="font-size:24px; line-height:1;">+</span>
+      </button>
+    </div>
+
+    <!-- Zen / Focus Mode Widget -->
+    <div class="zen-widget">
+      <div class="zen-orb-container">
+        <div class="zen-orb">
+          <div class="zen-moon"></div>
+        </div>
+        <div class="zen-text">
+          <div>
+            <div class="zen-title">Focus mode</div>
+            <div class="zen-status">Active rendering</div>
+          </div>
+          <div class="badge-count" style="background:var(--accent-purple); color:#111;">✨</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- DASHBOARD COLUMN -->
+  <div class="dashboard-col">
+    
+    <!-- Digital Panel -->
+    <div class="digital-panel">
+      
+      <!-- Dot-matrix display -->
+      <div class="digital-marquee">
+        AIAUTOGEN <span>></span> BATCH-200A
+      </div>
+      
+      <!-- Inset Render Control Area -->
+      <div class="media-inset">
+        <!-- Render Orb -->
+        <div class="render-orb">
+          <div class="render-orb-inner"></div>
+        </div>
+        
+        <!-- Render Details -->
+        <div class="render-info">
+          <div>
+            <div class="render-title">Cosmic Cats — Scene 4</div>
+            <div class="render-sub">FLUX 1.1 Pro Ultra, 4K Upscale</div>
+          </div>
+          
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
+          
+          <div class="render-meta">
+            <div class="digital-time">04:38 <small>05:29</small></div>
+            <div style="color:var(--silicone-darker); background:rgba(255,255,255,0.8); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">FL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Cards -->
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon">✦</div>
+        <div class="action-text">New Workspace</div>
+        <div class="task-time" style="color:var(--text-3);">Create blank canvas</div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">🎬</div>
+        <div class="action-text">Director Mode</div>
+        <div class="task-time" style="color:var(--text-3);">Auto-generate scenes</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Renderfarm — Prototype V02 (Higgsfield-Inspired)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══════ AUTH ══════ -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-glow"></div>
+    <div class="auth-card">
+      <div class="auth-brand">◆ RENDERFARM</div>
+      <p class="auth-tagline">Cinema Studio</p>
+      <input type="email" id="auth-email" placeholder="your@email.com" class="field" autofocus>
+      <button class="btn-generate" onclick="doLogin()">Enter Studio</button>
+      <p id="auth-msg" class="auth-msg"></p>
+    </div>
+  </div>
+
+  <!-- ══════ APP ══════ -->
+  <div id="app" class="screen app" style="display:none;">
+
+    <!-- TOPBAR (Higgsfield-style horizontal nav) -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="brand">◆ RENDERFARM</span>
+        <nav class="topnav">
+          <button class="topnav-btn active" onclick="go('setup',this)">Setup</button>
+          <button class="topnav-btn" onclick="go('director',this)">Director</button>
+          <button class="topnav-btn" onclick="go('assets',this)">Assets</button>
+          <button class="topnav-btn has-badge" onclick="go('shots',this)">Shots</button>
+          <button class="topnav-btn" onclick="go('sandbox',this)">Sandbox</button>
+          <button class="topnav-btn" onclick="go('export',this)">Export</button>
+        </nav>
+      </div>
+      <div class="topbar-right">
+        <span class="credit-badge">$124.50</span>
+        <span class="user-id" id="uid">user@mail.com</span>
+        <button class="btn-ghost" onclick="doLogout()">Log out</button>
+      </div>
+    </header>
+
+    <!-- CANVAS AREA (100% of remaining viewport) -->
+    <main class="canvas-area">
+
+      <!-- ── SETUP ── -->
+      <section id="v-setup" class="view active">
+        <div class="center-stage narrow">
+          <h1 class="hero-text">What will you <span class="neon">create</span> today?</h1>
+          <div class="setup-grid">
+            <div class="panel">
+              <p class="panel-label">Your Projects</p>
+              <div class="proj-list">
+                <div class="proj active-proj" onclick="pickProj(this)"><span>Midnight Chase</span><span class="pill pill-active">Active</span></div>
+                <div class="proj" onclick="pickProj(this)"><span>Neon Dreams</span></div>
+                <div class="proj" onclick="pickProj(this)"><span>Desert Storm</span></div>
+              </div>
+              <div class="row gap-8 mt-12">
+                <button class="btn-sm btn-outline">Load</button>
+                <button class="btn-sm btn-danger">Delete</button>
+              </div>
+            </div>
+            <div class="panel">
+              <p class="panel-label">New Project</p>
+              <input type="text" class="field" placeholder="Project name...">
+              <button class="btn-primary mt-12">+ Create Project</button>
+              <div class="status-line mt-12">● "Midnight Chase" loaded</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIRECTOR ── -->
+      <section id="v-director" class="view">
+        <div class="center-stage">
+          <h1 class="hero-text">Director — <span class="neon">Script Analyzer</span></h1>
+          <div class="panel panel-full">
+            <textarea class="field field-xl" rows="14" placeholder="Paste your screenplay...&#10;&#10;INT. WAREHOUSE — NIGHT&#10;&#10;MIKE (40s, leather jacket) steps into dim light.&#10;Rain hammers the skylights above."></textarea>
+          </div>
+          <!-- HUD-style floating bar for director -->
+          <div class="hud hud-inline">
+            <select class="hud-select"><option>English</option><option>Español</option></select>
+            <button class="btn-generate">✦ Analyze Script</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ASSETS ── -->
+      <section id="v-assets" class="view">
+        <div class="center-stage full">
+          <div class="sub-tabs">
+            <button class="sub-tab active" onclick="subTab(this)">Characters</button>
+            <button class="sub-tab" onclick="subTab(this)">Props</button>
+            <button class="sub-tab" onclick="subTab(this)">Environments</button>
+          </div>
+          <div class="asset-workspace">
+            <!-- Asset sidebar -->
+            <aside class="asset-list">
+              <button class="btn-primary btn-sm btn-full">+ New</button>
+              <div class="asset-thumbs">
+                <div class="asset-thumb sel" onclick="selAsset(this)"><div class="at-img" style="background:#2c1845"></div><span>Mike</span></div>
+                <div class="asset-thumb" onclick="selAsset(this)"><div class="at-img" style="background:#18304a"></div><span>Elena</span></div>
+                <div class="asset-thumb" onclick="selAsset(this)"><div class="at-img" style="background:#1a3518"></div><span>Det. Ross</span></div>
+              </div>
+            </aside>
+            <!-- Editor -->
+            <div class="asset-editor">
+              <label class="lbl">Name</label>
+              <input class="field" value="Mike">
+              <label class="lbl">Description</label>
+              <textarea class="field" rows="2">40s male, leather jacket, scarred hands</textarea>
+              <label class="lbl">AI Prompt</label>
+              <textarea class="field" rows="3">Photorealistic portrait, 40yo man, leather jacket, short grey hair, cinematic lighting, dark warehouse</textarea>
+              <div class="row gap-8">
+                <div class="flex-1"><label class="lbl">Provider</label><select class="field"><option>Black Forest Labs</option><option>Runway</option><option>Luma AI</option></select></div>
+                <div class="flex-1"><label class="lbl">Model</label><select class="field"><option>Flux Pro v1.1 Ultra</option><option>Flux Dev</option></select></div>
+              </div>
+              <div class="row gap-8 mt-12">
+                <button class="btn-generate flex-1">⚡ Generate</button>
+                <button class="btn-sm btn-danger">Delete</button>
+              </div>
+            </div>
+            <!-- Preview -->
+            <div class="asset-preview">
+              <div class="preview-canvas"><span class="ghost-text">No render yet</span></div>
+              <div class="var-strip"><div class="var-th"></div><div class="var-th"></div><div class="var-th"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SHOTS ── -->
+      <section id="v-shots" class="view">
+        <!-- Full-bleed canvas, no padding -->
+        <div class="shots-layout">
+          <!-- Left: Slim icon rail for shot list -->
+          <div class="shot-rail">
+            <button class="rail-btn active" onclick="pickShot(0,this)">#1</button>
+            <button class="rail-btn" onclick="pickShot(1,this)">#2</button>
+            <button class="rail-btn" onclick="pickShot(2,this)">#3</button>
+            <button class="rail-btn" onclick="pickShot(3,this)">#4</button>
+            <button class="rail-btn" onclick="pickShot(4,this)">#5</button>
+            <button class="rail-btn rail-add" onclick="addShot(this)">+</button>
+            <div class="rail-stats"><span class="neon">3</span>/5</div>
+          </div>
+          <!-- Center: Giant render canvas -->
+          <div class="shot-canvas">
+            <div class="render-viewport">
+              <span class="ghost-text big">RENDER CANVAS</span>
+            </div>
+            <div class="var-strip wide"><div class="var-th"></div><div class="var-th"></div><div class="var-th"></div><div class="var-th"></div></div>
+          </div>
+          <!-- Right: Inspector (collapsible) -->
+          <div class="shot-inspector">
+            <div class="insp-header">
+              <span class="shot-num">#1</span>
+              <select class="field field-sm"><option>MEDIUM SHOT</option><option>CLOSE UP</option><option>WIDE</option><option>OTS</option></select>
+              <button class="btn-icon btn-danger" title="Delete">×</button>
+            </div>
+            <label class="lbl">Description</label>
+            <textarea class="field" rows="2">Mike steps into the dim warehouse.</textarea>
+            <label class="lbl">AI Prompt</label>
+            <textarea class="field" rows="3">Cinematic medium shot, man in leather jacket entering dark warehouse, volumetric light, film grain</textarea>
+            <label class="lbl">Camera</label>
+            <input class="field" value="Slow push-in, handheld">
+            <label class="lbl">Notes</label>
+            <input class="field" placeholder="Director notes...">
+            <label class="lbl">Linked Entities</label>
+            <div class="pills-row">
+              <button class="pill on">Mike</button>
+              <button class="pill">Elena</button>
+              <button class="pill on">Warehouse</button>
+              <button class="pill">Revolver</button>
+            </div>
+            <div class="row gap-8">
+              <div class="flex-1"><label class="lbl">Provider</label><select class="field"><option>Black Forest Labs</option></select></div>
+              <div class="flex-1"><label class="lbl">Model</label><select class="field"><option>Flux Pro Ultra</option></select></div>
+            </div>
+            <button class="btn-approve btn-full mt-12">✓ Approve</button>
+          </div>
+        </div>
+        <!-- HUD floating bar at bottom (Higgsfield signature) -->
+        <div class="hud hud-shots">
+          <div class="hud-meta">
+            <span class="hud-pill">🎬 Genre: <strong>General</strong></span>
+            <span class="hud-pill">⚙ Style: <strong>Auto</strong></span>
+            <span class="hud-pill">📷 Camera: <strong>Auto</strong></span>
+          </div>
+          <div class="hud-prompt-bar">
+            <button class="hud-plus">+</button>
+            <input class="hud-prompt" placeholder="Describe your scene — use @ to add characters & locations">
+            <div class="hud-chips">
+              <span class="hud-chip">Cinema 3.5</span>
+              <span class="hud-chip">8s</span>
+              <span class="hud-chip">1080p</span>
+              <span class="hud-chip">Auto</span>
+              <span class="hud-chip">1/4</span>
+            </div>
+            <button class="btn-generate hud-gen">GENERATE → 96</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SANDBOX ── -->
+      <section id="v-sandbox" class="view">
+        <div class="center-stage">
+          <h1 class="hero-text">Sandbox — <span class="neon">Experiment Freely</span></h1>
+          <div class="sandbox-result"><span class="ghost-text big">Results appear here</span></div>
+          <div class="hud hud-inline">
+            <input class="hud-prompt flex-1" placeholder="Write any prompt...">
+            <select class="hud-select"><option>Image</option><option>Video</option><option>Audio</option></select>
+            <button class="btn-generate">⚡ Generate</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── EXPORT ── -->
+      <section id="v-export" class="view">
+        <div class="center-stage narrow">
+          <h1 class="hero-text">Export — <span class="neon">Post-Production</span></h1>
+          <div class="export-mosaic">
+            <div class="export-cell"><span>#1</span></div>
+            <div class="export-cell"><span>#2</span></div>
+            <div class="export-cell"><span>#3</span></div>
+          </div>
+          <div class="export-meta">
+            <span>3 approved shots</span><span>Total: $2.34</span>
+          </div>
+          <div class="row gap-8 center">
+            <button class="btn-primary">Export PDF</button>
+            <button class="btn-outline">Download ZIP</button>
+            <button class="btn-outline">CSV for Premiere</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

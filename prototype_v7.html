@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI AUTO GEN — V6 Ultra-Soft Silicone Neumorphism Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DotGothic16&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================
+   DESIGN SYSTEM: V6 Ultra-Soft Silicone Neumorphism
+   Premium creative studio aesthetic (Hyper-tactile)
+   ========================================== */
+:root {
+  /* Silicone Base Colors - Even Lower Contrast */
+  --silicone-outer: #1d1d21;
+  --silicone-darker: #1e1e22;
+  --silicone-base: #1f1f23;
+  --silicone-lighter: #26262a;
+  --silicone-hover: #2c2c30;
+  
+  /* Super Soft Matte Shadows (Diffused, larger spread, lower opacity) */
+  --shadow-out: 
+    -3.2px -3.2px 8px rgba(255, 255, 255, 0.024), 
+    4px 4px 12px rgba(0, 0, 0, 0.16);
+  
+  --shadow-out-lg: 
+    -4.8px -4.8px 11.2px rgba(255, 255, 255, 0.032), 
+    6.4px 6.4px 16px rgba(0, 0, 0, 0.256);
+    
+  /* Silicone Edge Refraction Highlight */
+  --edge-highlight:
+    inset 1px 1px 2px rgba(255, 255, 255, 0.032),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.04);
+
+  /* Deep but smooth inset for pressed states */
+  --shadow-in: 
+    inset -2.4px -2.4px 6.4px rgba(255, 255, 255, 0.019), 
+    inset 3.2px 3.2px 9.6px rgba(0, 0, 0, 0.224);
+
+  /* Accents */
+  --accent: #30453f;
+  --accent-glow: rgba(48, 69, 63, 0.12);
+  --accent-gradient: linear-gradient(135deg, #2b3e39 0%, #30453f 100%);
+  
+  /* Text */
+  --text-1: rgba(255, 255, 255, 0.85);
+  --text-2: rgba(255, 255, 255, 0.45);
+  --text-3: rgba(255, 255, 255, 0.25);
+
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-digital: 'DotGothic16', monospace;
+
+  /* Massively Pillowed Radii */
+  --r-xs: 10px;
+  --r-sm: 16px;
+  --r-md: 24px;
+  --r-lg: 36px;
+  --r-xl: 56px;
+  --r-full: 999px;
+  
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--silicone-outer);
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* SVG Icon Helper */
+svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+/* Container acting as the "Screen" */
+.screen {
+  width: 100%;
+  max-width: 1200px;
+  height: 800px;
+  background: var(--silicone-base);
+  border-radius: var(--r-xl);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 48px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Screen reflection / glare */
+.screen::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 150%; height: 100%;
+  background: linear-gradient(105deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.01) 30%, transparent 35%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ==========================================
+   SIDEBAR / WIDGET AREA
+   ========================================== */
+.widget-col {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* Widget Card - Silicone bump */
+.widget-card {
+  background: var(--silicone-base);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-out), var(--edge-highlight);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: transform 0.3s ease;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-2);
+}
+
+.badge-count {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-full);
+  background: var(--silicone-base);
+  box-shadow: var(--shadow-in);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Task Item */
+.task-item {
+  background: var(--accent-gradient);
+  border-radius: var(--r-md);
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 6px 16px var(--accent-glow), var(--edge-highlight);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-elastic), box-shadow 0.2s;
+}
+
+.task-item:hover {
+  box-shadow: 0 10px 24px var(--accent-glow), var(--edge-highlight);
+}
+
+.task-item:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-in);
+}
+
+.task-item.secondary {
+  background: var(--silicone-base);
+  color: var(--text-1);
+  box-shadow: var(--shadow-in);
+}
+
+.task-item.secondary:hover {
+  box-shadow: var(--shadow-in), inset 0 0 10px rgba(255,255,255,0.02);
+}
+
+.task-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; font-family: var(--font-display); letter-spacing: -0.01em;}
+.task-time { font-size: 12px; opacity: 0.7; font-weight: 500; }
+
+.avatars {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+}
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: #000;
+  margin-left: -10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.task-item.secondary .avatar { border-color: var(--silicone-darker); }
+
+/* Zen Mode / Status */
+.zen-widget {
+  background: #E4E4E8; /* Very soft matte light grey */
+  border-radius: var(--r-lg);
+  padding: 32px;
+  box-shadow: 
+    -4px -4px 12px rgba(255,255,255,0.03), 
+    8px 8px 20px rgba(0,0,0,0.12);
+  color: #1a1a1c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.zen-orb-container {
+  background: #2a2a2e; /* Soft dark grey for contrast */
+  border-radius: var(--r-lg);
+  padding: 28px;
+  width: 100%;
+  box-shadow: 
+    inset 2px 2px 5px rgba(0,0,0,0.1),
+    -4px -4px 16px rgba(255,255,255,0.7),
+    4px 4px 16px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.zen-orb {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--silicone-base);
+  /* Ultra-soft perfect matte silicone well */
+  box-shadow: 
+    inset 10px 10px 20px rgba(0,0,0,0.3),
+    inset -6px -6px 16px rgba(255,255,255,0.03),
+    6px 6px 16px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zen-moon {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border-radius: 50%;
+  box-shadow: -12px 10px 0 0 var(--accent);
+  filter: drop-shadow(0 0 14px var(--accent-glow));
+}
+
+.zen-text {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 24px;
+  color: #fff;
+}
+.zen-title { font-weight: 600; font-size: 16px; font-family: var(--font-display); }
+.zen-status { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+
+/* ==========================================
+   MAIN DASHBOARD AREA (The Digital Mixing)
+   ========================================== */
+.dashboard-col {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* Soft Purple Panel */
+.digital-panel {
+  background: var(--accent);
+  border-radius: var(--r-xl);
+  padding: 40px;
+  box-shadow: 
+    -6px -6px 16px rgba(255,255,255,0.02), 
+    8px 8px 24px rgba(0,0,0,0.25), 
+    inset 1px 1px 2px rgba(255,255,255,0.3); /* Subtle edge highlight */
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* The Dot-Matrix Digital Display */
+.digital-marquee {
+  font-family: var(--font-digital);
+  font-size: 36px;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+.digital-marquee span { opacity: 0.4; }
+
+/* Inset Media/Render Area */
+.media-inset {
+  background: var(--silicone-darker);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: 
+    inset -3px -3px 8px rgba(255,255,255,0.05),
+    inset 4px 4px 12px rgba(0,0,0,0.4);
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+/* Neumorphic Record / Loading Orb */
+.render-orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--silicone-base);
+  box-shadow: 
+    -3px -3px 10px rgba(255,255,255,0.03),
+    5px 5px 16px rgba(0,0,0,0.3),
+    inset -2px -2px 6px rgba(0,0,0,0.5),
+    inset 2px 2px 6px rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.render-orb-inner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--silicone-darker);
+  box-shadow: inset 3px 3px 8px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+.render-orb::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg 280deg, var(--accent) 360deg);
+  opacity: 0.2;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Controls Info */
+.render-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.render-title { font-weight: 600; font-size: 18px; color: var(--text-1); font-family: var(--font-display); }
+.render-sub { font-size: 13px; color: var(--text-2); margin-top: 4px;}
+
+.progress-track {
+  height: 10px;
+  background: #1E1E22;
+  border-radius: var(--r-full);
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 65%;
+  background: var(--accent-gradient);
+  border-radius: var(--r-full);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.render-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.digital-time {
+  font-family: var(--font-digital);
+  font-size: 24px;
+  color: var(--text-1);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.digital-time small { font-size: 14px; color: var(--text-3); }
+
+/* Quick Actions Cards */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.action-card {
+  background: var(--silicone-base);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-out), var(--edge-highlight);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-elastic);
+}
+
+.action-card:hover {
+  background: var(--silicone-lighter);
+  box-shadow: var(--shadow-out-lg), var(--edge-highlight);
+}
+
+.action-card:active {
+  box-shadow: var(--shadow-in);
+  transform: scale(0.98);
+}
+
+.action-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: var(--silicone-base);
+  box-shadow: var(--shadow-in);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  padding: 12px;
+}
+
+.action-text {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-1);
+  font-family: var(--font-display);
+}
+
+/* Soft Neumorphic Button */
+.soft-btn {
+  background: var(--silicone-base);
+  border: none;
+  padding: 14px;
+  border-radius: var(--r-full);
+  color: var(--text-2);
+  box-shadow: var(--shadow-out), var(--edge-highlight);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.soft-btn:hover {
+  color: var(--accent);
+  background: var(--silicone-lighter);
+}
+
+.soft-btn:active {
+  box-shadow: var(--shadow-in);
+  transform: scale(0.98);
+}
+
+.soft-btn-icon {
+  width: 24px;
+  height: 24px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="screen">
+  
+  <!-- WIDGET COLUMN -->
+  <div class="widget-col">
+    
+    <!-- Tasks Widget -->
+    <div class="widget-card">
+      <div class="widget-header">
+        <span>Today</span>
+        <div class="badge-count">2</div>
+      </div>
+      
+      <div class="task-item">
+        <div class="task-title">Generate Characters</div>
+        <div class="task-time">12:30 - 12:50</div>
+        <div class="avatars">
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=11') center/cover;"></div>
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=12') center/cover;"></div>
+        </div>
+      </div>
+      
+      <div class="task-item secondary">
+        <div class="task-title">Review Env renders</div>
+        <div class="task-time">14:00 - 15:00</div>
+        <div class="avatars">
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=13') center/cover;"></div>
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=14') center/cover;"></div>
+        </div>
+      </div>
+      
+      <button class="soft-btn" style="margin-top: 12px;">
+        <div class="soft-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+        </div>
+      </button>
+    </div>
+
+    <!-- Zen / Focus Mode Widget -->
+    <div class="zen-widget">
+      <div class="zen-orb-container">
+        <div class="zen-orb">
+          <div class="zen-moon"></div>
+        </div>
+        <div class="zen-text">
+          <div>
+            <div class="zen-title">Focus mode</div>
+            <div class="zen-status">Active rendering</div>
+          </div>
+          <div class="badge-count" style="background:var(--accent); color:#fff; border-radius: 50%; box-shadow: 0 4px 10px rgba(139,128,217,0.3);">
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- DASHBOARD COLUMN -->
+  <div class="dashboard-col">
+    
+    <!-- Digital Panel -->
+    <div class="digital-panel">
+      
+      <!-- Dot-matrix display -->
+      <div class="digital-marquee">
+        AIAUTOGEN <span style="margin: 0 8px;">></span> BATCH-200A
+      </div>
+      
+      <!-- Inset Render Control Area -->
+      <div class="media-inset">
+        <!-- Render Orb -->
+        <div class="render-orb">
+          <div class="render-orb-inner">
+             <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </div>
+        </div>
+        
+        <!-- Render Details -->
+        <div class="render-info">
+          <div>
+            <div class="render-title">Cosmic Cats — Scene 4</div>
+            <div class="render-sub">FLUX 1.1 Pro Ultra, 4K Upscale</div>
+          </div>
+          
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
+          
+          <div class="render-meta">
+            <div class="digital-time">04:38 <small>05:29</small></div>
+            <div style="color:var(--silicone-darker); background:rgba(255,255,255,0.9); border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">FL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Cards -->
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4-4 4 4"></path></svg>
+        </div>
+        <div>
+          <div class="action-text">New Workspace</div>
+          <div class="task-time" style="color:var(--text-3); margin-top: 4px;">Create blank canvas</div>
+        </div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">
+          <svg viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"></rect><path d="M12 12h.01"></path><path d="M17 12h.01"></path><path d="M7 12h.01"></path></svg>
+        </div>
+        <div>
+          <div class="action-text">Director Mode</div>
+          <div class="task-time" style="color:var(--text-3); margin-top: 4px;">Auto-generate scenes</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONTROL PANEL -->
+<div class="control-panel" style="position:fixed; bottom:20px; right:20px; background:var(--silicone-base); padding:24px; border-radius:var(--r-lg); box-shadow:var(--shadow-out-lg), var(--edge-highlight); width:320px; z-index:100; font-family:var(--font-sans); color:var(--text-1);">
+  <div style="font-weight:600; font-family:var(--font-display); margin-bottom:16px;">V7 Tweaker</div>
+  
+  <div style="margin-bottom:12px;">
+    <label style="font-size:12px; color:var(--text-2); display:flex; justify-content:space-between;">Base Silicone <span id="val-base">#1f1f23</span></label>
+    <input type="color" id="ctrl-base" value="#1f1f23" style="width:100%; margin-top:4px; border-radius:4px; border:none; height:32px; background:transparent; cursor:pointer;">
+  </div>
+
+  <div style="margin-bottom:12px;">
+    <label style="font-size:12px; color:var(--text-2); display:flex; justify-content:space-between;">Dark Shadows Opacity <span id="val-dark">0.16</span></label>
+    <input type="range" id="ctrl-dark" min="0" max="0.5" step="0.01" value="0.16" style="width:100%; margin-top:4px;">
+  </div>
+
+  <div style="margin-bottom:12px;">
+    <label style="font-size:12px; color:var(--text-2); display:flex; justify-content:space-between;">Light Shadows (Highlights) <span id="val-light">0.024</span></label>
+    <input type="range" id="ctrl-light" min="0" max="0.1" step="0.001" value="0.024" style="width:100%; margin-top:4px;">
+  </div>
+
+  <div style="margin-bottom:12px;">
+    <label style="font-size:12px; color:var(--text-2); display:flex; justify-content:space-between;">Shadow Spread Multiplier <span id="val-dist">0.8</span></label>
+    <input type="range" id="ctrl-dist" min="0" max="3" step="0.1" value="0.8" style="width:100%; margin-top:4px;">
+  </div>
+  
+  <div style="margin-bottom:12px;">
+    <label style="font-size:12px; color:var(--text-2); display:flex; justify-content:space-between;">Accent Color <span id="val-accent">#30453f</span></label>
+    <input type="color" id="ctrl-accent" value="#30453f" style="width:100%; margin-top:4px; border-radius:4px; border:none; height:32px; background:transparent; cursor:pointer;">
+  </div>
+  
+  <button id="ctrl-copy" class="soft-btn" style="width:100%; margin-top:8px;">Copy Resulting CSS</button>
+</div>
+
+<script>
+const root = document.documentElement;
+
+const ctrlBase = document.getElementById('ctrl-base');
+const ctrlDark = document.getElementById('ctrl-dark');
+const ctrlLight = document.getElementById('ctrl-light');
+const ctrlDist = document.getElementById('ctrl-dist');
+const ctrlAccent = document.getElementById('ctrl-accent');
+
+function shadeHexColor(color, percent) {
+    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+}
+
+function updateVars() {
+  const base = ctrlBase.value;
+  const dark = parseFloat(ctrlDark.value);
+  const light = parseFloat(ctrlLight.value);
+  const dist = parseFloat(ctrlDist.value);
+  const accent = ctrlAccent.value;
+  
+  document.getElementById('val-base').innerText = base;
+  document.getElementById('val-dark').innerText = dark.toFixed(2);
+  document.getElementById('val-light').innerText = light.toFixed(3);
+  document.getElementById('val-dist').innerText = dist.toFixed(1) + 'x';
+  document.getElementById('val-accent').innerText = accent;
+  
+  root.style.setProperty('--silicone-outer', shadeHexColor(base, -0.05));
+  root.style.setProperty('--silicone-darker', shadeHexColor(base, -0.02));
+  root.style.setProperty('--silicone-base', base);
+  root.style.setProperty('--silicone-lighter', shadeHexColor(base, 0.03));
+  root.style.setProperty('--silicone-hover', shadeHexColor(base, 0.06));
+  
+  root.style.setProperty('--accent', accent);
+  root.style.setProperty('--accent-glow', accent + '33');
+  root.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${shadeHexColor(accent, -0.1)} 0%, ${accent} 100%)`);
+  
+  const d = (n) => `${n * dist}px`;
+  
+  root.style.setProperty('--shadow-out', 
+    `${d(-4)} ${d(-4)} ${d(10)} rgba(255, 255, 255, ${light}), 
+     ${d(5)} ${d(5)} ${d(15)} rgba(0, 0, 0, ${dark})`
+  );
+  
+  root.style.setProperty('--shadow-out-lg', 
+    `${d(-6)} ${d(-6)} ${d(14)} rgba(255, 255, 255, ${light*1.35}), 
+     ${d(8)} ${d(8)} ${d(20)} rgba(0, 0, 0, ${dark*1.6})`
+  );
+  
+  root.style.setProperty('--edge-highlight', 
+    `inset 1px 1px 2px rgba(255, 255, 255, ${light*1.35}),
+     inset -1px -1px 2px rgba(0, 0, 0, ${dark*0.25})`
+  );
+
+  root.style.setProperty('--shadow-in', 
+    `inset ${d(-3)} ${d(-3)} ${d(8)} rgba(255, 255, 255, ${light*0.8}), 
+     inset ${d(4)} ${d(4)} ${d(12)} rgba(0, 0, 0, ${dark*1.4})`
+  );
+}
+
+ctrlBase.addEventListener('input', updateVars);
+ctrlDark.addEventListener('input', updateVars);
+ctrlLight.addEventListener('input', updateVars);
+ctrlDist.addEventListener('input', updateVars);
+ctrlAccent.addEventListener('input', updateVars);
+
+document.getElementById('ctrl-copy').addEventListener('click', () => {
+  const css = `
+  --silicone-base: ${ctrlBase.value};
+  --shadow-out: ${root.style.getPropertyValue('--shadow-out')};
+  --shadow-out-lg: ${root.style.getPropertyValue('--shadow-out-lg')};
+  --edge-highlight: ${root.style.getPropertyValue('--edge-highlight')};
+  --shadow-in: ${root.style.getPropertyValue('--shadow-in')};
+  `;
+  navigator.clipboard.writeText(css);
+  document.getElementById('ctrl-copy').innerText = 'Copied!';
+  setTimeout(() => document.getElementById('ctrl-copy').innerText = 'Copy Resulting CSS', 2000);
+});
+</script>
+</body>
+</html>

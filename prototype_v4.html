@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI AUTO GEN — Soft Neumorphism Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+/* ==========================================
+   DESIGN SYSTEM: Soft Neumorphism + Digital
+   ========================================== */
+:root {
+  /* Color Palette */
+  --bg-dark: #222225;
+  --bg-panel: #2a2a2e;
+  --bg-well: #1c1c1f;
+  
+  /* The "Image" Purple Accent */
+  --accent-purple: #9284F1;
+  --accent-purple-dim: #7367c3;
+  --accent-purple-glow: rgba(146, 132, 241, 0.4);
+
+  /* Secondary Accents */
+  --teal: #AFE0E5;
+  
+  /* Text */
+  --text-1: #ffffff;
+  --text-2: rgba(255, 255, 255, 0.6);
+  --text-3: rgba(255, 255, 255, 0.4);
+  --text-inv: #1c1c1f;
+
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-digital: 'DotGothic16', monospace;
+
+  /* Soft Neumorphic Shadows */
+  /* Very diffuse, wide spread, low opacity white for highlight, deep black for shadow */
+  --shadow-soft-up: 
+    -8px -8px 24px rgba(255, 255, 255, 0.04), 
+    8px 8px 24px rgba(0, 0, 0, 0.4);
+    
+  --shadow-soft-up-lg: 
+    -12px -12px 36px rgba(255, 255, 255, 0.03), 
+    12px 12px 36px rgba(0, 0, 0, 0.5);
+
+  --shadow-soft-down: 
+    inset -4px -4px 12px rgba(255, 255, 255, 0.03), 
+    inset 4px 4px 12px rgba(0, 0, 0, 0.4);
+
+  --shadow-glass-up: 
+    -4px -4px 16px rgba(255, 255, 255, 0.1), 
+    8px 8px 24px rgba(0, 0, 0, 0.2);
+
+  /* Radii - very round, squircle-like */
+  --r-sm: 12px;
+  --r-md: 20px;
+  --r-lg: 32px;
+  --r-xl: 48px;
+  --r-full: 999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: #111111; /* Outer dark area like the image frame */
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* Container acting as the "Screen" */
+.screen {
+  width: 100%;
+  max-width: 1200px;
+  height: 800px;
+  background: var(--bg-dark);
+  border-radius: var(--r-xl);
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 40px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ==========================================
+   SIDEBAR / WIDGET AREA
+   ========================================== */
+.widget-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Widget 1: Schedule / Tasks (from the image concept) */
+.widget-card {
+  background: var(--bg-dark);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-soft-up);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-2);
+}
+
+.badge-count {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-full);
+  background: var(--bg-well);
+  box-shadow: var(--shadow-soft-down);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--accent-purple);
+  font-weight: 700;
+}
+
+.task-item {
+  background: var(--accent-purple);
+  border-radius: var(--r-md);
+  padding: 16px;
+  color: var(--bg-dark);
+  box-shadow: 0 8px 24px var(--accent-purple-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item.secondary {
+  background: var(--bg-well);
+  color: var(--text-1);
+  box-shadow: var(--shadow-soft-down);
+}
+
+.task-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.task-time { font-size: 12px; opacity: 0.8; font-weight: 500; }
+
+.avatars {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+}
+.avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-purple);
+  background: #000;
+  margin-left: -8px;
+}
+.task-item.secondary .avatar { border-color: var(--bg-well); }
+
+/* Widget 2: Zen Mode / Status */
+.zen-widget {
+  background: #e2e2e4; /* Light mode contrast card */
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-soft-up);
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.zen-orb-container {
+  background: #222;
+  border-radius: var(--r-lg);
+  padding: 24px;
+  width: 100%;
+  box-shadow: 
+    -8px -8px 24px rgba(255,255,255,0.8),
+    8px 8px 24px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.zen-orb {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #3a3a41 0%, #111 80%);
+  box-shadow: 
+    inset 10px 10px 20px rgba(0,0,0,0.5),
+    inset -5px -5px 15px rgba(255,255,255,0.1),
+    10px 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zen-moon {
+  width: 60px;
+  height: 60px;
+  background: transparent;
+  border-radius: 50%;
+  box-shadow: -15px 10px 0 0 var(--accent-purple);
+  filter: drop-shadow(0 0 15px var(--accent-purple));
+}
+
+.zen-text {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 16px;
+  color: #fff;
+}
+.zen-title { font-weight: 700; font-size: 16px; }
+.zen-status { font-size: 12px; color: var(--text-3); }
+
+/* ==========================================
+   MAIN DASHBOARD AREA (The Digital Mixing)
+   ========================================== */
+.dashboard-col {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Digital Header Panel */
+.digital-panel {
+  background: var(--accent-purple);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-soft-up-lg), 0 20px 60px var(--accent-purple-glow);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* The Dot-Matrix Digital Display */
+.digital-marquee {
+  font-family: var(--font-digital);
+  font-size: 32px;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.digital-marquee span { opacity: 0.5; }
+
+/* Inset Media/Render Area */
+.media-inset {
+  background: var(--bg-dark);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: 
+    inset -5px -5px 15px rgba(255,255,255,0.1),
+    inset 5px 5px 15px rgba(0,0,0,0.6);
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Neumorphic Record / Loading Orb */
+.render-orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #1a1a1c;
+  box-shadow: 
+    -4px -4px 12px rgba(255,255,255,0.05),
+    4px 4px 12px rgba(0,0,0,0.5),
+    inset -2px -2px 8px rgba(0,0,0,0.8),
+    inset 2px 2px 8px rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.render-orb-inner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-dark);
+  box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8);
+}
+.render-orb::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg 300deg, var(--accent-purple) 360deg);
+  opacity: 0.2;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Controls Info */
+.render-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.render-title { font-weight: 700; font-size: 18px; color: var(--text-1); }
+.render-sub { font-size: 13px; color: var(--text-3); font-weight: 500; }
+
+.progress-track {
+  height: 12px;
+  background: var(--bg-well);
+  border-radius: var(--r-full);
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 65%;
+  background: var(--accent-purple);
+  border-radius: var(--r-full);
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+}
+
+.render-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.digital-time {
+  font-family: var(--font-digital);
+  font-size: 24px;
+  color: var(--text-1);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.digital-time small { font-size: 14px; color: var(--text-3); }
+
+/* Quick Actions Cards */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.action-card {
+  background: var(--bg-dark);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-soft-up);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.4, 1);
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft-up-lg);
+}
+
+.action-card:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-soft-down);
+}
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  background: var(--bg-well);
+  box-shadow: var(--shadow-soft-down);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--accent-purple);
+}
+
+.action-text {
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+/* Soft Neumorphic Button */
+.soft-btn {
+  background: var(--bg-dark);
+  border: none;
+  padding: 16px;
+  border-radius: var(--r-full);
+  color: var(--text-2);
+  font-weight: 600;
+  font-family: var(--font-sans);
+  box-shadow: var(--shadow-soft-up);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.soft-btn:hover {
+  color: var(--accent-purple);
+}
+
+.soft-btn:active {
+  box-shadow: var(--shadow-soft-down);
+}
+
+</style>
+</head>
+<body>
+
+<div class="screen">
+  
+  <!-- WIDGET COLUMN (Like the left side of the inspiration image ) -->
+  <div class="widget-col">
+    
+    <!-- Tasks Widget -->
+    <div class="widget-card">
+      <div class="widget-header">
+        <span>Today</span>
+        <div class="badge-count">2</div>
+      </div>
+      
+      <div class="task-item">
+        <div class="task-title">Generate Characters</div>
+        <div class="task-time">12:30 - 12:50</div>
+        <div class="avatars">
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=1') center/cover;"></div>
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=2') center/cover;"></div>
+        </div>
+      </div>
+      
+      <div class="task-item secondary">
+        <div class="task-title">Review Env renders</div>
+        <div class="task-time">14:00 - 15:00</div>
+        <div class="avatars">
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=3') center/cover;"></div>
+          <div class="avatar" style="background: url('https://i.pravatar.cc/100?img=4') center/cover;"></div>
+        </div>
+      </div>
+      
+      <button class="soft-btn" style="margin-top: 8px;">
+        <span style="font-size:24px; line-height:1;">+</span>
+      </button>
+    </div>
+
+    <!-- Zen / Focus Mode Widget -->
+    <div class="zen-widget">
+      <div class="zen-orb-container">
+        <div class="zen-orb">
+          <div class="zen-moon"></div>
+        </div>
+        <div class="zen-text">
+          <div>
+            <div class="zen-title">Focus mode</div>
+            <div class="zen-status">Active rendering</div>
+          </div>
+          <div class="badge-count" style="background:var(--accent-purple); color:#fff;">✨</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- DASHBOARD COLUMN -->
+  <div class="dashboard-col">
+    
+    <!-- Digital Panel (Like the Spotify widget but for AI Generation) -->
+    <div class="digital-panel">
+      
+      <!-- Dot-matrix display -->
+      <div class="digital-marquee">
+        AIAUTOGEN <span>></span> BATCH-200A
+      </div>
+      
+      <!-- Inset Render Control Area -->
+      <div class="media-inset">
+        <!-- Render Orb (replaces vinyl) -->
+        <div class="render-orb">
+          <div class="render-orb-inner"></div>
+        </div>
+        
+        <!-- Render Details -->
+        <div class="render-info">
+          <div>
+            <div class="render-title">Cosmic Cats — Scene 4</div>
+            <div class="render-sub">FLUX 1.1 Pro Ultra, 4K Upscale</div>
+          </div>
+          
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
+          
+          <div class="render-meta">
+            <div class="digital-time">04:38 <small>05:29</small></div>
+            <div style="color:var(--bg-dark); background:rgba(255,255,255,0.8); border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;">FL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Neumorphic Controls -->
+    <div class="actions-grid">
+      <div class="action-card">
+        <div class="action-icon">✦</div>
+        <div class="action-text">New Workspace</div>
+        <div class="task-time" style="color:var(--text-3);">Create blank canvas</div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-icon">🎬</div>
+        <div class="action-text">Director Mode</div>
+        <div class="task-time" style="color:var(--text-3);">Auto-generate scenes</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

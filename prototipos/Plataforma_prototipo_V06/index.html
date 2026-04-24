@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Renderfarm — AI Cinema Studio</title>
+  <meta name="description" content="AI-native cinematic video production on an infinite canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════ AUTH ══════ -->
+<div id="auth" class="screen">
+  <div class="auth-bg"></div>
+  <div class="auth-card">
+    <div class="auth-logo">◈</div>
+    <div class="auth-brand">RENDERFARM</div>
+    <p class="auth-sub">AI Cinema Studio · V06</p>
+    <div class="auth-fields">
+      <input type="text" id="a-user" class="field" placeholder="Email">
+      <input type="password" id="a-key" class="field" placeholder="API Key">
+      <button id="a-go" class="btn btn-primary btn-full">Enter Studio</button>
+    </div>
+    <p id="a-msg" class="auth-msg"></p>
+  </div>
+</div>
+
+<!-- ══════ APP ══════ -->
+<div id="app" class="app" style="display:none">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="top-brand"><i>◈</i> RENDERFARM</div>
+    <button class="top-project" id="t-proj">📁 Midnight Chase <span style="font-size:8px;color:var(--t3)">▾</span></button>
+
+    <div class="pipeline" id="pipeline">
+      <span class="pipe-node active"><span class="pipe-dot" style="background:var(--blue)"></span> Prompt</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node"><span class="pipe-dot" style="background:var(--accent)"></span> Model</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node"><span class="pipe-dot" style="background:var(--warn)"></span> Render</span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-node"><span class="pipe-dot" style="background:var(--ok)"></span> Output</span>
+    </div>
+
+    <div class="top-actions">
+      <button class="top-btn" title="Undo">↶</button>
+      <button class="top-btn" title="Redo">↷</button>
+      <button class="top-btn" title="Keyboard shortcuts">⌨</button>
+      <span class="top-credit" id="t-credits">$2.47</span>
+      <div class="top-avatar" title="Profile">S</div>
+    </div>
+  </header>
+
+  <!-- ICON RAIL -->
+  <nav class="rail">
+    <button class="rail-btn active" data-v="canvas">🎬<span class="rail-tip">Canvas</span></button>
+    <button class="rail-btn" data-v="compare">⊞<span class="rail-tip">Compare</span></button>
+    <button class="rail-btn" data-v="timeline">≡<span class="rail-tip">Timeline</span></button>
+    <div class="rail-sep"></div>
+    <button class="rail-btn" data-v="assets">📦<span class="rail-tip">Assets</span></button>
+    <button class="rail-btn" data-a="script">📝<span class="rail-tip">Script</span><span class="notif"></span></button>
+    <button class="rail-btn" data-a="settings">⚙<span class="rail-tip">Settings</span></button>
+    <div class="rail-end">
+      <div class="rail-sep"></div>
+      <button class="rail-btn" data-a="help">?<span class="rail-tip">Help</span></button>
+    </div>
+  </nav>
+
+  <!-- CANVAS -->
+  <main class="canvas" id="canvas">
+
+    <!-- Shots -->
+    <div class="shots" id="shots"></div>
+
+    <!-- Generation Log -->
+    <div class="glog" id="glog">
+      <div class="glog-head" id="glog-h">
+        <span class="glog-dot" id="glog-dot"></span>
+        <span class="glog-lbl" id="glog-lbl">Ready</span>
+        <button class="glog-x" id="glog-x">▾</button>
+      </div>
+      <div class="glog-body" id="glog-b">
+        <div class="gstep ok"><span class="gstep-i">✓</span><span>Session initialized</span></div>
+        <div class="gstep ok"><span class="gstep-i">✓</span><span>5 shots loaded</span></div>
+        <div class="gstep ok"><span class="gstep-i">✓</span><span>Models: Flux · Kling · Minimax</span></div>
+      </div>
+    </div>
+
+    <!-- Project Style Card -->
+    <div class="pcard" id="pcard">
+      <div class="pcard-t">Project Style</div>
+      <div class="pcard-row"><span class="pcard-lbl">Palette</span><span class="swatch" style="background:#08080c"></span><span class="swatch" style="background:#7c5cff"></span><span class="swatch" style="background:#ff2d78"></span><span class="swatch" style="background:#00d4ff"></span></div>
+      <div class="pcard-row"><span class="pcard-lbl">Mood</span><span>Noir · Tension · Rain</span></div>
+      <div class="pcard-row"><span class="pcard-lbl">Refs</span><span>Blade Runner, Se7en</span></div>
+      <div class="pcard-tags"><span class="ptag">@Mike</span><span class="ptag">@Elena</span><span class="ptag">@Ross</span></div>
+    </div>
+
+    <!-- Suggestion Pills -->
+    <div class="pills" id="pills">
+      <button class="pill" data-p="Warehouse establishing shot, rain, night, neon reflections">🎬 Warehouse establishing</button>
+      <button class="pill" data-p="Elena close-up reveal, warm backlight, shallow DOF">✨ Elena close-up</button>
+      <button class="pill" data-p="Chase sequence through alley, handheld, wet reflections">🏃 Chase sequence</button>
+      <button class="pill" data-p="Mike noir silhouette, cigarette smoke, overhead light">🚬 Mike silhouette</button>
+      <button class="pill" data-p="Wide aerial, city at dusk, golden hour establishing">🌆 City aerial dusk</button>
+    </div>
+
+    <!-- Floating Prompt -->
+    <div class="prompt" id="prompt">
+      <textarea class="prompt-txt" id="p-txt" placeholder="Describe your shot…" rows="1"></textarea>
+      <div class="prompt-ents" id="p-ents" style="display:none"></div>
+      <div class="prompt-bar">
+        <button class="p-tool" title="Attach reference">📎</button>
+        <button class="p-tool" title="Image input">🖼</button>
+        <div class="p-mode">
+          <button class="p-mode-b on" data-m="shot">🎬 Shot</button>
+          <button class="p-mode-b" data-m="sandbox">⚡ Free</button>
+          <button class="p-mode-b" data-m="edit">✏️ Edit</button>
+        </div>
+        <button class="p-model" id="p-model"><span class="mdot"></span><span id="p-model-lbl">Flux Pro</span> <span style="font-size:7px">▾</span></button>
+        <button class="p-tool" title="Voice">🎤</button>
+        <button class="p-send" id="p-send" title="Generate">↑</button>
+      </div>
+    </div>
+
+    <!-- Comparison View (overlay) -->
+    <div class="comp-view" id="comp-view"></div>
+
+    <!-- Right Inspector Panel -->
+    <div class="inspector" id="inspector">
+      <div class="insp-head">
+        <span class="insp-title" id="i-title">Shot Inspector</span>
+        <button class="insp-x" id="i-close">✕</button>
+      </div>
+      <div class="insp-body" id="i-body">
+        <div class="insp-sec">
+          <div class="insp-lbl">Prompt</div>
+          <textarea class="field" id="i-prompt" rows="3" style="font-size:11px"></textarea>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Model</div>
+          <div class="chips" id="i-models">
+            <span class="chip on" data-k="flux-pro">Flux Pro</span>
+            <span class="chip" data-k="kling">Kling 2.0</span>
+            <span class="chip" data-k="minimax">Minimax</span>
+            <span class="chip" data-k="wan">Wan 2.1</span>
+            <span class="chip" data-k="runway">Runway Gen-4</span>
+            <span class="chip" data-k="pika">Pika 2.2</span>
+          </div>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Resolution</div>
+          <div class="chips" id="i-res">
+            <span class="chip on" data-k="1080p">1080p</span>
+            <span class="chip" data-k="720p">720p</span>
+            <span class="chip" data-k="4k">4K</span>
+          </div>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Duration</div>
+          <div class="chips" id="i-dur">
+            <span class="chip" data-k="3s">3s</span>
+            <span class="chip on" data-k="5s">5s</span>
+            <span class="chip" data-k="8s">8s</span>
+            <span class="chip" data-k="10s">10s</span>
+          </div>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Aspect Ratio</div>
+          <div class="chips" id="i-ar">
+            <span class="chip on" data-k="16:9">16:9</span>
+            <span class="chip" data-k="9:16">9:16</span>
+            <span class="chip" data-k="1:1">1:1</span>
+            <span class="chip" data-k="21:9">21:9</span>
+          </div>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Inference Steps</div>
+          <div class="slider-r"><input type="range" min="10" max="50" value="28" id="i-steps"><span class="sv" id="i-steps-v">28</span></div>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">CFG Scale</div>
+          <div class="slider-r"><input type="range" min="1" max="20" value="7" step="0.5" id="i-cfg"><span class="sv" id="i-cfg-v">7.0</span></div>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Negative Prompt</div>
+          <textarea class="field" rows="2" placeholder="blur, low quality, text…" style="font-size:10px" id="i-neg"></textarea>
+        </div>
+        <div class="insp-sec">
+          <div class="insp-lbl">Seed</div>
+          <div style="display:flex;gap:4px"><input class="field" style="flex:1;font-size:10px" id="i-seed" placeholder="Random"><button class="btn btn-ghost btn-sm">🎲</button></div>
+        </div>
+      </div>
+      <div class="insp-foot">
+        <button class="btn btn-primary btn-full" id="i-gen">⚡ Generate</button>
+        <div class="insp-acts">
+          <button class="btn btn-ghost btn-sm" id="i-comp">⊞ Compare</button>
+          <button class="btn btn-ghost btn-sm" id="i-dup">⊕ Duplicate</button>
+          <button class="btn btn-danger btn-sm" id="i-del">✕ Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- QUEUE DOCK -->
+  <footer class="dock">
+    <div class="dock-tabs">
+      <button class="dock-tab on" data-dt="queue">Queue</button>
+      <button class="dock-tab" data-dt="history">History</button>
+      <button class="dock-tab" data-dt="exports">Exports</button>
+    </div>
+    <div class="dock-sep"></div>
+    <div class="dock-queue" id="d-queue">
+      <span class="q-pulse" id="q-dot" style="display:none"></span>
+      <span class="dock-info" id="q-label">No active jobs</span>
+      <div class="q-bar"><div class="q-fill" id="q-fill" style="width:0%"></div></div>
+    </div>
+    <span class="dock-cost" id="d-cost">Session: $0.48</span>
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

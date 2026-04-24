@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI AUTO GEN — Prototype v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================
+   DESIGN SYSTEM: Dark Neumorphic × Earthy Teal
+   ========================================== */
+:root {
+  /* --- Palette (from image2 + adjusted for dark bg) --- */
+  --bg:          #16191d;
+  --bg-raised:   #1c2026;
+  --bg-inset:    #12151a;
+  --bg-subtle:   #1f2329;
+
+  /* Neumorphic shadows (dark mode = lighter top-left, darker bottom-right) */
+  --shadow-neu-up: -4px -4px 12px rgba(255,255,255,0.03), 4px 4px 12px rgba(0,0,0,0.5);
+  --shadow-neu-down: inset -3px -3px 8px rgba(255,255,255,0.03), inset 3px 3px 8px rgba(0,0,0,0.45);
+  --shadow-neu-lg: -6px -6px 20px rgba(255,255,255,0.04), 6px 6px 24px rgba(0,0,0,0.6);
+  --shadow-float: 0 8px 32px rgba(0,0,0,0.4);
+
+  /* Earthy Teal palette */
+  --teal:        #7abfbf;
+  --teal-dim:    #4a8a8a;
+  --teal-glow:   rgba(122, 191, 191, 0.15);
+  --teal-bright: #AFE0E5;
+  --sand:        #B3A296;
+  --sand-dim:    rgba(179, 162, 150, 0.15);
+  --copper:      #8D6552;
+  --forest:      #376166;
+  --deep:        #16383C;
+
+  /* Neutral text on dark */
+  --text-1:      #e8e4e0;
+  --text-2:      rgba(232, 228, 224, 0.55);
+  --text-3:      rgba(232, 228, 224, 0.3);
+  --text-accent: #AFE0E5;
+
+  /* Borders */
+  --border:      rgba(255,255,255,0.06);
+  --border-2:    rgba(255,255,255,0.10);
+
+  /* Radii */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-full: 999px;
+
+  /* Typography */
+  --font: 'Inter', -apple-system, sans-serif;
+  --display: 'Space Grotesk', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ==========================================
+   SIDEBAR
+   ========================================== */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  gap: 4px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  padding: 8px 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(135deg, var(--teal), var(--forest));
+  box-shadow: var(--shadow-neu-up);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.logo span { color: var(--teal-bright); }
+
+.project-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-neu-up);
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.project-pill:hover {
+  background: var(--bg-subtle);
+}
+
+.project-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+  background: linear-gradient(135deg, var(--copper), var(--sand));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.project-info {
+  flex: 1;
+}
+
+.project-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.project-meta {
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.nav-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 16px 14px 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.nav-item:hover {
+  color: var(--text-1);
+  background: var(--bg-subtle);
+}
+
+.nav-item.active {
+  color: var(--teal-bright);
+  background: var(--teal-glow);
+  box-shadow: var(--shadow-neu-down);
+  font-weight: 600;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--teal);
+}
+
+.nav-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.nav-item.active .nav-icon { opacity: 1; }
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--r-full);
+  background: var(--teal-glow);
+  color: var(--teal);
+}
+
+.sidebar-spacer { flex: 1; }
+
+.user-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-neu-up);
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-full);
+  background: linear-gradient(135deg, var(--teal-dim), var(--forest));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.user-info { flex: 1; }
+.user-name { font-size: 12px; font-weight: 600; }
+.user-plan {
+  font-size: 10px;
+  color: var(--teal);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   MAIN CONTENT
+   ========================================== */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Topbar */
+.topbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+
+.breadcrumb {
+  font-size: 12px;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumb strong { color: var(--text-2); }
+
+.topbar-spacer { flex: 1; }
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Neumorphic icon button */
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-sm);
+  border: none;
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-neu-up);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  color: var(--teal-bright);
+  box-shadow: var(--shadow-neu-down);
+}
+
+/* ==========================================
+   CONTENT AREA
+   ========================================== */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
+}
+
+/* Page header */
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.page-title {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.page-title em {
+  font-style: normal;
+  color: var(--teal-bright);
+}
+
+.page-subtitle {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  height: 40px;
+  padding: 0 22px;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--teal-dim), var(--forest));
+  color: var(--text-1);
+  font-size: 13px;
+  box-shadow: var(--shadow-neu-up), 0 0 20px var(--teal-glow);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-neu-lg), 0 0 30px var(--teal-glow);
+}
+
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-secondary {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  color: var(--text-2);
+  font-size: 13px;
+  box-shadow: var(--shadow-neu-up);
+}
+
+.btn-secondary:hover {
+  color: var(--text-1);
+  box-shadow: var(--shadow-neu-down);
+}
+
+.btn-ghost {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.btn-ghost:hover { color: var(--teal-bright); background: var(--teal-glow); }
+
+.btn-sm {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--r-xs);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   CARDS — Neumorphic
+   ========================================== */
+.card {
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-neu-up);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-neu-lg);
+}
+
+.card-inset {
+  background: var(--bg-inset);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-neu-down);
+  padding: 16px;
+}
+
+/* ==========================================
+   CHARACTER CARDS — Premium Grid
+   ========================================== */
+.entity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.entity-card {
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-neu-up);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.entity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-neu-lg), 0 0 40px rgba(122, 191, 191, 0.08);
+}
+
+.entity-render {
+  position: relative;
+  height: 260px;
+  background: var(--bg-inset);
+  overflow: hidden;
+}
+
+.entity-render img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.entity-card:hover .entity-render img {
+  transform: scale(1.05);
+}
+
+.entity-render-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.entity-render-empty-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  box-shadow: var(--shadow-neu-down);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.entity-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  background: rgba(22, 56, 60, 0.85);
+  backdrop-filter: blur(8px);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--teal-bright);
+}
+
+.entity-model-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.entity-body {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.entity-name {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.entity-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.entity-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--r-full);
+  background: var(--bg-inset);
+  box-shadow: var(--shadow-neu-down);
+  color: var(--text-2);
+}
+
+.entity-tag.teal {
+  background: var(--teal-glow);
+  color: var(--teal);
+}
+
+.entity-actions {
+  display: flex;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.entity-actions .btn { flex: 1; }
+
+/* Add card */
+.entity-card-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 380px;
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-neu-down);
+  border: 2px dashed var(--border-2);
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.entity-card-add:hover {
+  border-color: var(--teal-dim);
+  color: var(--teal);
+  box-shadow: var(--shadow-neu-up);
+}
+
+.entity-card-add-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: var(--bg-subtle);
+  box-shadow: var(--shadow-neu-up);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: all 0.3s;
+}
+
+.entity-card-add:hover .entity-card-add-icon {
+  background: var(--teal-glow);
+  color: var(--teal-bright);
+}
+
+/* ==========================================
+   TOOLBAR (Model selector strip)
+   ========================================== */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-neu-up);
+  margin-bottom: 24px;
+}
+
+.toolbar-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-2);
+}
+
+.toolbar-select {
+  background: var(--bg-inset);
+  border: none;
+  box-shadow: var(--shadow-neu-down);
+  color: var(--text-1);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+.toolbar-select:focus {
+  box-shadow: var(--shadow-neu-down), 0 0 0 2px var(--teal-dim);
+}
+
+.toolbar-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--r-full);
+  background: var(--teal-glow);
+  color: var(--teal-bright);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.toolbar-chip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: dot-pulse 2s infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ==========================================
+   INPUTS — Neumorphic
+   ========================================== */
+.input-neu {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: var(--bg-inset);
+  box-shadow: var(--shadow-neu-down);
+  color: var(--text-1);
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+
+.input-neu::placeholder { color: var(--text-3); }
+
+.input-neu:focus {
+  box-shadow: var(--shadow-neu-down), 0 0 0 2px var(--teal-dim);
+}
+
+.textarea-neu {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px;
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--bg-inset);
+  box-shadow: var(--shadow-neu-down);
+  color: var(--text-1);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+  transition: box-shadow 0.2s;
+}
+
+.textarea-neu:focus {
+  box-shadow: var(--shadow-neu-down), 0 0 0 2px var(--teal-dim);
+}
+
+/* ==========================================
+   LABEL & FORM GROUPS
+   ========================================== */
+.field-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ==========================================
+   STAT BADGES
+   ========================================== */
+.stat-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 16px 18px;
+  border-radius: var(--r-md);
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-neu-up);
+}
+
+.stat-value {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--teal-bright);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   TABS — Pill style
+   ========================================== */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg-inset);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-neu-down);
+  margin-bottom: 24px;
+  width: fit-content;
+}
+
+.tab {
+  padding: 8px 18px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+}
+
+.tab:hover { color: var(--text-1); }
+
+.tab.active {
+  color: var(--text-1);
+  background: var(--bg-raised);
+  box-shadow: var(--shadow-neu-up);
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.05s; opacity: 0; }
+.delay-2 { animation-delay: 0.1s; opacity: 0; }
+.delay-3 { animation-delay: 0.15s; opacity: 0; }
+.delay-4 { animation-delay: 0.2s; opacity: 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+/* ==========================================
+   COST CHIP
+   ========================================== */
+.cost-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  background: rgba(141, 101, 82, 0.15);
+  color: var(--sand);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   GENERATE BUTTON — Hero CTA
+   ========================================== */
+.btn-generate {
+  height: 44px;
+  padding: 0 28px;
+  border-radius: var(--r-md);
+  border: none;
+  background: linear-gradient(135deg, var(--teal-dim) 0%, var(--forest) 50%, var(--deep) 100%);
+  color: var(--teal-bright);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-neu-up), 0 0 30px var(--teal-glow);
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-generate::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(175, 224, 229, 0.1) 0%, transparent 60%);
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-generate:hover {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-neu-lg), 0 0 50px var(--teal-glow);
+}
+
+.btn-generate:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+
+<!-- ====== SIDEBAR ====== -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">✦</div>
+    AI <span>AUTO GEN</span>
+  </div>
+
+  <div class="project-pill">
+    <div class="project-avatar">02</div>
+    <div class="project-info">
+      <div class="project-name">Cosmic Cats</div>
+      <div class="project-meta">Film Essay · 12 shots</div>
+    </div>
+    <span style="color:var(--text-3);font-size:12px">⌄</span>
+  </div>
+
+  <div class="nav-section-label">Production</div>
+  <div class="nav-item"><span class="nav-icon">📋</span> Setup</div>
+  <div class="nav-item"><span class="nav-icon">🎬</span> Director</div>
+  <div class="nav-item active"><span class="nav-icon">👤</span> Characters <span class="nav-badge">3</span></div>
+  <div class="nav-item"><span class="nav-icon">🏔</span> Environments</div>
+  <div class="nav-item"><span class="nav-icon">🎞</span> Shots <span class="nav-badge">12</span></div>
+
+  <div class="nav-section-label">Studio</div>
+  <div class="nav-item"><span class="nav-icon">🧪</span> Sandbox</div>
+  <div class="nav-item"><span class="nav-icon">⚡</span> Nodes</div>
+  <div class="nav-item"><span class="nav-icon">📦</span> Export</div>
+
+  <div class="sidebar-spacer"></div>
+
+  <div class="user-widget">
+    <div class="user-avatar">SK</div>
+    <div class="user-info">
+      <div class="user-name">Sebastian K.</div>
+      <div class="user-plan">Pro Plan</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ====== MAIN ====== -->
+<main class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="breadcrumb">
+      Cosmic Cats <span style="opacity:0.3">›</span> <strong>Characters</strong>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" title="Sync">↻</button>
+      <button class="icon-btn" title="Settings">⚙</button>
+      <button class="icon-btn" title="Help">?</button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <section class="content">
+    <!-- Page Header -->
+    <div class="page-header animate-in">
+      <div>
+        <h1 class="page-title">Character <em>Production</em></h1>
+        <p class="page-subtitle">Design and render your cast with AI-powered generation</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="cost-chip">💰 Est. $0.040</div>
+        <button class="btn-generate">
+          ✦ Generate All
+        </button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar animate-in delay-1">
+      <span class="toolbar-label">Master Model</span>
+      <div class="toolbar-divider"></div>
+      <select class="toolbar-select">
+        <option>OpenAI</option>
+        <option>Black Forest Labs</option>
+        <option>Stability AI</option>
+      </select>
+      <select class="toolbar-select">
+        <option>GPT Image 1.0</option>
+        <option>FLUX 1.1 Pro Ultra</option>
+      </select>
+      <div class="toolbar-divider"></div>
+      <div class="toolbar-chip"><span class="dot"></span> Database Synced</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-row animate-in delay-1">
+      <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Characters</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Renders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$0.12</div>
+        <div class="stat-label">Total Cost</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">2</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+
+    <!-- Entity Grid -->
+    <div class="entity-grid">
+      <!-- Card 1 — With render -->
+      <div class="entity-card animate-in delay-1">
+        <div class="entity-render">
+          <img src="https://images.unsplash.com/photo-1615497001839-b0a0eac3274c?w=400&h=500&fit=crop" alt="Character" />
+          <div class="entity-badge">CHAR</div>
+          <div class="entity-model-badge">GPT Image 1.0</div>
+        </div>
+        <div class="entity-body">
+          <div class="entity-name">Captain Nova</div>
+          <div class="entity-meta">
+            <span class="entity-tag teal">Protagonist</span>
+            <span class="entity-tag">square_hd</span>
+            <span class="cost-chip">$0.040</span>
+          </div>
+          <div class="entity-actions">
+            <button class="btn btn-ghost btn-sm">✦ Regenerate</button>
+            <button class="btn btn-ghost btn-sm">✎ Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 — With render -->
+      <div class="entity-card animate-in delay-2">
+        <div class="entity-render">
+          <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=500&fit=crop" alt="Character" />
+          <div class="entity-badge">CHAR</div>
+          <div class="entity-model-badge">FLUX 1.1 Pro</div>
+        </div>
+        <div class="entity-body">
+          <div class="entity-name">Whiskers</div>
+          <div class="entity-meta">
+            <span class="entity-tag teal">Sidekick</span>
+            <span class="entity-tag">landscape_16_9</span>
+            <span class="cost-chip">$0.060</span>
+          </div>
+          <div class="entity-actions">
+            <button class="btn btn-ghost btn-sm">✦ Regenerate</button>
+            <button class="btn btn-ghost btn-sm">✎ Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 — Empty -->
+      <div class="entity-card animate-in delay-3">
+        <div class="entity-render">
+          <div class="entity-render-empty">
+            <div class="entity-render-empty-icon">🎨</div>
+            No render yet
+          </div>
+          <div class="entity-badge">CHAR</div>
+        </div>
+        <div class="entity-body">
+          <div class="entity-name">Jose</div>
+          <div class="entity-meta">
+            <span class="entity-tag">square_hd</span>
+            <span class="entity-tag" style="color:var(--sand)">● Unsaved</span>
+          </div>
+          <div class="entity-actions">
+            <button class="btn btn-primary btn-sm" style="flex:1">✦ Generate</button>
+            <button class="btn btn-ghost btn-sm">✎ Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add New Card -->
+      <div class="entity-card-add animate-in delay-4">
+        <div class="entity-card-add-icon">+</div>
+        Add New Character
+      </div>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renderfarm V05 — Canvas Studio</title>
+  <meta name="description" content="AI Video Renderfarm — Canvas-first conversational cinema production">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 1 — AUTH (dark + aurora)
+     ═══════════════════════════════════════════ -->
+<div id="auth-screen" class="screen">
+  <div class="auth-aurora"></div>
+  <div class="auth-card">
+    <div class="auth-logo">◈</div>
+    <div class="auth-brand">RENDERFARM</div>
+    <p class="auth-tagline">Conversational Cinema Production</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input type="text" id="auth-user" class="field" placeholder="Email">
+      <input type="password" id="auth-pass" class="field" placeholder="API Key">
+      <button id="auth-btn" class="btn-cta">Enter Studio</button>
+    </div>
+    <p id="auth-msg" class="auth-msg"></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 2 — APP SHELL (canvas-first)
+     ═══════════════════════════════════════════ -->
+<div id="app-shell" class="app-shell" style="display:none">
+
+  <!-- ═══ ICON RAIL (left) ═══ -->
+  <nav class="rail">
+    <div class="rail-brand">◈</div>
+    <button class="rail-btn active" data-view="canvas" title="Canvas">
+      🎬<span class="rail-tooltip">Canvas</span>
+    </button>
+    <button class="rail-btn" data-view="timeline" title="Timeline">
+      ≡<span class="rail-tooltip">Timeline</span>
+    </button>
+    <button class="rail-btn" data-view="assets" title="Assets">
+      📦<span class="rail-tooltip">Assets</span>
+    </button>
+    <div class="rail-sep"></div>
+    <button class="rail-btn" data-view="compare" title="Compare">
+      ⊞<span class="rail-tooltip">Compare</span>
+    </button>
+    <button class="rail-btn" data-action="script" title="Script">
+      📝<span class="rail-tooltip">Script</span>
+      <span class="rail-dot"></span>
+    </button>
+    <div class="rail-footer">
+      <div class="rail-sep"></div>
+      <div class="rail-credit">$2.47</div>
+      <div class="rail-avatar">S</div>
+    </div>
+  </nav>
+
+  <!-- ═══ CANVAS AREA (center, takes everything) ═══ -->
+  <main class="canvas-area" id="canvas-area">
+
+    <!-- Generation Log (floating, top-left) -->
+    <div class="gen-log" id="gen-log">
+      <div class="gen-log-header" id="gen-log-header">
+        <span class="gen-log-dot" id="gen-log-dot"></span>
+        <span class="gen-log-title" id="gen-log-title">Ready</span>
+        <button class="gen-log-toggle" id="gen-log-toggle">▾</button>
+      </div>
+      <div class="gen-log-body" id="gen-log-body">
+        <div class="log-step done">
+          <span class="log-step-icon">✓</span>
+          <span>Session initialized</span>
+        </div>
+        <div class="log-step done">
+          <span class="log-step-icon">✓</span>
+          <span>5 shots loaded from project</span>
+        </div>
+        <div class="log-step done">
+          <span class="log-step-icon">✓</span>
+          <span>Models: Flux Pro, Kling, Minimax</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shot Cards on Canvas -->
+    <div class="canvas-shots" id="canvas-shots">
+      <!-- Dynamically populated -->
+    </div>
+
+    <!-- Project Style Card (floating, top-right area) -->
+    <div class="style-card" id="style-card">
+      <div class="style-card-title">Project Style</div>
+      <div class="style-row">
+        <span class="style-row-label">Palette</span>
+        <span class="style-swatch" style="background:#08080c"></span>
+        <span class="style-swatch" style="background:#7c5cff"></span>
+        <span class="style-swatch" style="background:#ff2d78"></span>
+        <span class="style-swatch" style="background:#00d4ff"></span>
+      </div>
+      <div class="style-row">
+        <span class="style-row-label">Mood</span>
+        <span style="color:var(--t1);font-size:11px">Noir · Tension · Rain</span>
+      </div>
+      <div class="style-row">
+        <span class="style-row-label">Refs</span>
+        <span style="color:var(--t1);font-size:11px">Blade Runner, Se7en</span>
+      </div>
+      <div class="style-tags">
+        <span class="style-tag">@Mike</span>
+        <span class="style-tag">@Elena</span>
+        <span class="style-tag">@Ross</span>
+      </div>
+    </div>
+
+    <!-- Suggestion Pills -->
+    <div class="suggest-pills" id="suggest-pills">
+      <button class="suggest-pill" data-prompt="Warehouse establishing shot, rain, night">🎬 Warehouse establishing shot</button>
+      <button class="suggest-pill" data-prompt="Elena close-up reveal, warm lighting, shallow DOF">✨ Elena close-up reveal</button>
+      <button class="suggest-pill" data-prompt="Chase sequence through alley, handheld, adrenaline">🏃 Chase through alley</button>
+      <button class="suggest-pill" data-prompt="Mike enters frame, noir silhouette, smoke">🚬 Mike noir silhouette</button>
+      <button class="suggest-pill" data-prompt="Wide aerial, city at dusk, establishing">🌆 City aerial dusk</button>
+    </div>
+
+    <!-- ⭐ FLOATING PROMPT BAR ⭐ -->
+    <div class="prompt-float" id="prompt-float">
+      <textarea class="prompt-input" id="prompt-input" placeholder="Describe your shot..." rows="1"></textarea>
+      <div class="prompt-entity-pills" id="prompt-entities" style="display:none">
+        <!-- Injected when @mentions detected -->
+      </div>
+      <div class="prompt-toolbar">
+        <button class="prompt-tool" id="btn-attach" title="Attach reference">📎</button>
+        <div class="prompt-mode">
+          <button class="prompt-mode-btn active" data-mode="shot">🎬 Shot</button>
+          <button class="prompt-mode-btn" data-mode="sandbox">⚡ Sandbox</button>
+        </div>
+        <button class="prompt-model" id="btn-model">
+          <span class="model-dot"></span>
+          <span id="model-label">Flux Pro</span>
+          <span style="font-size:8px">▾</span>
+        </button>
+        <button class="prompt-tool" id="btn-voice" title="Voice input">🎤</button>
+        <button class="prompt-send" id="btn-send" title="Generate">↑</button>
+      </div>
+    </div>
+
+    <!-- Contextual Overlay Panel (appears on shot select) -->
+    <div class="ctx-panel" id="ctx-panel">
+      <div class="ctx-header">
+        <span class="ctx-title" id="ctx-shot-title">Shot #1</span>
+        <button class="ctx-close" id="ctx-close">✕</button>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">Model</div>
+        <div class="ctx-row">
+          <span class="ctx-chip active" data-model="flux-pro">Flux Pro</span>
+          <span class="ctx-chip" data-model="kling">Kling 2.0</span>
+          <span class="ctx-chip" data-model="minimax">Minimax</span>
+          <span class="ctx-chip" data-model="wan">Wan 2.1</span>
+        </div>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">Resolution</div>
+        <div class="ctx-row">
+          <span class="ctx-chip active" data-res="1080p">1080p</span>
+          <span class="ctx-chip" data-res="720p">720p</span>
+          <span class="ctx-chip" data-res="4k">4K</span>
+        </div>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">Duration</div>
+        <div class="ctx-row">
+          <span class="ctx-chip" data-dur="3s">3s</span>
+          <span class="ctx-chip active" data-dur="5s">5s</span>
+          <span class="ctx-chip" data-dur="8s">8s</span>
+          <span class="ctx-chip" data-dur="10s">10s</span>
+        </div>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">Aspect Ratio</div>
+        <div class="ctx-row">
+          <span class="ctx-chip active" data-ar="16:9">16:9</span>
+          <span class="ctx-chip" data-ar="9:16">9:16</span>
+          <span class="ctx-chip" data-ar="1:1">1:1</span>
+          <span class="ctx-chip" data-ar="21:9">21:9</span>
+        </div>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">Inference Steps</div>
+        <div class="ctx-slider">
+          <input type="range" min="10" max="50" value="28" id="ctx-steps">
+          <span class="ctx-slider-val" id="ctx-steps-val">28</span>
+        </div>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">CFG Scale</div>
+        <div class="ctx-slider">
+          <input type="range" min="1" max="20" value="7" step="0.5" id="ctx-cfg">
+          <span class="ctx-slider-val" id="ctx-cfg-val">7.0</span>
+        </div>
+      </div>
+
+      <div class="ctx-section">
+        <div class="ctx-label">Negative Prompt</div>
+        <textarea class="field" rows="2" placeholder="blur, low quality, text..." style="font-size:11px"></textarea>
+      </div>
+
+      <div class="ctx-actions">
+        <button class="btn-cta" id="ctx-generate">⚡ Generate this shot</button>
+        <div class="ctx-actions-row">
+          <button class="btn-sm" id="ctx-compare">⊞ Compare</button>
+          <button class="btn-sm" id="ctx-duplicate">⊕ Duplicate</button>
+          <button class="btn-sm" id="ctx-delete" style="color:var(--red);border-color:rgba(255,77,77,.2)">✕ Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ TOOL STRIP (right) ═══ -->
+  <aside class="tool-strip">
+    <button class="tool-btn active" data-tool="select" title="Select">⊡</button>
+    <button class="tool-btn" data-tool="add" title="Add shot">⊕</button>
+    <button class="tool-btn" data-tool="edit" title="Edit">✏️</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" data-tool="regen" title="Regenerate">↻</button>
+    <button class="tool-btn" data-tool="save" title="Save">💾</button>
+    <button class="tool-btn" data-tool="style" title="Style guide">◇</button>
+    <button class="tool-btn" data-tool="fav" title="Favorites">★</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" data-tool="export" title="Export">⤓</button>
+    <div class="tool-zoom">
+      <button class="tool-btn" data-tool="zin" title="Zoom in">+</button>
+      <span class="tool-zoom-val" id="zoom-val">100%</span>
+      <button class="tool-btn" data-tool="zout" title="Zoom out">−</button>
+    </div>
+  </aside>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

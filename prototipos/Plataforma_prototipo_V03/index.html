@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Renderfarm — V03 (Higgsfield × OpenArt Fusion)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══════ AUTH ══════ -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-glow"></div>
+    <div class="auth-card">
+      <div class="auth-logo">◆</div>
+      <div class="auth-brand">RENDERFARM</div>
+      <p class="auth-tagline">AI Cinema Studio</p>
+      <input type="email" id="auth-email" placeholder="your@email.com" class="field" autofocus>
+      <button class="btn-cta" onclick="doLogin()">Enter Studio →</button>
+      <p id="auth-msg" class="auth-msg"></p>
+    </div>
+  </div>
+
+  <!-- ══════ APP (3-column) ══════ -->
+  <div id="app" class="app-shell" style="display:none;">
+
+    <!-- COL 1: SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-brand"><span class="sb-logo">◆</span> RENDERFARM</div>
+
+      <div class="sb-section-label">CREATE</div>
+      <button class="sb-item active" onclick="goMode('shots',this)">
+        <span class="sb-icon">🎬</span>Shots
+      </button>
+      <button class="sb-item" onclick="goMode('sandbox',this)">
+        <span class="sb-icon">⚡</span>Sandbox
+      </button>
+
+      <div class="sb-section-label">PROJECT</div>
+      <button class="sb-item" onclick="goMode('setup',this)">
+        <span class="sb-icon">📁</span>Setup
+      </button>
+      <button class="sb-item" onclick="goMode('director',this)">
+        <span class="sb-icon">📜</span>Director
+      </button>
+
+      <div class="sb-section-label">ASSETS</div>
+      <button class="sb-item" onclick="goMode('characters',this)">
+        <span class="sb-icon">🧑</span>Characters
+      </button>
+      <button class="sb-item" onclick="goMode('props',this)">
+        <span class="sb-icon">🔫</span>Props
+      </button>
+      <button class="sb-item" onclick="goMode('environments',this)">
+        <span class="sb-icon">🏙️</span>Environments
+      </button>
+
+      <div class="sb-section-label">DELIVER</div>
+      <button class="sb-item" onclick="goMode('export',this)">
+        <span class="sb-icon">📦</span>Export
+      </button>
+
+      <!-- Sidebar footer -->
+      <div class="sb-footer">
+        <div class="sb-credit"><span class="mono">$124.50</span></div>
+        <div class="sb-user" id="uid">user@mail.com</div>
+        <button class="sb-logout" onclick="doLogout()">Log out</button>
+      </div>
+    </aside>
+
+    <!-- COL 2: CONTROL PANEL -->
+    <div class="ctrl-panel">
+
+      <!-- ── SHOTS CONTROLS ── -->
+      <div id="ctrl-shots" class="ctrl active">
+        <div class="ctrl-header">
+          <span class="breadcrumb">Create › <strong>Shots</strong></span>
+        </div>
+
+        <!-- Shot selector -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">SHOT NAVIGATOR</div>
+          <div class="shot-strip">
+            <button class="shot-chip active" onclick="pickShot(0,this)">#1</button>
+            <button class="shot-chip" onclick="pickShot(1,this)">#2</button>
+            <button class="shot-chip" onclick="pickShot(2,this)">#3</button>
+            <button class="shot-chip" onclick="pickShot(3,this)">#4</button>
+            <button class="shot-chip" onclick="pickShot(4,this)">#5</button>
+            <button class="shot-chip shot-add" onclick="addShot()">+</button>
+          </div>
+          <div class="shot-meta"><span class="accent">3</span> / 5 approved</div>
+        </div>
+
+        <!-- Model selector (OpenArt card style) -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">MODEL</div>
+          <button class="model-card" onclick="this.classList.toggle('open')">
+            <div class="model-icon">🖼️</div>
+            <div class="model-info">
+              <span class="model-provider">Black Forest Labs</span>
+              <span class="model-name">Flux Pro v1.1 Ultra</span>
+            </div>
+            <span class="model-chevron">▾</span>
+          </button>
+          <div class="model-dropdown" id="model-dd">
+            <div class="model-group">
+              <div class="model-group-label">Black Forest Labs</div>
+              <div class="model-opt selected">Flux Pro v1.1 Ultra</div>
+              <div class="model-opt">Flux Dev</div>
+              <div class="model-opt">Flux Schnell</div>
+            </div>
+            <div class="model-group">
+              <div class="model-group-label">Runway</div>
+              <div class="model-opt">Gen-3 Alpha</div>
+              <div class="model-opt">Gen-3 Alpha Turbo</div>
+            </div>
+            <div class="model-group">
+              <div class="model-group-label">Luma AI</div>
+              <div class="model-opt">Dream Machine</div>
+            </div>
+            <div class="model-group">
+              <div class="model-group-label">Kling</div>
+              <div class="model-opt">Kling 3.0</div>
+              <div class="model-opt">Kling 2.0 Master</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual references (OpenArt style) -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">VISUAL REFERENCES</div>
+          <div class="ref-upload">
+            <span class="ref-icon">📎</span>
+            <span>Add visual references</span>
+            <span class="ref-count">0/14</span>
+          </div>
+        </div>
+
+        <!-- Prompt (with @mention support) -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROMPT</div>
+          <div class="prompt-area">
+            <div class="prompt-chips" id="prompt-chips">
+              <!-- Inline entity chips will appear here -->
+            </div>
+            <textarea class="field prompt-field" id="prompt-text" rows="4" placeholder="Describe your shot... use @ to add characters & locations&#10;&#10;e.g. @Mike steps through the rain into the dim @Warehouse"></textarea>
+          </div>
+          <div class="prompt-helper">
+            <button class="pill-tag" onclick="insertEntity('Mike')">@Mike</button>
+            <button class="pill-tag" onclick="insertEntity('Elena')">@Elena</button>
+            <button class="pill-tag" onclick="insertEntity('Warehouse')">@Warehouse</button>
+            <button class="pill-tag" onclick="insertEntity('Revolver')">@Revolver</button>
+          </div>
+        </div>
+
+        <!-- Shot details -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">SHOT TYPE</div>
+          <select class="field">
+            <option>Medium Shot</option>
+            <option>Close Up</option>
+            <option>Wide</option>
+            <option>Over the Shoulder</option>
+            <option>Extreme Close Up</option>
+            <option>Bird's Eye</option>
+          </select>
+        </div>
+
+        <div class="ctrl-section">
+          <div class="ctrl-label">CAMERA MOTION</div>
+          <input class="field" value="Slow push-in, handheld">
+        </div>
+
+        <!-- Output config (OpenArt style) -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">OUTPUT</div>
+          <div class="output-row">
+            <div class="output-chip">16:9</div>
+            <div class="output-chip">1080p</div>
+            <div class="output-chip">8s</div>
+            <div class="output-chip">Cinema</div>
+          </div>
+        </div>
+
+        <!-- Batch count -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">VARIATIONS</div>
+          <div class="batch-ctrl">
+            <button class="batch-btn" onclick="batchChange(-1)">−</button>
+            <span class="batch-val" id="batch-n">2</span>
+            <button class="batch-btn" onclick="batchChange(1)">+</button>
+          </div>
+        </div>
+
+        <!-- Director notes -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">NOTES</div>
+          <input class="field" placeholder="Director notes...">
+        </div>
+
+        <!-- Actions -->
+        <div class="ctrl-actions">
+          <button class="btn-cta btn-full" id="btn-generate">⚡ Generate — 96 credits</button>
+          <div class="ctrl-actions-row">
+            <button class="btn-approve flex-1">✓ Approve</button>
+            <button class="btn-sm btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETUP CONTROLS ── -->
+      <div id="ctrl-setup" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Project › <strong>Setup</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROJECTS</div>
+          <div class="proj-list">
+            <div class="proj active-proj" onclick="pickProj(this)"><span>Midnight Chase</span><span class="pill-active">Active</span></div>
+            <div class="proj" onclick="pickProj(this)"><span>Neon Dreams</span></div>
+            <div class="proj" onclick="pickProj(this)"><span>Desert Storm</span></div>
+          </div>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">NEW PROJECT</div>
+          <input class="field" placeholder="Project name...">
+          <button class="btn-cta btn-full mt-8">+ Create Project</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">ACTIONS</div>
+          <div class="ctrl-actions-row">
+            <button class="btn-sm btn-outline flex-1">Load</button>
+            <button class="btn-sm btn-danger flex-1">Delete</button>
+          </div>
+        </div>
+        <div class="status-line">● "Midnight Chase" loaded</div>
+      </div>
+
+      <!-- ── DIRECTOR CONTROLS ── -->
+      <div id="ctrl-director" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Project › <strong>Director</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">SCREENPLAY</div>
+          <textarea class="field" rows="16" placeholder="Paste your screenplay...&#10;&#10;INT. WAREHOUSE — NIGHT&#10;&#10;MIKE (40s, leather jacket) steps into dim light.&#10;Rain hammers the skylights above."></textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">LANGUAGE</div>
+          <select class="field"><option>English</option><option>Español</option></select>
+        </div>
+        <button class="btn-cta btn-full">✦ Analyze Script</button>
+      </div>
+
+      <!-- ── CHARACTERS CONTROLS ── -->
+      <div id="ctrl-characters" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Assets › <strong>Characters</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">CHARACTERS</div>
+          <div class="asset-list-panel">
+            <div class="asset-row sel" onclick="selAsset(this)"><div class="at-dot" style="background:#7c3aed"></div>Mike</div>
+            <div class="asset-row" onclick="selAsset(this)"><div class="at-dot" style="background:#2563eb"></div>Elena</div>
+            <div class="asset-row" onclick="selAsset(this)"><div class="at-dot" style="background:#059669"></div>Det. Ross</div>
+          </div>
+          <button class="btn-sm btn-outline btn-full mt-8">+ New Character</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">NAME</div>
+          <input class="field" value="Mike">
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">DESCRIPTION</div>
+          <textarea class="field" rows="2">40s male, leather jacket, scarred hands</textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">AI PROMPT</div>
+          <textarea class="field" rows="3">Photorealistic portrait, 40yo man, leather jacket, short grey hair, cinematic lighting, dark warehouse</textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">MODEL</div>
+          <button class="model-card sm">
+            <div class="model-icon">🖼️</div>
+            <div class="model-info">
+              <span class="model-provider">Black Forest Labs</span>
+              <span class="model-name">Flux Pro Ultra</span>
+            </div>
+            <span class="model-chevron">▾</span>
+          </button>
+        </div>
+        <div class="ctrl-actions">
+          <button class="btn-cta btn-full">⚡ Generate</button>
+          <button class="btn-sm btn-danger btn-full mt-8">Delete Character</button>
+        </div>
+      </div>
+
+      <!-- ── PROPS CONTROLS ── -->
+      <div id="ctrl-props" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Assets › <strong>Props</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROPS</div>
+          <div class="asset-list-panel">
+            <div class="asset-row sel"><div class="at-dot" style="background:#dc2626"></div>Revolver</div>
+            <div class="asset-row"><div class="at-dot" style="background:#f59e0b"></div>Briefcase</div>
+          </div>
+          <button class="btn-sm btn-outline btn-full mt-8">+ New Prop</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">NAME</div>
+          <input class="field" value="Revolver">
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">AI PROMPT</div>
+          <textarea class="field" rows="3">Worn .44 revolver on wet concrete, close-up, cinematic depth of field</textarea>
+        </div>
+        <button class="btn-cta btn-full">⚡ Generate</button>
+      </div>
+
+      <!-- ── ENVIRONMENTS CONTROLS ── -->
+      <div id="ctrl-environments" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Assets › <strong>Environments</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">ENVIRONMENTS</div>
+          <div class="asset-list-panel">
+            <div class="asset-row sel"><div class="at-dot" style="background:#6366f1"></div>Warehouse</div>
+            <div class="asset-row"><div class="at-dot" style="background:#0ea5e9"></div>Rooftop</div>
+            <div class="asset-row"><div class="at-dot" style="background:#a3a3a3"></div>Alley</div>
+          </div>
+          <button class="btn-sm btn-outline btn-full mt-8">+ New Environment</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">NAME</div>
+          <input class="field" value="Warehouse">
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">AI PROMPT</div>
+          <textarea class="field" rows="3">Abandoned industrial warehouse, rain on skylights, dim fluorescent lights, wet concrete floor, volumetric fog</textarea>
+        </div>
+        <button class="btn-cta btn-full">⚡ Generate</button>
+      </div>
+
+      <!-- ── SANDBOX CONTROLS ── -->
+      <div id="ctrl-sandbox" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Create › <strong>Sandbox</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">TYPE</div>
+          <div class="output-row">
+            <div class="output-chip active">Image</div>
+            <div class="output-chip">Video</div>
+            <div class="output-chip">Audio</div>
+          </div>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">MODEL</div>
+          <button class="model-card sm">
+            <div class="model-icon">🖼️</div>
+            <div class="model-info">
+              <span class="model-provider">Black Forest Labs</span>
+              <span class="model-name">Flux Pro Ultra</span>
+            </div>
+            <span class="model-chevron">▾</span>
+          </button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROMPT</div>
+          <textarea class="field" rows="5" placeholder="Write any prompt... no project rules here."></textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">VARIATIONS</div>
+          <div class="batch-ctrl">
+            <button class="batch-btn">−</button>
+            <span class="batch-val">1</span>
+            <button class="batch-btn">+</button>
+          </div>
+        </div>
+        <button class="btn-cta btn-full">⚡ Generate</button>
+      </div>
+
+      <!-- ── EXPORT CONTROLS ── -->
+      <div id="ctrl-export" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Deliver › <strong>Export</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">STATUS</div>
+          <div class="export-stat">
+            <div class="stat-row"><span>Approved</span><span class="accent mono">3</span></div>
+            <div class="stat-row"><span>Pending</span><span class="mono">2</span></div>
+            <div class="stat-row"><span>Total cost</span><span class="green mono">$2.34</span></div>
+          </div>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">ACTIONS</div>
+          <button class="btn-cta btn-full">Export PDF</button>
+          <button class="btn-sm btn-outline btn-full mt-8">Download ZIP</button>
+          <button class="btn-sm btn-outline btn-full mt-8">CSV for Premiere</button>
+        </div>
+      </div>
+
+    </div><!-- /ctrl-panel -->
+
+    <!-- COL 3: CANVAS -->
+    <main class="canvas">
+      <!-- Top toolbar (OpenArt-style) -->
+      <div class="canvas-toolbar">
+        <div class="tb-left">
+          <div class="tb-pill active">All Creations</div>
+          <div class="tb-pill">Collections</div>
+        </div>
+        <div class="tb-right">
+          <div class="tb-icon-group">
+            <button class="tb-icon" title="Grid view">▦</button>
+            <button class="tb-icon active" title="Single view">◻</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Render viewport -->
+      <div class="render-viewport" id="render-viewport">
+        <div class="rv-empty">
+          <div class="rv-icon">◆</div>
+          <div class="rv-text">RENDER CANVAS</div>
+          <div class="rv-sub">Select a shot and hit Generate to start</div>
+        </div>
+      </div>
+
+      <!-- Variations strip -->
+      <div class="var-strip" id="var-strip">
+        <div class="var-th"></div>
+        <div class="var-th"></div>
+        <div class="var-th"></div>
+        <div class="var-th"></div>
+      </div>
+    </main>
+
+    <!-- BOTTOM DOCK (OpenArt + Higgsfield fusion) -->
+    <div class="bottom-dock">
+      <button class="dock-item active" onclick="goDock('shots',this)"><span class="dock-icon">🎬</span>Shots</button>
+      <button class="dock-item" onclick="goDock('sandbox',this)"><span class="dock-icon">⚡</span>Sandbox</button>
+      <button class="dock-item" onclick="goDock('characters',this)"><span class="dock-icon">🧑</span>Chars</button>
+      <button class="dock-item" onclick="goDock('environments',this)"><span class="dock-icon">🏙️</span>Envs</button>
+      <button class="dock-item" onclick="goDock('export',this)"><span class="dock-icon">📦</span>Export</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Renderfarm — V04 (Weave Pipeline)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══════ AUTH ══════ -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-glow"></div>
+    <div class="auth-card">
+      <div class="auth-logo">◆</div>
+      <div class="auth-brand">RENDERFARM</div>
+      <p class="auth-tagline">AI Cinema Studio · V04</p>
+      <input type="email" id="auth-email" placeholder="your@email.com" class="field" autofocus>
+      <button class="btn-cta" onclick="doLogin()">Enter Studio →</button>
+      <p id="auth-msg" class="auth-msg"></p>
+    </div>
+  </div>
+
+  <!-- ══════ APP SHELL ══════ -->
+  <div id="app" class="app-shell" style="display:none;">
+
+    <!-- COL 1: SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-brand"><span class="sb-logo">◆</span> RENDERFARM</div>
+
+      <div class="sb-section-label">CREATE</div>
+      <button class="sb-item active" onclick="goMode('shots',this)">
+        <span class="sb-icon">🎬</span>Shots
+      </button>
+      <button class="sb-item" onclick="goMode('sandbox',this)">
+        <span class="sb-icon">⚡</span>Sandbox
+      </button>
+
+      <div class="sb-section-label">PROJECT</div>
+      <button class="sb-item" onclick="goMode('setup',this)">
+        <span class="sb-icon">📁</span>Setup
+      </button>
+      <button class="sb-item" onclick="goMode('director',this)">
+        <span class="sb-icon">📜</span>Director
+      </button>
+
+      <div class="sb-section-label">ASSETS</div>
+      <button class="sb-item" onclick="goMode('characters',this)">
+        <span class="sb-icon">🧑</span>Characters
+      </button>
+      <button class="sb-item" onclick="goMode('props',this)">
+        <span class="sb-icon">🔫</span>Props
+      </button>
+      <button class="sb-item" onclick="goMode('environments',this)">
+        <span class="sb-icon">🏙️</span>Environments
+      </button>
+
+      <div class="sb-section-label">DELIVER</div>
+      <button class="sb-item" onclick="goMode('export',this)">
+        <span class="sb-icon">📦</span>Export
+      </button>
+
+      <div class="sb-footer">
+        <div class="sb-credit"><span class="mono">$124.50</span></div>
+        <div class="sb-user" id="uid">user@mail.com</div>
+        <button class="sb-logout" onclick="doLogout()">Log out</button>
+      </div>
+    </aside>
+
+    <!-- COL 2: CONTROL PANEL -->
+    <div class="ctrl-panel">
+
+      <!-- ── SHOTS ── -->
+      <div id="ctrl-shots" class="ctrl active">
+        <div class="ctrl-header">
+          <span class="breadcrumb">Create › <strong>Shots</strong></span>
+        </div>
+
+        <!-- Pipeline Breadcrumb (NEW V04) -->
+        <div class="pipeline-crumb">
+          <div class="pipe-step step-prompt"><span class="pipe-dot"></span>Prompt</div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step step-model"><span class="pipe-dot"></span>Flux Pro</div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step step-params"><span class="pipe-dot"></span>1080p · 8s</div>
+          <span class="pipe-arrow">→</span>
+          <div class="pipe-step step-output"><span class="pipe-dot"></span>Output</div>
+        </div>
+
+        <!-- Shot Navigator -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">SHOT NAVIGATOR</div>
+          <div class="shot-strip" id="shot-strip">
+            <button class="shot-chip active" onclick="pickShot(0,this)">#1<span class="status-dot done"></span></button>
+            <button class="shot-chip" onclick="pickShot(1,this)">#2<span class="status-dot done"></span></button>
+            <button class="shot-chip" onclick="pickShot(2,this)">#3<span class="status-dot pending"></span></button>
+            <button class="shot-chip" onclick="pickShot(3,this)">#4<span class="status-dot done"></span></button>
+            <button class="shot-chip" onclick="pickShot(4,this)">#5<span class="status-dot error"></span></button>
+            <button class="shot-chip shot-add" onclick="addShot()">+</button>
+          </div>
+          <div class="shot-meta"><span class="accent">3</span> / 5 approved</div>
+        </div>
+
+        <!-- Model (Collapsible — V04) -->
+        <div class="ctrl-section">
+          <div class="ctrl-collapse" aria-expanded="true" onclick="toggleSection(this)">
+            <div class="ctrl-label">MODEL</div>
+            <span class="ctrl-chevron">▾</span>
+          </div>
+          <div class="ctrl-collapse-body">
+            <button class="model-card" onclick="this.classList.toggle('open')">
+              <div class="model-icon">🖼️</div>
+              <div class="model-info">
+                <span class="model-provider">Black Forest Labs</span>
+                <span class="model-name">Flux Pro v1.1 Ultra</span>
+              </div>
+              <span class="model-chevron">▾</span>
+            </button>
+            <div class="model-dropdown" id="model-dd">
+              <div class="model-group">
+                <div class="model-group-label">Black Forest Labs</div>
+                <div class="model-opt selected">Flux Pro v1.1 Ultra</div>
+                <div class="model-opt">Flux Dev</div>
+                <div class="model-opt">Flux Schnell</div>
+              </div>
+              <div class="model-group">
+                <div class="model-group-label">Runway</div>
+                <div class="model-opt">Gen-3 Alpha</div>
+                <div class="model-opt">Gen-3 Alpha Turbo</div>
+              </div>
+              <div class="model-group">
+                <div class="model-group-label">Kling</div>
+                <div class="model-opt">Kling 3.0</div>
+                <div class="model-opt">Kling 2.0 Master</div>
+              </div>
+              <div class="model-group">
+                <div class="model-group-label">Luma AI</div>
+                <div class="model-opt">Dream Machine</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual References (Collapsible) -->
+        <div class="ctrl-section">
+          <div class="ctrl-collapse" aria-expanded="true" onclick="toggleSection(this)">
+            <div class="ctrl-label">VISUAL REFERENCES</div>
+            <span class="ctrl-chevron">▾</span>
+          </div>
+          <div class="ctrl-collapse-body">
+            <div class="ref-upload">
+              <span class="ref-icon">📎</span>
+              <span>Add visual references</span>
+              <span class="ref-count">0/14</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompt -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROMPT</div>
+          <div class="prompt-area">
+            <textarea class="field prompt-field" id="prompt-text" rows="4" placeholder="Describe your shot... use @ to add characters&#10;&#10;e.g. @Mike steps through the rain into the dim @Warehouse"></textarea>
+          </div>
+          <div class="prompt-helper">
+            <button class="pill-tag" onclick="insertEntity('Mike')">@Mike</button>
+            <button class="pill-tag" onclick="insertEntity('Elena')">@Elena</button>
+            <button class="pill-tag" onclick="insertEntity('Warehouse')">@Warehouse</button>
+            <button class="pill-tag" onclick="insertEntity('Revolver')">@Revolver</button>
+          </div>
+        </div>
+
+        <!-- Parameters (Collapsible — V04 Weave sliders) -->
+        <div class="ctrl-section">
+          <div class="ctrl-collapse" aria-expanded="true" onclick="toggleSection(this)">
+            <div class="ctrl-label">PARAMETERS</div>
+            <span class="ctrl-chevron">▾</span>
+          </div>
+          <div class="ctrl-collapse-body">
+            <div class="ctrl-label" style="font-size:9px;margin-bottom:4px">SHOT TYPE</div>
+            <select class="field">
+              <option>Medium Shot</option><option>Close Up</option><option>Wide</option>
+              <option>Over the Shoulder</option><option>Extreme Close Up</option><option>Bird's Eye</option>
+            </select>
+            <div class="ctrl-label" style="font-size:9px;margin-top:10px;margin-bottom:4px">CAMERA MOTION</div>
+            <input class="field" value="Slow push-in, handheld">
+            <div class="ctrl-label" style="font-size:9px;margin-top:10px;margin-bottom:4px">INFERENCE STEPS</div>
+            <div class="slider-row">
+              <input type="range" min="10" max="50" value="28" oninput="this.nextElementSibling.textContent=this.value">
+              <span class="slider-val">28</span>
+            </div>
+            <div class="ctrl-label" style="font-size:9px;margin-top:10px;margin-bottom:4px">CFG SCALE</div>
+            <div class="slider-row">
+              <input type="range" min="1" max="20" value="7" step="0.5" oninput="this.nextElementSibling.textContent=this.value">
+              <span class="slider-val">7</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="ctrl-section">
+          <div class="ctrl-collapse" aria-expanded="true" onclick="toggleSection(this)">
+            <div class="ctrl-label">OUTPUT</div>
+            <span class="ctrl-chevron">▾</span>
+          </div>
+          <div class="ctrl-collapse-body">
+            <div class="output-row">
+              <div class="output-chip active">16:9</div>
+              <div class="output-chip">1:1</div>
+              <div class="output-chip">9:16</div>
+            </div>
+            <div class="output-row" style="margin-top:6px">
+              <div class="output-chip active">1080p</div>
+              <div class="output-chip">720p</div>
+              <div class="output-chip">4K</div>
+            </div>
+            <div class="output-row" style="margin-top:6px">
+              <div class="output-chip active">8s</div>
+              <div class="output-chip">4s</div>
+              <div class="output-chip">16s</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Variations -->
+        <div class="ctrl-section">
+          <div class="ctrl-label">VARIATIONS</div>
+          <div class="batch-ctrl">
+            <button class="batch-btn" onclick="batchChange(-1)">−</button>
+            <span class="batch-val" id="batch-n">2</span>
+            <button class="batch-btn" onclick="batchChange(1)">+</button>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="ctrl-section">
+          <div class="ctrl-collapse" aria-expanded="false" onclick="toggleSection(this)">
+            <div class="ctrl-label">NOTES</div>
+            <span class="ctrl-chevron">▾</span>
+          </div>
+          <div class="ctrl-collapse-body">
+            <input class="field" placeholder="Director notes...">
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="ctrl-actions">
+          <button class="btn-cta btn-full" id="btn-generate" onclick="doGenerate()">⚡ Generate — 96 credits</button>
+          <div class="ctrl-actions-row">
+            <button class="btn-approve flex-1">✓ Approve</button>
+            <button class="btn-sm btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETUP ── -->
+      <div id="ctrl-setup" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Project › <strong>Setup</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROJECTS</div>
+          <div class="proj-list">
+            <div class="proj active-proj" onclick="pickProj(this)"><span>Midnight Chase</span><span class="pill-active">Active</span></div>
+            <div class="proj" onclick="pickProj(this)"><span>Neon Dreams</span></div>
+            <div class="proj" onclick="pickProj(this)"><span>Desert Storm</span></div>
+          </div>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">NEW PROJECT</div>
+          <input class="field" placeholder="Project name...">
+          <button class="btn-cta btn-full mt-8">+ Create Project</button>
+        </div>
+        <div class="status-line">● "Midnight Chase" loaded</div>
+      </div>
+
+      <!-- ── DIRECTOR ── -->
+      <div id="ctrl-director" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Project › <strong>Director</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">SCREENPLAY</div>
+          <textarea class="field" rows="16" placeholder="Paste your screenplay...&#10;&#10;INT. WAREHOUSE — NIGHT&#10;&#10;MIKE (40s, leather jacket) steps into dim light."></textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">LANGUAGE</div>
+          <select class="field"><option>English</option><option>Español</option></select>
+        </div>
+        <button class="btn-cta btn-full" style="margin:12px 16px;width:calc(100% - 32px)">✦ Analyze Script</button>
+      </div>
+
+      <!-- ── CHARACTERS ── -->
+      <div id="ctrl-characters" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Assets › <strong>Characters</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">CHARACTERS</div>
+          <div class="asset-list-panel">
+            <div class="asset-row sel" onclick="selAsset(this)"><div class="at-dot" style="background:#7c5cff"></div>Mike</div>
+            <div class="asset-row" onclick="selAsset(this)"><div class="at-dot" style="background:#3b82f6"></div>Elena</div>
+            <div class="asset-row" onclick="selAsset(this)"><div class="at-dot" style="background:#4ecb71"></div>Det. Ross</div>
+          </div>
+          <button class="btn-sm btn-outline btn-full mt-8">+ New Character</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">NAME</div>
+          <input class="field" value="Mike">
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">DESCRIPTION</div>
+          <textarea class="field" rows="2">40s male, leather jacket, scarred hands</textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">AI PROMPT</div>
+          <textarea class="field" rows="3">Photorealistic portrait, 40yo man, leather jacket, short grey hair, cinematic lighting</textarea>
+        </div>
+        <div class="ctrl-actions">
+          <button class="btn-cta btn-full">⚡ Generate</button>
+          <button class="btn-sm btn-danger btn-full mt-8">Delete Character</button>
+        </div>
+      </div>
+
+      <!-- ── PROPS ── -->
+      <div id="ctrl-props" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Assets › <strong>Props</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROPS</div>
+          <div class="asset-list-panel">
+            <div class="asset-row sel"><div class="at-dot" style="background:#ff4d4d"></div>Revolver</div>
+            <div class="asset-row"><div class="at-dot" style="background:#f5a623"></div>Briefcase</div>
+          </div>
+          <button class="btn-sm btn-outline btn-full mt-8">+ New Prop</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">AI PROMPT</div>
+          <textarea class="field" rows="3">Worn .44 revolver on wet concrete, close-up, cinematic depth of field</textarea>
+        </div>
+        <button class="btn-cta btn-full" style="margin:12px 16px;width:calc(100% - 32px)">⚡ Generate</button>
+      </div>
+
+      <!-- ── ENVIRONMENTS ── -->
+      <div id="ctrl-environments" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Assets › <strong>Environments</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">ENVIRONMENTS</div>
+          <div class="asset-list-panel">
+            <div class="asset-row sel"><div class="at-dot" style="background:#7c5cff"></div>Warehouse</div>
+            <div class="asset-row"><div class="at-dot" style="background:#00d4ff"></div>Rooftop</div>
+            <div class="asset-row"><div class="at-dot" style="background:#9898a8"></div>Alley</div>
+          </div>
+          <button class="btn-sm btn-outline btn-full mt-8">+ New Environment</button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">AI PROMPT</div>
+          <textarea class="field" rows="3">Abandoned industrial warehouse, rain on skylights, dim fluorescent lights, volumetric fog</textarea>
+        </div>
+        <button class="btn-cta btn-full" style="margin:12px 16px;width:calc(100% - 32px)">⚡ Generate</button>
+      </div>
+
+      <!-- ── SANDBOX ── -->
+      <div id="ctrl-sandbox" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Create › <strong>Sandbox</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">TYPE</div>
+          <div class="output-row">
+            <div class="output-chip active">Image</div>
+            <div class="output-chip">Video</div>
+            <div class="output-chip">Audio</div>
+          </div>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">MODEL</div>
+          <button class="model-card sm">
+            <div class="model-icon">🖼️</div>
+            <div class="model-info">
+              <span class="model-provider">Black Forest Labs</span>
+              <span class="model-name">Flux Pro Ultra</span>
+            </div>
+            <span class="model-chevron">▾</span>
+          </button>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">PROMPT</div>
+          <textarea class="field" rows="5" placeholder="Write any prompt... no project rules here."></textarea>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">VARIATIONS</div>
+          <div class="batch-ctrl">
+            <button class="batch-btn">−</button>
+            <span class="batch-val">1</span>
+            <button class="batch-btn">+</button>
+          </div>
+        </div>
+        <button class="btn-cta btn-full" style="margin:12px 16px;width:calc(100% - 32px)">⚡ Generate</button>
+      </div>
+
+      <!-- ── EXPORT ── -->
+      <div id="ctrl-export" class="ctrl">
+        <div class="ctrl-header"><span class="breadcrumb">Deliver › <strong>Export</strong></span></div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">STATUS</div>
+          <div class="export-stat">
+            <div class="stat-row"><span>Approved</span><span class="accent mono">3</span></div>
+            <div class="stat-row"><span>Pending</span><span class="mono">2</span></div>
+            <div class="stat-row"><span>Total cost</span><span class="green mono">$2.34</span></div>
+          </div>
+        </div>
+        <div class="ctrl-section">
+          <div class="ctrl-label">ACTIONS</div>
+          <button class="btn-cta btn-full">Export PDF</button>
+          <button class="btn-sm btn-outline btn-full mt-8">Download ZIP</button>
+          <button class="btn-sm btn-outline btn-full mt-8">CSV for Premiere</button>
+        </div>
+      </div>
+
+    </div><!-- /ctrl-panel -->
+
+    <!-- COL 3: CANVAS -->
+    <main class="canvas">
+      <div class="canvas-toolbar">
+        <div class="tb-left">
+          <div class="tb-pill active" onclick="setView('single',this)">Single</div>
+          <div class="tb-pill" onclick="setView('compare',this)">Compare</div>
+          <div class="tb-pill" onclick="setView('grid',this)">Grid</div>
+        </div>
+        <div class="tb-right">
+          <div class="tb-icon" title="Zoom In">+</div>
+          <div class="tb-icon" title="Zoom Out">−</div>
+          <div class="tb-icon" title="Fit">⊡</div>
+        </div>
+      </div>
+
+      <!-- Single View -->
+      <div class="render-viewport" id="render-viewport">
+        <div class="rv-empty" id="rv-empty">
+          <div class="rv-icon">◆</div>
+          <div class="rv-text">RENDER CANVAS</div>
+          <div class="rv-sub">Select a shot and hit Generate to start</div>
+        </div>
+      </div>
+
+      <!-- Comparison Grid (NEW V04) -->
+      <div class="comparison-grid cols-2" id="comparison-grid">
+        <div class="comp-card" onclick="selectComp(this)">
+          <div class="comp-preview">
+            <div class="comp-placeholder">◆</div>
+            <div class="comp-overlay">
+              <span class="comp-badge model-badge">Flux Pro</span>
+              <span class="comp-badge cost-badge">$0.04</span>
+            </div>
+          </div>
+          <div class="comp-footer">
+            <span class="comp-model-name">Variation A</span>
+            <div class="comp-actions"><button title="Approve">✓</button><button title="Expand">⊡</button></div>
+          </div>
+        </div>
+        <div class="comp-card" onclick="selectComp(this)">
+          <div class="comp-preview">
+            <div class="comp-placeholder">◆</div>
+            <div class="comp-overlay">
+              <span class="comp-badge model-badge">Flux Pro</span>
+              <span class="comp-badge cost-badge">$0.04</span>
+            </div>
+          </div>
+          <div class="comp-footer">
+            <span class="comp-model-name">Variation B</span>
+            <div class="comp-actions"><button title="Approve">✓</button><button title="Expand">⊡</button></div>
+          </div>
+        </div>
+        <div class="comp-card" onclick="selectComp(this)">
+          <div class="comp-preview">
+            <div class="comp-placeholder">◆</div>
+            <div class="comp-overlay">
+              <span class="comp-badge model-badge">Kling 3.0</span>
+              <span class="comp-badge cost-badge">$0.08</span>
+            </div>
+          </div>
+          <div class="comp-footer">
+            <span class="comp-model-name">Variation C</span>
+            <div class="comp-actions"><button title="Approve">✓</button><button title="Expand">⊡</button></div>
+          </div>
+        </div>
+        <div class="comp-card" onclick="selectComp(this)">
+          <div class="comp-preview">
+            <div class="comp-placeholder">◆</div>
+            <div class="comp-overlay">
+              <span class="comp-badge model-badge">Kling 3.0</span>
+              <span class="comp-badge cost-badge">$0.08</span>
+            </div>
+          </div>
+          <div class="comp-footer">
+            <span class="comp-model-name">Variation D</span>
+            <div class="comp-actions"><button title="Approve">✓</button><button title="Expand">⊡</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variations strip -->
+      <div class="var-strip" id="var-strip">
+        <div class="var-th active"></div>
+        <div class="var-th"></div>
+        <div class="var-th"></div>
+        <div class="var-th"></div>
+      </div>
+    </main>
+
+    <!-- BOTTOM DOCK -->
+    <div class="bottom-dock">
+      <button class="dock-item active" onclick="goDock('shots',this)"><span class="dock-icon">🎬</span>Shots</button>
+      <button class="dock-item" onclick="goDock('sandbox',this)"><span class="dock-icon">⚡</span>Sandbox</button>
+      <button class="dock-item" onclick="goDock('characters',this)"><span class="dock-icon">🧑</span>Chars</button>
+      <button class="dock-item" onclick="goDock('environments',this)"><span class="dock-icon">🏙️</span>Envs</button>
+      <button class="dock-item" onclick="goDock('export',this)"><span class="dock-icon">📦</span>Export</button>
+
+      <!-- Queue Widget (NEW V04) -->
+      <div class="dock-queue" id="dock-queue" style="display:none;">
+        <div class="queue-indicator">
+          <span class="q-dot"></span>
+          <span class="q-label" id="q-label">2 jobs</span>
+        </div>
+        <div class="queue-bar"><div class="queue-bar-fill" id="q-fill" style="width:35%"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
