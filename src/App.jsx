@@ -14,6 +14,7 @@ import { genId, deleteVariant, downloadAsset, getDriveDisplayUrl } from './utils
 // ─── STATUS COLORS ─────────────────────────
 const STATUS = { done:'var(--ok)', pending:'var(--warn)', error:'var(--err)', processing:'var(--cyan)', ready:'var(--t3)' }
 const CAT_ICONS = { image:'🖼', video:'🎬', audio:'🎵', '3d':'🧊', lipsync:'💋' }
+const MODE_TO_CAT = { shot:'image', sandbox:'image', edit:'image', audio:'audio', '3d':'3d' }
 
 // ─── MAIN APP ──────────────────────────────
 function App() {
@@ -34,6 +35,10 @@ function App() {
   const [genLabel, setGenLabel] = useState('No active jobs')
   const [sessionCost, setSessionCost] = useState(0)
   const [glogOpen, setGlogOpen] = useState(true)
+  const [showNewProject, setShowNewProject] = useState(false)
+  const [newProjectName, setNewProjectName] = useState('')
+  const [dockTab, setDockTab] = useState('queue')
+  const [costPreview, setCostPreview] = useState(null)
   const [logs, setLogs] = useState([{type:'ok',icon:'✓',msg:'System ready'}])
   const [modelCategories, setModelCategories] = useState({})
   const [pipelineStep, setPipelineStep] = useState(0)
@@ -136,6 +141,13 @@ function App() {
           setGenLabel('No active jobs')
           refreshMedia()
           addLog('ok','✓', `Output ready: ${o.file_name || o.task_id}`)
+          // Track real session cost
+          if (o.actual_cost) {
+            setSessionCost(prev => prev + parseFloat(o.actual_cost))
+          } else if (o.estimated_cost) {
+            setSessionCost(prev => prev + parseFloat(o.estimated_cost))
+          }
+          setPipelineStep(3)
         } else if (o.status === 'processing') {
           setGenProgress(o.progress || 50)
           setGenLabel(o.status_message || 'Processing…')
@@ -150,14 +162,44 @@ function App() {
     setLogs(prev => [...prev.slice(-30), { type, icon, msg, ts: Date.now() }])
   }
 
+  // ─── PERSIST CONTRACT TO SUPABASE ─────────
+  const persistContract = useCallback(async (newContract) => {
+    if (!activeProject?.id) return
+    try {
+      await supabase.from('projects').update({ contract: newContract }).eq('id', activeProject.id)
+    } catch(e) { console.error('Persist error:', e) }
+  }, [activeProject])
+
+  // ─── COST PREVIEW ─────────────────────────
+  const updateCostPreview = useCallback((modelId, params) => {
+    const cost = calculatePreviewCost(modelId, params)
+    setCostPreview(cost)
+  }, [])
+
+  // ─── CREATE PROJECT ───────────────────────
+  const createProject = useCallback(async (name) => {
+    if (!name.trim() || !session) return
+    const { data, error } = await supabase.from('projects').insert({
+      name: name.trim(), profile_id: session.user.id, contract: { characters:[], props:[], environments:[], shots:[] }
+    }).select().single()
+    if (error) { toast.error(error.message); return }
+    setProjects(prev => [...prev, data])
+    setActiveProject(data)
+    setContract({ characters:[], props:[], environments:[], shots:[] })
+    setShowNewProject(false)
+    setNewProjectName('')
+    addLog('ok','✓',`Project "${name}" created`)
+  }, [session])
+
   // ─── GENERATE ─────────────────────────────
   const handleGenerate = useCallback(async (shot) => {
     if (generating) return
     setGenerating(true)
     setGenProgress(5)
-    setGenLabel(`Generating ${shot?.title || ''}…`)
+    const cost = calculatePreviewCost(shot?.model || 'fal-ai/flux-pro/v1.1', { aspect_ratio: shot?.ar })
+    setGenLabel(`Generating ${shot?.title || ''}… ${formatCost(cost)}`)
     setPipelineStep(2)
-    addLog('run','⟳',`Sending to ${shot?.model || 'pipeline'}…`)
+    addLog('run','⟳',`Sending to ${shot?.model || 'pipeline'}… est. ${formatCost(cost)}`)
 
     const taskId = genId('TASK')
     const payload = {
@@ -200,9 +242,25 @@ function App() {
       <header className="topbar">
         <div className="top-left">
           <div className="top-brand"><i>◈</i> RENDERFARM</div>
-          <button className="top-project" onClick={() => toast('Project selector coming soon')}>
-            📁 {activeProject?.name || 'No Project'} <span className="chevron-sm">▾</span>
-          </button>
+          <div style={{position:'relative'}}>
+            <button className="top-project" onClick={() => setShowNewProject(!showNewProject)}>
+              📁 {activeProject?.name || 'No Project'} <span className="chevron-sm">▾</span>
+            </button>
+            {showNewProject && (
+              <div style={{position:'absolute',top:'100%',left:0,marginTop:4,background:'var(--bg2)',border:'1px solid var(--t4)',borderRadius:'var(--r2)',padding:8,zIndex:300,width:220,display:'flex',flexDirection:'column',gap:6}}>
+                {projects.map(p => (
+                  <button key={p.id} className={`btn btn-ghost btn-sm${p.id===activeProject?.id?' btn-primary':''}`}
+                    onClick={() => { setActiveProject(p); setShowNewProject(false); const c = p.contract||{}; setContract({characters:c.characters||[],props:c.props||[],environments:c.environments||[],shots:c.shots||[]}); addLog('ok','✓',`Switched to "${p.name}"`) }}>
+                    {p.name}
+                  </button>
+                ))}
+                <div style={{borderTop:'1px solid var(--t4)',paddingTop:6,display:'flex',gap:4}}>
+                  <input className="field" placeholder="New project…" value={newProjectName} onChange={e=>setNewProjectName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')createProject(newProjectName)}} style={{flex:1}} />
+                  <button className="btn btn-primary btn-sm" onClick={()=>createProject(newProjectName)}>+</button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="pipeline">
           {['Prompt','Model','Render','Output'].map((s,i) => (
@@ -234,11 +292,11 @@ function App() {
         <button className={`rail-btn${assetsOpen?' active':''}`} onClick={() => setAssetsOpen(!assetsOpen)}>
           📦<span className="rail-tip">Assets</span>
         </button>
-        <button className="rail-btn" onClick={() => toast('Sandbox mode')}>⚡<span className="rail-tip">Sandbox</span></button>
+        <button className="rail-btn" onClick={() => { setMode('sandbox'); toast('Sandbox mode — free generation') }}>⚡<span className="rail-tip">Sandbox</span></button>
         <div className="rail-end">
           <div className="rail-sep" />
-          <button className="rail-btn" onClick={() => supabase.auth.signOut()}>
-            ⚙<span className="rail-tip">Settings</span>
+          <button className="rail-btn" onClick={() => { if(confirm('Sign out?')) supabase.auth.signOut() }}>
+            ⚙<span className="rail-tip">Sign Out</span>
           </button>
         </div>
       </nav>
@@ -373,8 +431,12 @@ function App() {
                 </div>
               </div>
               <div className="insp-foot">
+                <div className="cost-row" style={{marginBottom:6}}>
+                  <span className="mono">Estimated cost</span>
+                  <span className="cost-val">{formatCost(calculatePreviewCost(selected.model, {aspect_ratio:selected.ar}))}</span>
+                </div>
                 <button className="btn btn-primary btn-full" onClick={() => handleGenerate(selected)} disabled={generating}>
-                  ⚡ Generate
+                  ⚡ Generate — {formatCost(calculatePreviewCost(selected.model, {aspect_ratio:selected.ar}))}
                 </button>
                 <div className="insp-acts">
                   <button className="btn btn-ghost btn-sm" onClick={() => setView('compare')}>⊞ Compare</button>
@@ -434,9 +496,9 @@ function App() {
               <div className="share-sec">
                 <div className="insp-lbl">Export</div>
                 <div className="share-exports">
-                  <button className="btn btn-ghost btn-sm btn-full">📄 PDF Storyboard</button>
-                  <button className="btn btn-ghost btn-sm btn-full">📦 Download ZIP</button>
-                  <button className="btn btn-ghost btn-sm btn-full">🎬 CSV for Premiere</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const blob = new Blob([JSON.stringify(contract,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_contract.json`; a.click(); toast.success('Contract JSON exported') }}>📄 Export Contract JSON</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const rows = (contract.shots||[]).map((s,i) => `${i+1},"${s.title||''}","${(s.prompt||'').replace(/"/g,'""')}",${s.model||''},${s.res||''},${s.ar||''},${s.status||''}`); const csv = 'Shot,Title,Prompt,Model,Resolution,AR,Status\n'+rows.join('\n'); const blob = new Blob([csv],{type:'text/csv'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_shotlist.csv`; a.click(); toast.success('CSV exported') }}>🎬 CSV for Premiere</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { navigator.clipboard.writeText(JSON.stringify(contract,null,2)); toast.success('Contract copied to clipboard') }}>📋 Copy B_CONTRACT JSON</button>
                 </div>
               </div>
             </div>
@@ -447,9 +509,9 @@ function App() {
       {/* ═══ DOCK ═══ */}
       <footer className="dock">
         <div className="dock-tabs">
-          <button className="dock-tab on">Queue</button>
-          <button className="dock-tab">History</button>
-          <button className="dock-tab">Exports</button>
+          <button className={`dock-tab${dockTab==='queue'?' on':''}`} onClick={()=>setDockTab('queue')}>Queue</button>
+          <button className={`dock-tab${dockTab==='history'?' on':''}`} onClick={()=>setDockTab('history')}>History ({media.length})</button>
+          <button className={`dock-tab${dockTab==='exports'?' on':''}`} onClick={()=>setDockTab('exports')}>Exports</button>
         </div>
         <div className="dock-sep" />
         <div className="dock-queue">
@@ -466,26 +528,37 @@ function App() {
     </div>
   )
 
-  // ─── SHOT HELPERS ─────────────────────────
+  // ─── SHOT HELPERS (with Supabase persistence) ─────────
   function updateShot(id, key, val) {
-    setContract(prev => ({
-      ...prev, shots: prev.shots.map(s => s.id===id ? {...s,[key]:val} : s)
-    }))
+    setContract(prev => {
+      const updated = {...prev, shots: prev.shots.map(s => s.id===id ? {...s,[key]:val} : s)}
+      persistContract(updated)
+      return updated
+    })
   }
   function removeShot(id) {
-    setContract(prev => ({...prev, shots: prev.shots.filter(s => s.id!==id)}))
+    setContract(prev => {
+      const updated = {...prev, shots: prev.shots.filter(s => s.id!==id)}
+      persistContract(updated)
+      return updated
+    })
     setSelectedShot(null); setInspectorOpen(false)
   }
   function handlePromptSend() {
     if (!promptText.trim()) return
+    const cat = MODE_TO_CAT[mode] || 'image'
     const newShot = {
       id: genId('SHOT'), title: promptText.substring(0,40), prompt: promptText,
-      model: 'fal-ai/flux-pro/v1.1', cat: mode==='audio'?'audio':mode==='3d'?'3d':'image',
-      status:'pending', res:'1080p', dur:'5s', ar:'16:9', entities:[]
+      model: 'fal-ai/flux-pro/v1.1', cat,
+      status:'pending', res:'1080p', dur: cat==='video'?'5s':'—', ar:'16:9', entities:[]
     }
-    setContract(prev => ({...prev, shots:[...prev.shots, newShot]}))
+    setContract(prev => {
+      const updated = {...prev, shots:[...prev.shots, newShot]}
+      persistContract(updated)
+      return updated
+    })
     setPromptText('')
-    addLog('ok','✓',`Shot #${shots.length+1} created`)
+    addLog('ok','✓',`Shot #${shots.length+1} created — ${formatCost(calculatePreviewCost(newShot.model))}`)
   }
   async function handleEnhance() {
     if (!promptText.trim()) return
