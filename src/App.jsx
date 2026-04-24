@@ -39,6 +39,8 @@ function App() {
   const [newProjectName, setNewProjectName] = useState('')
   const [dockTab, setDockTab] = useState('queue')
   const [costPreview, setCostPreview] = useState(null)
+  const [shareData, setShareData] = useState({token:null, visibility:'private', invites:[]})
+  const [inviteEmail, setInviteEmail] = useState('')
   const [logs, setLogs] = useState([{type:'ok',icon:'✓',msg:'System ready'}])
   const [modelCategories, setModelCategories] = useState({})
   const [pipelineStep, setPipelineStep] = useState(0)
@@ -412,23 +414,26 @@ function App() {
                       </optgroup>
                     ))}
                   </select>
+                  <div style={{fontSize:10,color:'var(--t3)',marginTop:4}}>{getModelHint(selected.model).substring(0,80)}…</div>
                 </div>
-                <div className="insp-sec">
-                  <div className="insp-lbl">Resolution</div>
-                  <div className="chips">
-                    {['720p','1080p','4K'].map(r => (
-                      <span key={r} className={`chip${(selected.res||'1080p')===r?' on':''}`} onClick={() => updateShot(selected.id,'res',r)}>{r}</span>
-                    ))}
+                {/* Dynamic params from model schema */}
+                {getModelOptions(selected.model).map(opt => (
+                  <div className="insp-sec" key={opt.key}>
+                    <div className="insp-lbl">{opt.label}</div>
+                    <div className="chips">
+                      {(opt.options||[]).map(v => {
+                        const current = selected[opt.key] || selected.options?.[opt.key] || opt.default
+                        return <span key={v} className={`chip${current===v?' on':''}`}
+                          onClick={() => updateShot(selected.id, opt.key, v)}>{v}</span>
+                      })}
+                    </div>
                   </div>
-                </div>
-                <div className="insp-sec">
-                  <div className="insp-lbl">Aspect Ratio</div>
-                  <div className="chips">
-                    {['16:9','9:16','1:1','21:9','4:3'].map(r => (
-                      <span key={r} className={`chip${(selected.ar||'16:9')===r?' on':''}`} onClick={() => updateShot(selected.id,'ar',r)}>{r}</span>
-                    ))}
+                ))}
+                {getModelOptions(selected.model).length === 0 && (
+                  <div className="insp-sec">
+                    <div style={{fontSize:11,color:'var(--t3)',fontStyle:'italic'}}>No configurable parameters for this model</div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="insp-foot">
                 <div className="cost-row" style={{marginBottom:6}}>
@@ -474,31 +479,74 @@ function App() {
       {/* ═══ SHARE MODAL ═══ */}
       {shareOpen && (
         <div className="modal-overlay" onClick={() => setShareOpen(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{width:460}}>
             <div className="modal-head">
               <span className="modal-title">Share Project</span>
               <button className="modal-x" onClick={() => setShareOpen(false)}>✕</button>
             </div>
             <div className="modal-body">
+              {/* Share Link */}
               <div className="share-sec">
-                <div className="insp-lbl">Public Link</div>
+                <div className="insp-lbl">Share Link</div>
                 <div className="share-link-row">
-                  <input className="field" value={`https://renderfarm.ai/p/${activeProject?.name||'project'}`} readOnly />
-                  <button className="btn btn-ghost btn-sm" onClick={() => { navigator.clipboard.writeText(`https://renderfarm.ai/p/${activeProject?.name||''}`); toast.success('Copied') }}>📋</button>
+                  <input className="field" value={shareData.token ? `${window.location.origin}/?share=${shareData.token}` : 'Generate a link...'} readOnly />
+                  {shareData.token ? (
+                    <button className="btn btn-ghost btn-sm" onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/?share=${shareData.token}`); toast.success('Link copied!') }}>📋</button>
+                  ) : (
+                    <button className="btn btn-primary btn-sm" onClick={async () => {
+                      const { data, error } = await supabase.from('project_shares').insert({
+                        project_id: activeProject.id, shared_by: session.user.id, visibility: shareData.visibility
+                      }).select().single()
+                      if (error) { toast.error(error.message); return }
+                      setShareData(prev => ({...prev, token: data.share_token}))
+                      addLog('ok','🔗','Share link created')
+                    }}>Generate</button>
+                  )}
                 </div>
               </div>
+              {/* Visibility */}
               <div className="share-sec">
                 <div className="insp-lbl">Visibility</div>
                 <div className="chips">
-                  <span className="chip on">🔒 Private</span><span className="chip">👥 Team</span><span className="chip">🌐 Public</span>
+                  {['private','team','public'].map(v => (
+                    <span key={v} className={`chip${shareData.visibility===v?' on':''}`}
+                      onClick={async () => {
+                        setShareData(prev => ({...prev, visibility: v}))
+                        if (shareData.token) {
+                          await supabase.from('project_shares').update({visibility: v}).eq('share_token', shareData.token)
+                          toast.success(`Visibility: ${v}`)
+                        }
+                      }}>
+                      {v==='private'?'🔒':v==='team'?'👥':'🌐'} {v}
+                    </span>
+                  ))}
                 </div>
               </div>
+              {/* Invite by email */}
+              <div className="share-sec">
+                <div className="insp-lbl">Invite Collaborator</div>
+                <div className="share-link-row">
+                  <input className="field" placeholder="email@example.com" value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)}
+                    onKeyDown={e=>{if(e.key==='Enter')handleInvite()}} />
+                  <button className="btn btn-primary btn-sm" onClick={handleInvite}>Invite</button>
+                </div>
+                {shareData.invites.length > 0 && (
+                  <div style={{marginTop:8,display:'flex',flexDirection:'column',gap:4}}>
+                    {shareData.invites.map((inv,i) => (
+                      <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:11,color:'var(--t2)',padding:'4px 8px',background:'var(--bg2)',borderRadius:6}}>
+                        <span>{inv.email}</span><span className="chip on" style={{fontSize:9}}>{inv.permission}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Export */}
               <div className="share-sec">
                 <div className="insp-lbl">Export</div>
                 <div className="share-exports">
-                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const blob = new Blob([JSON.stringify(contract,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_contract.json`; a.click(); toast.success('Contract JSON exported') }}>📄 Export Contract JSON</button>
-                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const rows = (contract.shots||[]).map((s,i) => `${i+1},"${s.title||''}","${(s.prompt||'').replace(/"/g,'""')}",${s.model||''},${s.res||''},${s.ar||''},${s.status||''}`); const csv = 'Shot,Title,Prompt,Model,Resolution,AR,Status\n'+rows.join('\n'); const blob = new Blob([csv],{type:'text/csv'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_shotlist.csv`; a.click(); toast.success('CSV exported') }}>🎬 CSV for Premiere</button>
-                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { navigator.clipboard.writeText(JSON.stringify(contract,null,2)); toast.success('Contract copied to clipboard') }}>📋 Copy B_CONTRACT JSON</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const blob = new Blob([JSON.stringify(contract,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_contract.json`; a.click(); toast.success('Contract JSON exported') }}>📄 Contract JSON</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const rows = (contract.shots||[]).map((s,i) => `${i+1},"${s.title||''}","${(s.prompt||'').replace(/"/g,'""')}",${s.model||''},${s.res||''},${s.ar||''},${s.status||''}`); const csv = 'Shot,Title,Prompt,Model,Resolution,AR,Status\n'+rows.join('\n'); const blob = new Blob([csv],{type:'text/csv'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_shotlist.csv`; a.click(); toast.success('CSV exported') }}>🎬 CSV Shotlist</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { navigator.clipboard.writeText(JSON.stringify(contract,null,2)); toast.success('Copied!') }}>📋 B_CONTRACT</button>
                 </div>
               </div>
             </div>
@@ -567,6 +615,23 @@ function App() {
       setPromptText(enhanced)
       addLog('ok','✦','Prompt enhanced')
     } catch(e) { toast.error(e.message) }
+  }
+  async function handleInvite() {
+    if (!inviteEmail.trim() || !activeProject) return
+    // Look up user by email
+    const { data: userData } = await supabase.from('user_wallets').select('user_id').limit(1)
+    const { data, error } = await supabase.from('project_shares').insert({
+      project_id: activeProject.id,
+      shared_by: session.user.id,
+      shared_with_email: inviteEmail.trim(),
+      permission: 'view',
+      visibility: shareData.visibility
+    }).select().single()
+    if (error) { toast.error(error.message); return }
+    setShareData(prev => ({...prev, invites:[...prev.invites, {email:inviteEmail.trim(), permission:'view'}]}))
+    setInviteEmail('')
+    toast.success(`Invited ${inviteEmail.trim()}`)
+    addLog('ok','👥',`Invited ${inviteEmail.trim()} to project`)
   }
 }
 
