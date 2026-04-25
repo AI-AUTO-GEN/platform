@@ -517,7 +517,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // P66+P68+P69: Reference image upload — multipart to n8n + persist metadata to Supabase
+  // P66+P68+P69+P70: Reference upload — n8n handles full pipeline (Drive HQ → optimize → Supabase)
   const handleReferenceUpload = useCallback(async (file) => {
     if (!selectedNode || !file) return;
     setUploading(true);
@@ -539,63 +539,35 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       
       const result = await res.json();
       
-      // Build proper Google Drive thumbnail URL from file ID
-      const driveFileId = result.driveFileId || result.id || result.fileId || null;
-      const driveUrl = driveFileId 
-        ? `https://drive.google.com/file/d/${driveFileId}/view`
-        : (result.driveUrl || result.webViewLink || '');
-      const thumbnailUrl = driveFileId
-        ? `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w400`
-        : (result.thumbnailUrl || result.thumbnailLink || '');
-      
-      const newRef = { url: driveUrl, thumbnailUrl, driveFileId, fileName: file.name, uploadedAt: new Date().toISOString() };
-      
-      // P69: Persist to reference_assets table in Supabase
-      if (session?.user?.id) {
-        await supabase.from('reference_assets').insert({
-          profile_id: session.user.id,
-          node_id: selectedNode.id,
-          node_type: selectedNode.data.typeLabel,
-          file_name: file.name,
-          mime_type: file.type,
-          drive_file_id: driveFileId,
-          drive_url: driveUrl,
-          thumbnail_url: thumbnailUrl,
-          purpose: 'reference'
-        });
-      }
+      // n8n returns: { driveFileId, drive_url, thumbnailUrl (optimized base64), fileName }
+      const newRef = {
+        url: result.drive_url || result.driveUrl || '',
+        thumbnailUrl: result.thumbnailUrl || '',
+        driveFileId: result.driveFileId || null,
+        fileName: result.fileName || file.name,
+        uploadedAt: new Date().toISOString()
+      };
       
       const currentRefs = selectedNode.data.rawData?.references || [];
       handleUpdateNode('references', [...currentRefs, newRef]);
     } catch (err) {
       console.error('Reference upload failed:', err);
-      // Fallback: upload directly to Supabase Storage
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const storagePath = `references/${selectedNode.id}/${Date.now()}_${file.name}`;
-        const { data: uploadData } = await supabase.storage.from('renderfarm-assets').upload(storagePath, file, { upsert: true });
-        if (uploadData) {
-          const { data: { publicUrl } } = supabase.storage.from('renderfarm-assets').getPublicUrl(storagePath);
-          const newRef = { url: publicUrl, thumbnailUrl: publicUrl, fileName: file.name, uploadedAt: new Date().toISOString() };
-          if (session?.user?.id) {
-            await supabase.from('reference_assets').insert({
-              profile_id: session.user.id, node_id: selectedNode.id, node_type: selectedNode.data.typeLabel,
-              file_name: file.name, mime_type: file.type, thumbnail_url: publicUrl, purpose: 'reference'
-            });
-          }
-          const currentRefs = selectedNode.data.rawData?.references || [];
-          handleUpdateNode('references', [...currentRefs, newRef]);
-          return;
-        }
-      } catch (storageErr) { console.error('Storage fallback also failed:', storageErr); }
-      // Last resort: local base64
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newRef = { url: reader.result, thumbnailUrl: reader.result, fileName: file.name, uploadedAt: new Date().toISOString(), local: true };
+      // Minimal fallback: small preview only (NOT saving HQ to Supabase)
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = () => {
+        // Resize to max 200px for tiny preview (~10-20KB)
+        const scale = Math.min(200 / img.width, 200 / img.height, 1);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const tinyThumb = canvas.toDataURL('image/jpeg', 0.5);
+        const newRef = { url: tinyThumb, thumbnailUrl: tinyThumb, fileName: file.name, uploadedAt: new Date().toISOString(), local: true };
         const currentRefs = selectedNode.data.rawData?.references || [];
         handleUpdateNode('references', [...currentRefs, newRef]);
       };
-      reader.readAsDataURL(file);
+      img.src = URL.createObjectURL(file);
     } finally {
       setUploading(false);
     }
