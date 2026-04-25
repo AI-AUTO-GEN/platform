@@ -16,11 +16,9 @@ const getDriveDisplayUrl = (url) => {
   return url;
 };
 
-import Tactile from './components/Tactile';
-
 const CustomNode = ({ data }) => {
   return (
-    <Tactile 
+    <div 
       style={{ 
         background: '#050508', 
         border: `1px solid ${data.color || '#333'}`, 
@@ -31,9 +29,9 @@ const CustomNode = ({ data }) => {
         display: 'flex', 
         flexDirection: 'column', 
         gap: '8px',
-        /* NodeCanvas background needs to act as the silicone base for nodes */
+        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
       }}
-      bg="#050508"
+      className="custom-flow-node"
     >
       <Handle type="target" position={Position.Left} style={{ background: '#fff', width: '12px', height: '12px', left: '-6px' }}>
          <div style={{ position: 'absolute', top: -10, left: -10, right: -10, bottom: -10, cursor: 'crosshair' }}></div>
@@ -49,7 +47,7 @@ const CustomNode = ({ data }) => {
             )}
           </div>
           <select 
-            className="select-mini nodrag tactile" 
+            className="select-mini nodrag" 
             style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', borderRadius: '4px', maxWidth: '100px', position: 'relative', zIndex: 10 }}
             value={data.modelId || ''}
             onChange={(e) => data.onChangeNodeModel(data.id, data.typeLabel, e.target.value)}
@@ -131,7 +129,7 @@ const CustomNode = ({ data }) => {
       <Handle type="source" position={Position.Right} style={{ background: '#fff', width: '12px', height: '12px', right: '-6px' }}>
          <div style={{ position: 'absolute', top: -10, left: -10, right: -10, bottom: -10, cursor: 'crosshair' }}></div>
       </Handle>
-    </Tactile>
+    </div>
   );
 };
 
@@ -199,9 +197,6 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
 
     const addGroup = (items, typeLabel, color, isTarget, startX, startYPos) => {
       (items || []).forEach((item, idx) => {
-        const activeMedia = media.find(m => m.task_id === item.id && m.status === 'ready');
-        const processingMedia = media.find(m => m.task_id === item.id && m.status === 'processing');
-        const errorMedia = media.find(m => m.task_id === item.id && m.status === 'error');
         const existingNode = nodes.find(n => n.id === item.id);
         const position = existingNode ? existingNode.position : { x: startX + (idx % 3) * 200, y: startYPos + Math.floor(idx / 3) * 150 };
         
@@ -209,7 +204,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
           id: item.id,
           type: 'custom',
           position,
-          data: { label: item.name || item.id, typeLabel, color, media: activeMedia, processingMedia, errorMedia, prompt: item.prompt || item.beat, isTarget, rawData: item, modelId: item.modelId, onChangeNodeModel, onChangeNodeSettings }
+          data: { label: item.name || item.id, typeLabel, color, media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: item.prompt || item.beat, isTarget, rawData: item, modelId: item.modelId, onChangeNodeModel, onChangeNodeSettings }
         });
 
         extractEdges(item, color);
@@ -224,9 +219,6 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
 
     const shotStartY = envStartY + Math.ceil((data.environments || []).length / 3) * 150 + 150;
     (data.shots || []).forEach((s, idx) => {
-      const activeMedia = media.find(m => m.task_id === s.id && m.status === 'ready');
-      const processingMedia = media.find(m => m.task_id === s.id && m.status === 'processing');
-      const errorMedia = media.find(m => m.task_id === s.id && m.status === 'error');
       const existingNode = nodes.find(n => n.id === s.id);
       const position = existingNode ? existingNode.position : { x: 50 + (idx % 4) * 220, y: shotStartY + Math.floor(idx / 4) * 250 };
       
@@ -234,16 +226,13 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: s.id,
         type: 'custom',
         position,
-        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: activeMedia, processingMedia, errorMedia, prompt: s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings }
+        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings }
       });
       extractEdges(s, '#1890ff');
     });
 
     const videoStartY = shotStartY + Math.ceil((data.shots || []).length / 4) * 250 + 150;
     (data.videos || []).forEach((v, idx) => {
-      const activeMedia = media.find(m => m.task_id === v.id && m.status === 'ready');
-      const processingMedia = media.find(m => m.task_id === v.id && m.status === 'processing');
-      const errorMedia = media.find(m => m.task_id === v.id && m.status === 'error');
       const existingNode = nodes.find(n => n.id === v.id);
       const position = existingNode ? existingNode.position : { x: 50 + (idx % 4) * 220, y: videoStartY + Math.floor(idx / 4) * 250 };
       
@@ -251,7 +240,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: v.id,
         type: 'custom',
         position,
-        data: { label: v.id, typeLabel: 'Video', color: '#9254de', media: activeMedia, processingMedia, errorMedia, prompt: v.prompt, isTarget: true, rawData: v, modelId: v.modelId, onChangeNodeModel, onChangeNodeSettings }
+        data: { label: v.id, typeLabel: 'Video', color: '#9254de', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: v.prompt, isTarget: true, rawData: v, modelId: v.modelId, onChangeNodeModel, onChangeNodeSettings }
       });
       extractEdges(v, '#9254de');
     });
@@ -264,7 +253,31 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
        const updated = newNodes.find(n => n.id === selectedNode.id);
        if (updated) setSelectedNode(updated);
     }
-  }, [data, media]); // Removed nodes from deps to prevent infinite loops
+  }, [data]); // Removed media to prevent DOM rebuilds on every progress tick
+
+  // Dedicated fast-path for media updates
+  useEffect(() => {
+    setNodes(nds => nds.map(node => {
+      const activeMedia = media.find(m => m.task_id === node.id && m.status === 'ready');
+      const processingMedia = media.find(m => m.task_id === node.id && m.status === 'processing');
+      const errorMedia = media.find(m => m.task_id === node.id && m.status === 'error');
+      
+      if (node.data.media?.id === activeMedia?.id && 
+          node.data.processingMedia?.progress === processingMedia?.progress &&
+          node.data.errorMedia?.id === errorMedia?.id) {
+        return node;
+      }
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          media: activeMedia,
+          processingMedia,
+          errorMedia
+        }
+      };
+    }));
+  }, [media, setNodes]);
 
   const onConnect = useCallback((params) => {
     // Determine which is target and source

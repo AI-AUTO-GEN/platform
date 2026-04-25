@@ -7,7 +7,7 @@ import { WalletWidget } from './components/Wallet'
 import { N8N_WEBHOOK_URL, MODALITIES } from './config/constants'
 import { MODEL_REGISTRY, MODEL_SCHEMAS, getModelOptions, getModelHint } from './config/modelRegistry'
 import { enhancePrompt } from './services/geminiService'
-import { calculatePreviewCost, formatCost } from './pricing/PricingEngine'
+import { calculatePreviewCost, formatCost, updateModelPricing } from './pricing/PricingEngine'
 import { useDriveMedia } from './hooks/useDriveMedia'
 import { genId, deleteVariant, getDriveDisplayUrl } from './utils/assetUtils'
 import NodeCanvas from './NodeCanvas'
@@ -58,7 +58,7 @@ function App() {
   useEffect(() => {
     if (!session) return
     ;(async () => {
-      const { data } = await supabase.from('ai_models').select('id,title,category,provider,pricing_base,variables_schema').eq('is_active', true)
+      const { data } = await supabase.from('ai_models').select('id,title,category,provider,pricing_base,pricing_type,pricing_desc,pricing_multipliers,variables_schema').eq('is_active', true)
       if (!data) return
       const cats = {}
       data.forEach(m => {
@@ -81,6 +81,17 @@ function App() {
       data.forEach(m => {
         if (m.variables_schema && Array.isArray(m.variables_schema) && m.variables_schema.length > 0) {
           MODEL_SCHEMAS[m.id] = m.variables_schema
+        }
+      })
+      // Populate DYNAMIC_PRICING
+      data.forEach(m => {
+        if (m.pricing_base !== undefined && m.pricing_type) {
+          updateModelPricing(m.id, {
+            base: Number(m.pricing_base),
+            type: m.pricing_type,
+            desc: m.pricing_desc || '',
+            multipliers: m.pricing_multipliers || {}
+          })
         }
       })
       addLog('ok','✓',`${data.length} models loaded`)

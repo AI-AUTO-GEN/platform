@@ -25,10 +25,11 @@ export default function EntityTaskCard({ badge, name, id, data, onGenerate, onUp
   const customOptions = getModelOptions(data.modelId)
 
   useEffect(() => {
+    if (!fullscreenImage) return;
     const handleEsc = (e) => { if(e.key === 'Escape') setFullscreenImage(null); };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+  }, [fullscreenImage]);
 
   return (
     <div className={`entity-task-card glass ${hasChanges ? 'modified' : ''} slide-in`}>

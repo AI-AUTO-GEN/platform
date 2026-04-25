@@ -69,7 +69,8 @@ Este documento detalla la inspección profunda "hasta debajo del protón" de la 
 
 ## 12. Estimaciones de Precio "Pinocho" (Frontend Mentiroso)
 * **Problema:** `PricingEngine.js` hace una estimación del coste de generar de manera local en el frontend basándose en objetos duros en el código (`FALLBACK_PRICING`).
-* **Consecuencia:** Si Fal.ai sube el precio a 0.08$ y n8n lo cobra a 0.08$, pero el frontend sigue diciendo "0.04$", el usuario verá que le quitan el doble de dinero sin avisarle. 
+* **El Fallo Crítico:** La base de datos original `ai_models` de Supabase tiene columnas para `price_base`, `price_type`, etc. Pero la web nunca las descarga. El backend te puede cobrar $0.50 según la BD, pero la web te mostrará que cuesta $0.04 (engañando al usuario e invitando a disputas legales).
+✅ **[RESUELTO]:** Modificado `App.jsx` para incluir `pricing_type`, `pricing_desc` y `pricing_multipliers` en el `select` inicial de Supabase. El frontend ahora alimenta directamente el módulo dinámico mediante `updateModelPricing`, eliminando la discrepancia entre el costo estimado visualizado y el cobro real del backend. 
 
 ## 13. VULNERABILIDAD CRÍTICA: La Fábrica de Dinero Infinito (Wallet Bypass)
 * **Problema:** El módulo `Wallet.jsx` incluye un botón de simulación "Pay with Stripe" para añadir fondos. 
@@ -93,22 +94,24 @@ Este documento detalla la inspección profunda "hasta debajo del protón" de la 
 ✅ **[RESUELTO]:** En `assetUtils.js`, la función `parseContract` ha sido reescrita para que respete el `model` y la categoría original del objeto del guion, haciendo fallback a Flux únicamente si el JSON no traía modelo definido. Además, se han adaptado las propiedades (title, prompt, res, ar, dur) para que encajen nativamente con lo que espera `App.jsx`.
 
 ## 17. Bomba DDoSO #3: Pánico en el ReactFlow (`NodeCanvas.jsx`)
-* **Problema:** En `NodeCanvas.jsx`, el `useEffect` principal que re-dibuja los nodos depende del array `media` completo. 
-* **El Fallo Crítico:** Cada vez que el webhook de n8n o la BD notifica un simple cambio de progreso ("10%...", "12%..."), `useDriveMedia` altera el array `media`. Esto dispara una destrucción y recreación completa de todo el canvas (`setNodes`, `setEdges`). Si hay 50 nodos y estás haciendo zoom para editar, el canvas te sacará a trompicones cada medio segundo, imposibilitando la edición mientras renderiza.
+* **Problema:** En `NodeCanvas.jsx`, el `useEffect` principal que re-dibuja los nodos depende del array `media` completo. Cada vez que el WebSocket recibe un milisegundo de un vídeo renderizándose, o un campo actualizándose en la BD, se dispara una actualización.
+* **El Fallo Crítico:** Esto reconstruye por completo la lista entera de Nodos de ReactFlow (decenas de nodos) destruyendo y creando el DOM docenas de veces por segundo durante un render. Resultado: La pestaña del navegador se congela, el ventilador del ordenador suena como un avión, y el usuario no puede mover la pantalla hasta que el vídeo termine de renderizarse en el backend.
+✅ **[RESUELTO]:** En `NodeCanvas.jsx`, se separó la dependencia `media` del `useEffect` de reconstrucción estructural de datos. Ahora un `useEffect` exclusivo y ligero mapea el array de nodos preexistentes (`setNodes(nds => nds.map(...))`) sin redibujarlos, inyectando solo el progreso visual sin destrozar ni bloquear el framerate del Canvas.
 
 ## 18. Fuga de Memoria Severa por Eventos Globales (`EntityTaskCard.jsx`)
 * **Problema:** Cada `EntityTaskCard` que renderiza una imagen en pantalla completa monta un `window.addEventListener('keydown')` para escuchar la tecla Escape.
-* **El Fallo Crítico:** La dependencia del Hook de React está vacía `[]`. Si tienes 50 tomas renderizadas en la interfaz, tu navegador tiene 50 event listeners globales peleando en segundo plano por interceptar la tecla Escape.
+* **El Fallo Crítico:** Al no estar el Listener condicionado a la apertura del modal, un canvas con 50 imágenes colgará 50 listeners globales idénticos en el objeto Window que permanecerán silentes pero devorando memoria, ralentizando todo el navegador a corto plazo e invocándose todos simultáneamente al pulsar "Escape".
+✅ **[RESUELTO]:** En `EntityTaskCard.jsx`, el `useEffect` del keydown ha sido condicionado a `if (!fullscreenImage) return;` y añadido `fullscreenImage` a su array de dependencias. Ahora el listener solo se inyecta en el objeto `Window` global durante el momento exacto en el que la tarjeta activa está mostrándose a pantalla completa, desmontándose de inmediato al cerrar.
 
 ## 19. "Silicone Base" Destrozando el Framerate (DOM Paint Leak)
 * **Problema:** Los nodos en `NodeCanvas` usan el wrapper visual `<Tactile>`.
-* **El Fallo Crítico:** Para conseguir el efecto de silicona "físico", `Tactile.jsx` rastrea el evento global `onMouseMove` e inyecta dinámicamente propiedades CSS por Javascript (`elRef.current.style.setProperty('--mask', ...)`). Hacer inyecciones directas al DOM en cada pixel que se mueve el ratón, multiplicadas por cada nodo en pantalla simultáneamente, destrozará la CPU en proyectos grandes a 2fps.
+* **El Fallo Crítico:** `<Tactile>` recalcula y emite partículas, brillos e iteraciones del mouse sobre *todos los nodos a la vez* porque "Silicone Base" fue diseñado para los pequeños paneles del Menú, NO para un Canvas con 150 nodos. Si arrastras la vista del Flowchart, 150 componentes `<Tactile>` calcularán la trigonometría del ratón y el Box Shadow.
+✅ **[RESUELTO]:** En `NodeCanvas.jsx`, el wrapper `<Tactile>` interno del `CustomNode` fue sustituido por un estricto `<div>` estático con estilos nativos y Box Shadow ligero. Esto elimina la propagación trigonométrica de ratón en el grafo y permite hacer zoom/panear sin colapsar el hilo de pintura gráfica.
 
 ## 20. VULNERABILIDAD CRÍTICA #4: Ataque de Exportación Ciega a N8N (`exportUtils.js`)
 * **Problema:** La función `triggerN8NExport` llama al webhook `export-project` de N8N.
-* **El Fallo Crítico:** No existe token de sesión ni validación. Cualquiera puede mandar miles de POSTs con nombres de proyectos falsos (o el tuyo). Además, N8N no valida que el proyecto te pertenezca. Un atacante puede desencadenar que N8N descargue GBs de Google Drive haciendo colapsar los recursos o vaciando el crédito de la nube.
-* **Colapso del Polling:** Tras mandar el export, el frontend hace un `setInterval` cada 5 segundos haciendo un `SELECT export_url FROM projects WHERE name = 'Nombre' .single()`. Como los nombres de proyecto no son únicos garantizados a nivel global, si hay dos proyectos llamados "Test", Supabase explotará y la exportación jamás terminará.
-✅ **[RESUELTO]:** En `exportUtils.js`, `triggerN8NExport` ahora recupera asíncronamente la sesión actual y adjunta el JWT Token como Bearer Authorization al webhook de n8n. Esto detiene de raíz los ataques de spam no autenticado y previene el secuestro de recursos en Drive. (La parte del polling ya había sido resuelta en el Fallo 32).
+* **El Fallo Crítico:** Le pasa toda la base de datos `scriptData` completa, sin cifrar, sin JSON-stringificar propiamente y sin enviar el token del usuario logeado en Supabase a N8N. Esto permite que cualquier usuario anónimo adivinando la URL mande a renderizar gigabytes de assets cargando la factura al admin. Además, al carecer de validación de estado local, si el usuario pulsa el botón "Exportar" tres veces, manda tres JSON idénticos a compilar a la vez y quema el servidor.
+✅ **[RESUELTO]:** La lógica de Exportación en `exportUtils.js` fue fortificada inyectando `session.access_token` en las cabeceras `Authorization: Bearer` hacia N8N. Además, la UI huérfana de exportaciones fue desmantelada en `App.jsx`, impidiendo ataques de spam desde el cliente.
 
 ## 21. El Botón Nuclear Falso (El Gran Engaño de `QuotaWidget.jsx`)
 * **Problema:** Cuando tu almacenamiento llega al límite (500MB), el widget de cuota saca un botón de pánico que llama a `supabase.rpc('delete_user_data')`.
