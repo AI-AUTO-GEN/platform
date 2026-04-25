@@ -154,9 +154,17 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const newEdges = [];
 
     const getNewNodePosition = (defaultX, defaultY) => {
-      if (selectedNode) {
-        let testX = selectedNode.position.x + 300;
-        let testY = selectedNode.position.y;
+      let refNode = selectedNode;
+      if (!refNode) {
+        const allNodes = [...nodes, ...newNodes];
+        if (allNodes.length > 0) {
+          refNode = allNodes.reduce((prev, current) => (prev.position.x > current.position.x) ? prev : current);
+        }
+      }
+
+      if (refNode) {
+        let testX = refNode.position.x + 300;
+        let testY = refNode.position.y;
         const checkCollision = (n) => Math.abs(n.position.x - testX) < 50 && Math.abs(n.position.y - testY) < 50;
         while (newNodes.some(checkCollision) || nodes.some(checkCollision)) {
           testX += 250;
