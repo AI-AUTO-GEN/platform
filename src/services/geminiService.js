@@ -79,6 +79,26 @@ export const generateShotlist = async (script, language) => {
   }
 }
 
+export const extractEntities = async (script, language) => {
+  const lang = language === 'es' ? 'Spanish' : 'English'
+  const raw = await geminiDirector(
+    `You are a film production analyst. Extract all characters, props, and environments from the screenplay. Write all names/descriptions in ${lang}.\n\nRules:\n- Output ONLY a valid JSON object with three arrays: "characters", "props", "environments"\n- Each item in every array must have "name" and "description" fields\n- Characters: named individuals or groups with speaking roles or significant screen time\n- Props: important physical objects that appear in the story\n- Environments: distinct locations or settings\n- Be thorough — don't miss any mentioned in the script\n- Output ONLY valid JSON, no markdown fencing, no explanation`,
+    script
+  )
+  try {
+    const cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim()
+    const parsed = JSON.parse(cleaned)
+    return {
+      characters: parsed.characters || [],
+      props: parsed.props || [],
+      environments: parsed.environments || [],
+    }
+  } catch (e) {
+    console.error('Entity extraction parse error:', e, raw)
+    return { characters: [], props: [], environments: [] }
+  }
+}
+
 export const assistShot = async (script, shotlist, shotIndex, feedback, language) => {
   const lang = language === 'es' ? 'Spanish' : 'English'
   const shot = shotlist[shotIndex]

@@ -17,10 +17,12 @@ export default function EntityTaskCard({ badge, name, id, data, onGenerate, onUp
   const [prompt, setPrompt] = useState(data.prompt || '')
   const [fullscreenImage, setFullscreenImage] = useState(null)
   const [confirmDeleteType, setConfirmDeleteType] = useState(null)
+  // P58 FIX: Internal variant selection state so the strip UI works even when parent passes no-op
+  const [localSelectedVariant, setLocalSelectedVariant] = useState(null)
   const hasChanges = prompt !== data.lastGeneratedPrompt
   
   const variants = driveMedia?.filter(m => m.task_id === id) || []
-  const activeVariant = selectedVersion || variants[0]
+  const activeVariant = localSelectedVariant || selectedVersion || variants[0]
 
   const customOptions = getModelOptions(data.modelId)
 
@@ -99,7 +101,7 @@ export default function EntityTaskCard({ badge, name, id, data, onGenerate, onUp
 
           <div className="variant-strip-v2">
             {variants.slice(0, 8).map(v => (
-              <div key={v.id} className={`variant-mini-v2 ${v.id === activeVariant?.id ? 'active' : ''} ${v.status === 'processing' ? 'busy' : ''}`} onClick={() => onSelectVersion(v)}>
+              <div key={v.id} className={`variant-mini-v2 ${v.id === activeVariant?.id ? 'active' : ''} ${v.status === 'processing' ? 'busy' : ''}`} onClick={() => { setLocalSelectedVariant(v); onSelectVersion(v); }}>
                 {v.status === 'processing' ? <div className="spinner-xs"></div> : <img src={getDriveDisplayUrl(v.thumbnailLink)} alt="v" />}
               </div>
             ))}

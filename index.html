@@ -4,15 +4,44 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="description" content="AI AUTO GEN - A premium platform to automate creativity using n8n, FAL.AI, and OpenRouter." />
+    <meta name="description" content="AI Renderfarm — Professional AI-powered creative platform. Generate images, video, audio, and 3D assets with intelligent director-assisted pipelines." />
+    <meta name="theme-color" content="#08080c" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    <title>AI AUTO GEN | Premium AI Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <title>AI Renderfarm | Director-Powered Creative Studio</title>
+    <!-- P33 FIX: Loading splash while JS bundle hydrates -->
+    <style>
+      #splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#08080c;gap:16px;transition:opacity .4s ease}
+      #splash.hidden{opacity:0;pointer-events:none}
+      #splash .sp-logo{font-size:28px;font-weight:800;letter-spacing:6px;color:#f0f0f5}
+      #splash .sp-accent{background:linear-gradient(135deg,#7c5cff,#ff2d78);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+      #splash .sp-bar{width:120px;height:2px;background:#1a1a28;border-radius:1px;overflow:hidden}
+      #splash .sp-fill{height:100%;width:40%;background:linear-gradient(90deg,#7c5cff,#ff2d78);border-radius:1px;animation:sp-load 1.5s ease infinite}
+      #splash .sp-sub{font-size:10px;color:#5a5a78;letter-spacing:2px;text-transform:uppercase}
+      @keyframes sp-load{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+    </style>
   </head>
   <body>
+    <!-- P33 FIX: Visible loading splash -->
+    <div id="splash">
+      <div class="sp-logo"><span class="sp-accent">✦</span> RENDERFARM</div>
+      <div class="sp-bar"><div class="sp-fill"></div></div>
+      <div class="sp-sub">Loading Studio</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Hide splash once React mounts
+      const observer = new MutationObserver(() => {
+        const root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          document.getElementById('splash')?.classList.add('hidden');
+          setTimeout(() => document.getElementById('splash')?.remove(), 500);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.getElementById('root'), { childList: true });
+    </script>
   </body>
 </html>

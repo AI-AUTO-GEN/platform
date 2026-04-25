@@ -26,14 +26,18 @@ html,body,#root{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-s
 .auth-overlay .switch-mode-btn:hover{color:#f0f0f5}
 .auth-overlay .auth-error{font-size:11px;color:#ff4d4d;margin-top:8px;min-height:16px}
 
+/* P43 FIX: Force dark autofill backgrounds */
+.auth-overlay input:-webkit-autofill,.auth-overlay input:-webkit-autofill:hover,.auth-overlay input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 50px #14141e inset!important;-webkit-text-fill-color:#f0f0f5!important;border-color:#333348!important;transition:background-color 5000s ease-in-out 0s}
+
 /* Wallet widget overrides */
 .wallet-widget{display:flex;align-items:center;gap:6px;background:rgba(78,203,113,.08);border:1px solid rgba(78,203,113,.15);border-radius:20px;padding:4px 12px;cursor:pointer;transition:.15s;font-size:12px}
 .wallet-widget:hover{border-color:rgba(78,203,113,.3)}
 .wallet-balance{font-family:'JetBrains Mono',monospace;font-size:11px;color:#4ecb71}
-.wallet-add-btn{width:18px;height:18px;border-radius:50%;background:rgba(78,203,113,.15);display:flex;align-items:center;justify-content:center}
+.wallet-add-btn{width:18px;height:18px;border-radius:50%;background:rgba(78,203,113,.15);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .wallet-widget.loading .pulse-dot{width:6px;height:6px;border-radius:50%;background:#4ecb71;animation:pulse 1s infinite}
 .text-accent{color:#7c5cff}
-.lucide-icon{vertical-align:middle}
+/* P36 FIX: Lucide icons — prevent shadow bleed with proper drop-shadow instead of box-shadow */
+.lucide-icon{vertical-align:middle;filter:drop-shadow(0 0 3px currentColor)}
 
 /* Wallet modal */
 .modal-overlay.fade-in{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
@@ -80,3 +84,20 @@ html,body,#root{height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-s
 .empty-history{color:#5a5a78}
 .p-8{padding:32px}
 .opacity-50{opacity:.5}
+
+/* P44 FIX: Enhanced wallet loading skeleton */
+.wallet-widget.loading{min-width:80px;height:28px;background:rgba(78,203,113,.04);border-color:rgba(78,203,113,.08)}
+.wallet-widget.loading .pulse-dot{width:6px;height:6px;border-radius:50%;background:#4ecb71;animation:pulse 1s infinite}
+
+/* P47 FIX: LogMonitor positioning — bottom-left, below side panel z-index */
+.sidebar-log-monitor{position:fixed;bottom:56px;left:60px;z-index:5;padding:8px 14px;border-radius:10px;background:rgba(14,14,20,.92);backdrop-filter:blur(8px);border:1px solid rgba(124,92,255,.12);box-shadow:0 4px 16px rgba(0,0,0,.3);animation:slideIn .3s ease both;max-width:360px}
+.sidebar-log-monitor.completed{border-color:rgba(78,203,113,.2);animation:fadeInSmooth .2s ease both}
+.sidebar-log-header{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7c5cff}
+.sidebar-log-monitor.completed .sidebar-log-header{color:#4ecb71}
+.sidebar-log-message{font-size:10px;color:#a0a0b8;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status-dot-pulse{width:6px;height:6px;border-radius:50%;background:#7c5cff;animation:pulse 1s infinite}
+.status-dot-static{width:6px;height:6px;border-radius:50%;background:#4ecb71}
+
+/* P59 FIX: Shimmer animation for DirectorPanel loading bar */
+@keyframes shimmer{0%{transform:translateX(-100%)}50%{transform:translateX(200%)}100%{transform:translateX(350%)}}
+

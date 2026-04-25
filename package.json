@@ -1,7 +1,7 @@
 {
   "name": "ai-auto-gen",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.7.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,13 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google-cloud/local-auth": "^3.0.1",
-    "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/supabase-js": "^2.103.0",
     "@xyflow/react": "^12.10.2",
-    "file-saver": "^2.0.5",
-    "googleapis": "^171.4.0",
-    "jszip": "^3.10.1",
     "lucide-react": "^1.8.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -25,7 +20,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@fal-ai/client": "^1.9.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

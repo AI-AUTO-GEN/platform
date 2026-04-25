@@ -1,4 +1,16 @@
-import { FAL_PRICING_DB } from './falPricingDB';
+// P29/P30 FIX: Lazy-load the 229KB falPricingDB to reduce initial bundle size
+let FAL_PRICING_DB = null;
+async function getFalPricing() {
+  if (!FAL_PRICING_DB) {
+    try {
+      const mod = await import('./falPricingDB');
+      FAL_PRICING_DB = mod.FAL_PRICING_DB || {};
+    } catch { FAL_PRICING_DB = {}; }
+  }
+  return FAL_PRICING_DB;
+}
+// Pre-warm: start loading the pricing DB immediately (non-blocking)
+getFalPricing();
 
 // ─── DYNAMIC REGISTRY (From Supabase ai_models table) ─────────
 export const DYNAMIC_PRICING = {};
@@ -61,8 +73,8 @@ export function calculatePreviewCost(modelId, params = {}) {
   // Try the DYNAMIC_PRICING DB from Supabase first
   let modelInfo = DYNAMIC_PRICING[modelId];
   if (!modelInfo) {
-    // Fallback to scraped DB
-    modelInfo = FAL_PRICING_DB[modelId];
+    // Fallback to scraped DB (lazy-loaded, may be null on first call)
+    modelInfo = FAL_PRICING_DB?.[modelId] || null;
   }
   if (!modelInfo || (modelInfo.type === 'unknown' && modelInfo.base === 0)) {
     modelInfo = FALLBACK_PRICING[modelId];

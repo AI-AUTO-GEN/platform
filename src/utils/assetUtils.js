@@ -84,14 +84,20 @@ export const deleteVariant = async (variant) => {
       if (driveMatch && driveMatch[1]) {
         // VULNERABILITY FIXED: Get the session token to authenticate the delete webhook to n8n
         const { data: { session } } = await supabase.auth.getSession();
-        fetch(N8N_WEBHOOK_URL, {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': session ? `Bearer ${session.access_token}` : ''
-          },
-          body: JSON.stringify({ action: 'delete_file', file_id: driveMatch[1], task_id: variant.task_id })
-        }).catch(err => console.error('Drive delete webhook error:', err));
+        // P17 FIX: Await the Drive delete webhook instead of fire-and-forget
+        try {
+          await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': session ? `Bearer ${session.access_token}` : ''
+            },
+            body: JSON.stringify({ action: 'delete_file', file_id: driveMatch[1], task_id: variant.task_id })
+          });
+        } catch (err) {
+          console.error('Drive delete webhook error:', err);
+          // Non-blocking: DB record will still be deleted even if Drive cleanup fails
+        }
       }
     }
     // VULNERABILITY FIXED: Verify the user ID explicitly during deletion to prevent ID-guessing attacks
@@ -121,7 +127,8 @@ export const deleteAllVariantsForTask = async (taskId, mediaList) => {
 
 // Generate unique ID
 export function genId(prefix) {
-  return `${prefix}___${Date.now()}_${Math.random().toString(36).slice(2, 6).toUpperCase()}`
+  // P34 FIX: Clean single-underscore separator instead of triple
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 }
 
 // Custom confirm via toast

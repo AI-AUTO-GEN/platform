@@ -1,32 +1,30 @@
 // ─── LogMonitor Component ────────────────────────
-// Real-time log feed from Supabase renderfarm_logs
+// P55 FIX: No longer creates its own Supabase channel.
+// Receives lastLog as a prop from App.jsx's single subscription.
 
-import { useState, useEffect } from 'react'
-import { supabase } from '../supabase'
+import { useState, useEffect, useRef } from 'react'
 
-export default function LogMonitor() {
-  const [logs, setLogs] = useState([])
+export default function LogMonitor({ lastLog }) {
   const [status, setStatus] = useState('IDLE')
+  const [displayLog, setDisplayLog] = useState(null)
+  const hideRef = useRef(null)
+  const completeRef = useRef(null)
 
   useEffect(() => {
-    let hideTimeout;
-    let completeTimeout;
-    const channel = supabase.channel('logs').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'renderfarm_logs' }, p => {
-        setLogs([p.new]);
-        setStatus('PROCESSING');
-        clearTimeout(hideTimeout);
-        clearTimeout(completeTimeout);
-        completeTimeout = setTimeout(() => {
-            setStatus('COMPLETED');
-            hideTimeout = setTimeout(() => setStatus('IDLE'), 2000);
-        }, 5000);
-    }).subscribe()
+    if (!lastLog) return
+    setDisplayLog(lastLog)
+    setStatus('PROCESSING')
+    clearTimeout(hideRef.current)
+    clearTimeout(completeRef.current)
+    completeRef.current = setTimeout(() => {
+      setStatus('COMPLETED')
+      hideRef.current = setTimeout(() => setStatus('IDLE'), 2000)
+    }, 5000)
     return () => {
-        supabase.removeChannel(channel);
-        clearTimeout(hideTimeout);
-        clearTimeout(completeTimeout);
+      clearTimeout(hideRef.current)
+      clearTimeout(completeRef.current)
     }
-  }, [])
+  }, [lastLog])
 
   if (status === 'IDLE') return null;
 
@@ -36,9 +34,9 @@ export default function LogMonitor() {
            <div className={status === 'PROCESSING' ? "status-dot-pulse" : "status-dot-static"}></div>
            <span>{status}</span>
        </div>
-       {status === 'PROCESSING' && logs.length > 0 && (
-         <div className="sidebar-log-message" title={logs[0].message}>
-            {logs[0].message.length > 40 ? logs[0].message.substring(0,40) + '...' : logs[0].message}
+       {status === 'PROCESSING' && displayLog && (
+         <div className="sidebar-log-message" title={displayLog.message}>
+            {displayLog.message?.length > 40 ? displayLog.message.substring(0,40) + '...' : displayLog.message}
          </div>
        )}
     </div>

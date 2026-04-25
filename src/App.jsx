@@ -4,6 +4,7 @@ import './App.css'
 import { supabase } from './supabase'
 import Auth from './Auth'
 import { WalletWidget } from './components/Wallet'
+import QuotaWidget from './components/QuotaWidget'
 import { N8N_WEBHOOK_URL, MODALITIES } from './config/constants'
 import { MODEL_REGISTRY, MODEL_SCHEMAS, getModelOptions, getModelHint } from './config/modelRegistry'
 import { enhancePrompt } from './services/geminiService'
@@ -14,6 +15,7 @@ import NodeCanvas from './NodeCanvas'
 import EntityTaskCard from './components/EntityTaskCard'
 import LogMonitor from './components/LogMonitor'
 import useGlobalTactile from './hooks/useGlobalTactile'
+import DirectorPanel from './components/DirectorPanel'
 
 // ─── STATUS COLORS ─────────────────────────
 const STATUS = { done:'var(--ok)', pending:'var(--warn)', error:'var(--err)', processing:'var(--cyan)', ready:'var(--t3)' }
@@ -35,6 +37,8 @@ function App() {
   const [mode, setMode] = useState('shot')
   const [promptText, setPromptText] = useState('')
   const [generating, setGenerating] = useState(false)
+  const [enhancing, setEnhancing] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [genProgress, setGenProgress] = useState(0)
   const [genLabel, setGenLabel] = useState('No active jobs')
   const [sessionCost, setSessionCost] = useState(0)
@@ -47,6 +51,8 @@ function App() {
   const [logs, setLogs] = useState([{type:'ok',icon:'✓',msg:'System ready'}])
   const [modelCategories, setModelCategories] = useState({})
   const [pipelineStep, setPipelineStep] = useState(0)
+  const [modelsLoaded, setModelsLoaded] = useState(0)
+  const modelsLoadedRef = useRef(false)
   const promptRef = useRef(null)
 
   // ─── GLOBAL TACTILE HAPTICS (P13 FIX) ────
@@ -62,9 +68,12 @@ function App() {
   // ─── LOAD MODELS FROM DB ─────────────────
   useEffect(() => {
     if (!session) return
+    // P61 FIX: Guard against multiple loads — session fires 2-3x on auth state changes
+    if (modelsLoadedRef.current) return
+    modelsLoadedRef.current = true
     ;(async () => {
       const { data } = await supabase.from('ai_models').select('id,title,category,provider,pricing_base,pricing_type,pricing_desc,pricing_multipliers,variables_schema').eq('is_active', true)
-      if (!data) return
+      if (!data) { modelsLoadedRef.current = false; return }
       const cats = {}
       data.forEach(m => {
         const cat = m.category || 'other'
@@ -72,15 +81,33 @@ function App() {
         cats[cat].push(m)
       })
       setModelCategories(cats)
-      // Populate MODEL_REGISTRY
+      // P61 FIX: Map DB category names to MODEL_REGISTRY keys
+      const catMap = {
+        'text-to-image': 'image', 'image-to-image': 'image',
+        'text-to-video': 'video', 'image-to-video': 'video',
+        'video-to-video': 'video',
+        'text-to-audio': 't2a', 'audio-to-audio': 'a2a',
+        'text-to-speech': 'tts', 'speech-to-text': 'stt',
+        'video-to-audio': 'v2a', 'audio-to-video': 'a2v',
+        'image-to-3d': 'i23d', 'text-to-3d': 't23d', '3d-to-3d': '3d23d',
+        'training': 'training', 'vision': 'vision', 'llm': 'llm',
+        'lipsync': 'lipsync',
+      }
+      // Populate MODEL_REGISTRY — merge related categories
+      const merged = {}
       Object.keys(cats).forEach(cat => {
+        const regKey = catMap[cat] || cat
+        if (!merged[regKey]) merged[regKey] = []
+        merged[regKey].push(...cats[cat])
+      })
+      Object.keys(merged).forEach(regKey => {
         const byProvider = {}
-        cats[cat].forEach(m => {
+        merged[regKey].forEach(m => {
           const p = m.provider || 'fal-ai'
           if (!byProvider[p]) byProvider[p] = { company: p, models: [] }
           byProvider[p].models.push({ id: m.id, name: m.title })
         })
-        MODEL_REGISTRY[cat] = Object.values(byProvider)
+        MODEL_REGISTRY[regKey] = Object.values(byProvider)
       })
       // Populate schemas
       data.forEach(m => {
@@ -99,11 +126,12 @@ function App() {
           })
         }
       })
+      setModelsLoaded(data.length)
       addLog('ok','✓',`${data.length} models loaded`)
     })()
   }, [session])
 
-  // ─── LOAD PROJECTS ────────────────────────
+  // ─── LOAD PROJECTS (P46 FIX: auto-create on first login) ────
   useEffect(() => {
     if (!session) return
     ;(async () => {
@@ -125,6 +153,18 @@ function App() {
           })
           addLog('ok','✓',`Project "${data[0].name}" loaded`)
         }
+      } else {
+        // P46 FIX: Auto-create first project for new users
+        const { data: newProject, error } = await supabase.from('projects').insert({
+          name: 'My First Project', profile_id: session.user.id,
+          contract: { characters: [], props: [], environments: [], shots: [] }
+        }).select().single()
+        if (newProject && !error) {
+          setProjects([newProject])
+          setActiveProject(newProject)
+          setContract({ characters: [], props: [], environments: [], shots: [] })
+          addLog('ok','✓','Welcome! Created "My First Project"')
+        }
       }
     })()
   }, [session])
@@ -135,6 +175,9 @@ function App() {
   )
 
   // ─── REAL-TIME LOGS ───────────────────────
+  // P55 FIX: Single source of truth for renderfarm_logs subscription
+  // LogMonitor now receives lastLog as a prop instead of its own channel
+  const [lastRealtimeLog, setLastRealtimeLog] = useState(null)
   useEffect(() => {
     if (!session) return
     const ch = supabase.channel('rf_logs')
@@ -142,6 +185,7 @@ function App() {
         const l = payload.new
         addLog(l.level === 'error' ? 'err' : l.level === 'warn' ? 'run' : 'ok', 
           l.level === 'error' ? '✗' : l.level === 'warn' ? '⟳' : '✓', l.message || '')
+        setLastRealtimeLog(l)
       })
       .subscribe()
     return () => supabase.removeChannel(ch)
@@ -231,11 +275,15 @@ function App() {
     }
 
     try {
+      // P56 FIX: Always get a fresh session token to avoid stale JWT after idle periods
+      const { data: { session: freshSession } } = await supabase.auth.getSession()
+      const freshToken = freshSession?.access_token
+      if (!freshToken) throw new Error('Session expired — please log in again.')
       const res = await fetch(N8N_WEBHOOK_URL, {
         method:'POST', headers:{
           'Content-Type':'application/json',
           // VULNERABILITY FIXED: Send JWT token to authenticate N8N webhook
-          'Authorization': `Bearer ${session?.access_token}`
+          'Authorization': `Bearer ${freshToken}`
         },
         body: JSON.stringify(payload)
       })
@@ -259,7 +307,8 @@ function App() {
   return (
     <div className="app">
       <Toaster position="bottom-right" toastOptions={{ style:{background:'#1a1a28',color:'#f0f0f5',border:'1px solid #333348'}}} />
-      <LogMonitor />
+      {/* P55 FIX: LogMonitor receives lastLog from the single subscription above */}
+      <LogMonitor lastLog={lastRealtimeLog} />
 
       {/* ═══ TOPBAR ═══ */}
       <header className="topbar">
@@ -296,23 +345,34 @@ function App() {
           ))}
         </div>
         <div className="top-right">
-          <button className="top-btn" title="Share" onClick={() => setShareOpen(true)}>🔗</button>
+          {/* P53 FIX: Guard share button when no project */}
+          <button className="top-btn" title={activeProject ? 'Share' : 'Create a project first'} onClick={() => { if(activeProject) setShareOpen(true); else toast.error('Create a project first') }} style={!activeProject ? {opacity:.4} : {}} aria-label="Share project">🔗</button>
           <WalletWidget session={session} />
-          <div className="top-avatar" onClick={() => supabase.auth.signOut()}>
-            {session.user.email?.[0]?.toUpperCase() || 'U'}
+          {/* P52 FIX: Avatar dropdown with visible logout */}
+          <div style={{position:'relative'}}>
+            <div className="top-avatar" onClick={() => setUserMenuOpen(!userMenuOpen)}>
+              {session.user.email?.[0]?.toUpperCase() || 'U'}
+            </div>
+            {userMenuOpen && (
+              <div style={{position:'absolute',top:'100%',right:0,marginTop:6,background:'var(--bg2)',border:'1px solid var(--t4)',borderRadius:'var(--r2)',padding:6,zIndex:300,width:180,display:'flex',flexDirection:'column',gap:2}} onClick={()=>setUserMenuOpen(false)}>
+                <div style={{padding:'6px 10px',fontSize:11,color:'var(--t3)',borderBottom:'1px solid var(--t4)',marginBottom:2}}>{session.user.email}</div>
+                <button className="btn btn-ghost btn-sm" style={{justifyContent:'flex-start'}} onClick={() => setView('director')}>🎬 Director Studio</button>
+                <button className="btn btn-ghost btn-sm" style={{justifyContent:'flex-start'}} onClick={() => { if(confirm('Sign out?')) supabase.auth.signOut() }}>🚪 Sign Out</button>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
       {/* ═══ RAIL ═══ */}
       <nav className="rail">
-        {[{k:'canvas',e:'🎬'},{k:'compare',e:'⊞'},{k:'timeline',e:'≡'}].map(r => (
-          <button key={r.k} className={`rail-btn${view===r.k?' active':''}`} onClick={() => setView(r.k)}>
-            {r.e}<span className="rail-tip">{r.k}</span>
+        {[{k:'canvas',e:'🎬',t:'Canvas'},{k:'director',e:'✦',t:'Director'},{k:'compare',e:'⊞',t:'Compare'},{k:'timeline',e:'≡',t:'Timeline'}].map(r => (
+          <button key={r.k} className={`rail-btn${view===r.k?' active':''}`} onClick={() => setView(r.k)} title={r.t}>
+            {r.e}<span className="rail-tip">{r.t}</span>
           </button>
         ))}
         <div className="rail-sep" />
-        <button className={`rail-btn${assetsOpen?' active':''}`} onClick={() => setAssetsOpen(!assetsOpen)}>
+        <button className={`rail-btn${assetsOpen?' active':''}`} onClick={() => setAssetsOpen(!assetsOpen)} title="Assets Panel" aria-label="Toggle assets panel">
           📦<span className="rail-tip">Assets</span>
         </button>
 
@@ -331,6 +391,7 @@ function App() {
           <>
             <div style={{ width: '100%', height: '100%', position: 'relative' }}>
               <NodeCanvas 
+                key={`canvas-${modelsLoaded}`}
                 data={contract} 
                 onChange={(newData) => { setContract(newData); persistContract(newData); }} 
                 media={media} 
@@ -348,7 +409,7 @@ function App() {
                 onKeyDown={e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); handlePromptSend() }}}
               />
               <div className="prompt-bar">
-                <button className="p-tool" title="Enhance with AI" onClick={handleEnhance}>✦</button>
+                <button className="p-tool" title="Enhance with AI" onClick={handleEnhance} disabled={enhancing} style={enhancing ? {animation:'pulse 1s infinite'} : {}}>{enhancing ? '⟳' : '✦'}</button>
                 <div className="p-mode">
                   {['shot','audio','3d'].map(m => (
                     <button key={m} className={`p-mode-b${mode===m?' on':''}`} onClick={() => setMode(m)}>
@@ -365,7 +426,13 @@ function App() {
         {/* Compare View */}
         {view === 'compare' && (
           <div className="comp-view open">
-            {media.filter(m=>m.status==='ready').slice(0,8).map((m,i) => (
+            {media.filter(m=>m.status==='ready').length === 0 ? (
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',color:'var(--t3)',gap:'12px',padding:'60px'}}>
+                <div style={{fontSize:'48px',opacity:0.3}}>⊞</div>
+                <div style={{fontSize:'16px',fontWeight:600,color:'var(--t2)'}}>No renders yet</div>
+                <div style={{fontSize:'12px',textAlign:'center',maxWidth:'300px'}}>Generate shots from the canvas to compare them here side by side. Each render will appear as a card for easy comparison.</div>
+              </div>
+            ) : media.filter(m=>m.status==='ready').slice(0,8).map((m,i) => (
               <div key={m.id} className="comp-card">
                 <div className="comp-thumb">
                   {m.thumbnailLink ? <img src={getDriveDisplayUrl(m.thumbnailLink)} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : `Variation ${i+1}`}
@@ -376,6 +443,62 @@ function App() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* P41 FIX: Director Panel — full pipeline UI */}
+        {view === 'director' && (
+          <DirectorPanel
+            language="en"
+            onApplyToCanvas={(directorData) => {
+              setContract(prev => {
+                const updated = {
+                  characters: [...(prev.characters || []), ...(directorData.characters || [])],
+                  props: [...(prev.props || []), ...(directorData.props || [])],
+                  environments: [...(prev.environments || []), ...(directorData.environments || [])],
+                  shots: [...(prev.shots || []), ...(directorData.shots || [])],
+                };
+                persistContract(updated);
+                return updated;
+              });
+              setView('canvas');
+              toast.success(`Applied ${directorData.shots?.length || 0} shots + ${(directorData.characters?.length||0)+(directorData.props?.length||0)+(directorData.environments?.length||0)} entities to canvas`);
+              addLog('ok','✓','Director data applied to canvas');
+            }}
+          />
+        )}
+
+        {/* P40 FIX: Timeline/Shotlist View */}
+        {view === 'timeline' && (
+          <div className="canvas" style={{display:'flex',flexDirection:'column',padding:'24px',gap:'8px',overflowY:'auto'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>
+              <h2 style={{fontSize:'16px',fontWeight:700,color:'var(--t1)'}}>📋 Shot List</h2>
+              <span style={{fontSize:'11px',color:'var(--t3)'}}>{(contract.shots||[]).length} shots</span>
+            </div>
+            {(contract.shots||[]).length === 0 ? (
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',flex:1,color:'var(--t3)',gap:'12px',padding:'60px'}}>
+                <div style={{fontSize:'48px',opacity:0.3}}>≡</div>
+                <div style={{fontSize:'16px',fontWeight:600,color:'var(--t2)'}}>No shots in this project</div>
+                <div style={{fontSize:'12px',textAlign:'center',maxWidth:'340px'}}>Add shots from the Canvas view using the toolbar or the prompt bar below. You can also use the <button style={{background:'none',border:'none',color:'var(--accent)',cursor:'pointer',textDecoration:'underline',font:'inherit'}} onClick={()=>setView('director')}>Director</button> to auto-generate a shot list from a screenplay idea.</div>
+              </div>
+            ) : (contract.shots||[]).map((shot, idx) => {
+              const shotMedia = media.find(m => m.metadata?.entity_id === shot.id && m.status === 'ready')
+              return (
+                <div key={shot.id} style={{display:'flex',gap:'12px',padding:'12px',background:'var(--bg3)',borderRadius:'10px',border:'1px solid var(--t4)',cursor:'pointer',transition:'.15s'}} onClick={() => { setSelectedShot(shot.id); setInspectorOpen(true) }}>
+                  <div style={{width:'80px',height:'50px',borderRadius:'6px',background:'var(--bg4)',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden',fontSize:'10px',color:'var(--t3)'}}>
+                    {shotMedia?.thumbnailLink ? <img src={getDriveDisplayUrl(shotMedia.thumbnailLink)} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : `#${idx+1}`}
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:'12px',fontWeight:600,color:'var(--t1)',marginBottom:'4px'}}>{shot.title || shot.prompt?.substring(0,50) || `Shot ${idx+1}`}</div>
+                    <div style={{fontSize:'10px',color:'var(--t3)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{shot.prompt || shot.beat || 'No prompt'}</div>
+                  </div>
+                  <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'4px'}}>
+                    <span style={{fontSize:'9px',padding:'2px 6px',borderRadius:'4px',background: shotMedia ? 'rgba(16,185,129,.15)' : 'rgba(245,166,35,.15)', color: shotMedia ? '#10b981' : '#f5a623'}}>{shotMedia ? '✓ Rendered' : '⏳ Pending'}</span>
+                    <span style={{fontSize:'9px',color:'var(--t3)'}}>{shot.modelId?.split('/').pop() || 'No model'}</span>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
 
@@ -482,7 +605,14 @@ function App() {
               </button>
             </div>
             <div className="ap-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {(assetTab==='chars'?contract.characters:assetTab==='props'?contract.props:contract.environments).map(a => (
+              {/* P45 FIX: Assets panel empty state */}
+              {(assetTab==='chars'?contract.characters:assetTab==='props'?contract.props:contract.environments).length === 0 ? (
+                <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'40px 20px',color:'var(--t3)',gap:'8px',textAlign:'center'}}>
+                  <div style={{fontSize:'32px',opacity:0.3}}>{assetTab==='chars'?'👤':assetTab==='props'?'🔫':'🏙️'}</div>
+                  <div style={{fontSize:'12px',fontWeight:600,color:'var(--t2)'}}>No {assetTab==='chars'?'characters':assetTab==='props'?'props':'environments'} yet</div>
+                  <div style={{fontSize:'10px',maxWidth:'220px'}}>Click "+ Add" above, or use the <button style={{background:'none',border:'none',color:'var(--accent)',cursor:'pointer',font:'inherit',textDecoration:'underline',padding:0}} onClick={()=>{setAssetsOpen(false);setView('director')}}>Director</button> to auto-extract entities from a screenplay.</div>
+                </div>
+              ) : (assetTab==='chars'?contract.characters:assetTab==='props'?contract.props:contract.environments).map(a => (
                 <EntityTaskCard 
                   key={a.id}
                   badge={assetTab === 'chars' ? 'CHR' : assetTab === 'props' ? 'PRP' : 'ENV'}
@@ -620,6 +750,8 @@ function App() {
           <span className="dock-stat"><span className="stat-dot bg-ok" />{shots.filter(s=>s.status==='done').length} approved</span>
           <span className="dock-stat"><span className="stat-dot bg-warn" />{shots.filter(s=>s.status==='pending').length} pending</span>
         </div>
+        {/* P54 FIX: QuotaWidget now rendered in dock — users can see storage usage */}
+        <QuotaWidget session={session} />
         <span className="dock-cost">Session: ${sessionCost.toFixed(2)}</span>
       </footer>
     </div>
@@ -668,16 +800,26 @@ function App() {
   }
   async function handleEnhance() {
     if (!promptText.trim()) return
+    setEnhancing(true) // P49 FIX: Loading feedback
     try {
       // VULNERABILITY FIXED: Use the active shot's model for enhancement to provide context-aware results
       const currentModel = selectedShot ? contract.shots.find(s => s.id === selectedShot)?.model : 'fal-ai/flux-pro/v1.1';
       const enhanced = await enhancePrompt(promptText, null, currentModel)
       setPromptText(enhanced)
       addLog('ok','✦','Prompt enhanced')
+      // P51 FIX: Track Gemini call cost (~$0.002 per enhance)
+      setSessionCost(prev => prev + 0.002)
     } catch(e) { toast.error(e.message) }
+    setEnhancing(false)
   }
   async function handleInvite() {
     if (!inviteEmail.trim() || !activeProject) return
+    // P18 FIX: Basic email validation before Supabase insert
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(inviteEmail.trim())) {
+      toast.error('Please enter a valid email address')
+      return
+    }
     // VULNERABILITY FIXED: Removed useless and dangerous blind query to user_wallets that was ignoring results
     const { error } = await supabase.from('project_shares').insert({
       project_id: activeProject.id,

@@ -1,2 +1,10 @@
+# AI Renderfarm Platform
 User-agent: *
-Disallow: /
+Allow: /
+
+# Block API/internal routes
+Disallow: /api/
+Disallow: /auth/
+
+# Sitemap (update with actual deployment URL)
+# Sitemap: https://ai-renderfarm.surge.sh/sitemap.xml

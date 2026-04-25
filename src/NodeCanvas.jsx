@@ -247,7 +247,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: s.id,
         type: 'custom',
         position,
-        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings }
+        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.prompt || s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings }
       });
       extractEdges(s, '#1890ff');
     });
@@ -440,20 +440,21 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
           <Controls />
           <Background color="#333" gap={16} />
           
-          {/* Top Panel for Toolbar */}
+          {/* Top Panel for Toolbar — P50 FIX: Added tooltips */}
           <div style={{ position: 'absolute', top: 20, left: 20, background: 'rgba(20,20,20,0.8)', padding: '10px', borderRadius: '8px', zIndex: 5, border: '1px solid #333', display: 'flex', gap: '8px' }}>
-             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#ff4d4f' }} onClick={() => addNewNode('Character')}>+ CHARACTER</button>
-             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#d4b106' }} onClick={() => addNewNode('Prop')}>+ PROP</button>
-             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#52c41a' }} onClick={() => addNewNode('Environment')}>+ ENVIRONMENT</button>
-             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#1890ff' }} onClick={() => addNewNode('Shot')}>+ SHOT</button>
-             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#9254de' }} onClick={() => addNewNode('Video')}>+ VIDEO</button>
+             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#ff4d4f' }} onClick={() => addNewNode('Character')} title="Add a character entity node" aria-label="Add Character">+ CHARACTER</button>
+             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#d4b106' }} onClick={() => addNewNode('Prop')} title="Add a prop entity node" aria-label="Add Prop">+ PROP</button>
+             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#52c41a' }} onClick={() => addNewNode('Environment')} title="Add an environment/location node" aria-label="Add Environment">+ ENVIRONMENT</button>
+             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#1890ff' }} onClick={() => addNewNode('Shot')} title="Add a shot/image generation node" aria-label="Add Shot">+ SHOT</button>
+             <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#9254de' }} onClick={() => addNewNode('Video')} title="Add a video generation node" aria-label="Add Video">+ VIDEO</button>
           </div>
         </ReactFlow>
       </div>
 
       {/* Side Panel for Editing */}
+      {/* P47 FIX: Side panel z-index elevated above LogMonitor overlay */}
       {selectedNode && (
-        <div style={{ width: '380px', background: '#111', borderLeft: '1px solid #333', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: '380px', background: '#111', borderLeft: '1px solid #333', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
            <div style={{ padding: '20px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between' }}>
              <h3 style={{ margin: 0, textTransform: 'uppercase', fontSize: '14px', color: selectedNode.data.color }}>{selectedNode.data.typeLabel} PROPERTIES</h3>
              <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }} onClick={() => setSelectedNode(null)}><X size={16} className="lucide-icon" /></button>

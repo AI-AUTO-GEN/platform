@@ -123,7 +123,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .p-send:hover{filter:brightness(1.2)}
 
 /* ═══ COMPARISON VIEW ═══ */
-.comp-view{display:none;position:fixed;inset:48px 0 42px 48px;background:var(--bg);z-index:80;padding:20px;overflow-y:auto}
+/* P15 FIX: Removed position:fixed — views are mutually exclusive via state routing now */
+.comp-view{display:none;width:100%;height:100%;background:var(--bg);padding:20px;overflow-y:auto}
 .comp-view.open{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;align-content:start}
 .comp-card{background:var(--bg2);border:1px solid var(--t4);border-radius:var(--r2);overflow:hidden;transition:.15s}
 .comp-card:hover{border-color:var(--accent)}
@@ -206,6 +207,13 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .dock-stat{font-size:9px;color:var(--t3);display:flex;align-items:center;gap:4px}
 .stat-dot{width:5px;height:5px;border-radius:50%}
 .dock-cost{font-family:var(--mono);font-size:10px;color:var(--t2)}
+
+/* P54 FIX: QuotaWidget styles for dock integration */
+.quota-widget{display:flex;align-items:center;gap:6px;padding:0 4px}
+.quota-bar-bg{width:60px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.quota-bar-fill{height:100%;border-radius:2px;transition:width .3s ease,background-color .3s ease}
+.btn-clear-alert{background:rgba(255,64,64,.12);color:#ff4040;border:1px solid rgba(255,64,64,.3);border-radius:4px;padding:2px 6px;font-size:8px;cursor:pointer;white-space:nowrap}
+.btn-clear-alert:hover{background:rgba(255,64,64,.2)}
 
 /* ═══ ANIM ═══ */
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
