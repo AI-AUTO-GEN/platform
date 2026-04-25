@@ -8,8 +8,7 @@ import Auth from './Auth'
 import { WalletWidget } from './components/Wallet'
 import QuotaWidget from './components/QuotaWidget'
 import { N8N_WEBHOOK_URL, MODALITIES } from './config/constants'
-import { MODEL_REGISTRY, MODEL_SCHEMAS, getModelOptions, getModelHint } from './config/modelRegistry'
-import { enhancePrompt } from './services/geminiService'
+import { MODEL_REGISTRY, MODEL_SCHEMAS, getModelOptions } from './config/modelRegistry'
 import { calculatePreviewCost, formatCost, updateModelPricing } from './pricing/PricingEngine'
 import { useDriveMedia } from './hooks/useDriveMedia'
 import { genId, deleteVariant, getDriveDisplayUrl } from './utils/assetUtils'
@@ -22,7 +21,6 @@ import DirectorPanel from './components/DirectorPanel'
 // ─── STATUS COLORS ─────────────────────────
 const STATUS = { done:'var(--ok)', pending:'var(--warn)', error:'var(--err)', processing:'var(--cyan)', ready:'var(--t3)' }
 const CAT_ICONS = { image:'🖼', video:'🎬', audio:'🎵', '3d':'🧊', lipsync:'💋' }
-const MODE_TO_CAT = { shot:'image', sandbox:'image', edit:'image', video:'video', audio:'audio', tts:'tts', '3d':'3d' }
 
 // ─── MAIN APP ──────────────────────────────
 function App() {
@@ -36,11 +34,9 @@ function App() {
   const [assetTab, setAssetTab] = useState('chars')
   const [shareOpen, setShareOpen] = useState(false)
   const [view, setView] = useState('canvas')
-  const [mode, setMode] = useState('shot')
   const [accountPage, setAccountPage] = useState(null)
-  const [promptText, setPromptText] = useState('')
   const [generating, setGenerating] = useState(false)
-  const [enhancing, setEnhancing] = useState(false)
+
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [genProgress, setGenProgress] = useState(0)
   const [genLabel, setGenLabel] = useState('No active jobs')
@@ -48,7 +44,7 @@ function App() {
   const [glogOpen, setGlogOpen] = useState(false)
   const [showNewProject, setShowNewProject] = useState(false)
   const [newProjectName, setNewProjectName] = useState('')
-  const [dockTab, setDockTab] = useState('queue')
+
   const [shareData, setShareData] = useState({token:null, visibility:'private', invites:[]})
   const [inviteEmail, setInviteEmail] = useState('')
   const [logs, setLogs] = useState([{type:'ok',icon:'✓',msg:'System ready'}])
@@ -56,7 +52,7 @@ function App() {
   const [pipelineStep, setPipelineStep] = useState(0)
   const [modelsLoaded, setModelsLoaded] = useState(0)
   const modelsLoadedRef = useRef(false)
-  const promptRef = useRef(null)
+
 
   // ─── GLOBAL TACTILE HAPTICS (P13 FIX) ────
   useGlobalTactile();
@@ -448,24 +444,7 @@ function App() {
               />
             </div>
 
-            {/* Floating Prompt */}
-            <div className="prompt">
-              <textarea ref={promptRef} className="prompt-txt" placeholder="Describe your shot…" rows={1}
-                value={promptText} onChange={e => setPromptText(e.target.value)}
-                onKeyDown={e => { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); handlePromptSend() }}}
-              />
-              <div className="prompt-bar">
-                <button className="p-tool" title="Enhance with AI" onClick={handleEnhance} disabled={enhancing} style={enhancing ? {animation:'pulse 1s infinite'} : {}}>{enhancing ? '⟳' : '✦'}</button>
-                <div className="p-mode">
-                  {[{k:'shot',l:'IMG'},{k:'video',l:'VID'},{k:'audio',l:'SFX'},{k:'tts',l:'TTS'},{k:'3d',l:'3D'}].map(m => (
-                    <button key={m.k} className={`p-mode-b${mode===m.k?' on':''}`} onClick={() => setMode(m.k)}>
-                      {m.l}
-                    </button>
-                  ))}
-                </div>
-                <button className="p-send" onClick={handlePromptSend} disabled={generating}>↑</button>
-              </div>
-            </div>
+
           </>
         )}
 
@@ -547,69 +526,6 @@ function App() {
             })}
           </div>
         )}
-
-        {/* P72: Generation log moved to header status dot dropdown */}
-
-        {/* Inspector */}
-        <div className={`inspector${inspectorOpen?' open':''}`}>
-          <div className="insp-head">
-            <span className="insp-title">{selected ? `Shot — ${selected.title||''}` : 'Inspector'}</span>
-            <button className="insp-x" onClick={() => { setInspectorOpen(false); setSelectedShot(null) }}>✕</button>
-          </div>
-          {selected && (
-            <>
-              <div className="insp-body">
-                <div className="insp-sec">
-                  <div className="insp-lbl">Prompt</div>
-                  <textarea className="field" rows={3} value={selected.prompt||''} onChange={e => updateShot(selected.id,'prompt',e.target.value)} />
-                </div>
-                <div className="insp-sec">
-                  <div className="insp-lbl">Model</div>
-                  <select className="field" value={selected.model||''} onChange={e => updateShot(selected.id,'model',e.target.value)}>
-                    {Object.entries(modelCategories).slice(0,6).map(([cat,models]) => (
-                      <optgroup key={cat} label={cat.toUpperCase()}>
-                        {models.slice(0,15).map(m => <option key={m.id} value={m.id}>{m.title}</option>)}
-                      </optgroup>
-                    ))}
-                  </select>
-                  <div style={{fontSize:10,color:'var(--t3)',marginTop:4}}>{getModelHint(selected.model).substring(0,80)}…</div>
-                </div>
-                {/* Dynamic params from model schema */}
-                {getModelOptions(selected.model, selected.cat).map(opt => (
-                  <div className="insp-sec" key={opt.key}>
-                    <div className="insp-lbl">{opt.label}</div>
-                    <div className="chips">
-                      {(opt.options||[]).map(v => {
-                        const current = selected[opt.key] || selected.options?.[opt.key] || opt.default
-                        return <span key={v} className={`chip${current===v?' on':''}`}
-                          onClick={() => updateShot(selected.id, opt.key, v)}>{v}</span>
-                      })}
-                    </div>
-                  </div>
-                ))}
-                {getModelOptions(selected.model, selected.cat).length === 0 && (
-                  <div className="insp-sec">
-                    <div style={{fontSize:11,color:'var(--t3)',fontStyle:'italic'}}>No configurable parameters for this model</div>
-                  </div>
-                )}
-              </div>
-              <div className="insp-foot">
-                <div className="cost-row" style={{marginBottom:6}}>
-                  <span className="mono">Estimated cost</span>
-                  <span className="cost-val">{formatCost(calculatePreviewCost(selected.model, {aspect_ratio:selected.ar}))}</span>
-                </div>
-                <button className="btn btn-primary btn-full" onClick={() => handleGenerate(selected)} disabled={generating}>
-                  ⚡ Generate — {formatCost(calculatePreviewCost(selected.model, {aspect_ratio:selected.ar}))}
-                </button>
-                <div className="insp-acts">
-                  <button className="btn btn-ghost btn-sm" onClick={() => setView('compare')}>⊞ Compare</button>
-                  <button className="btn btn-ghost btn-sm" onClick={() => { updateShot(selected.id,'status','done'); toast.success('Approved') }}>✓ Approve</button>
-                  <button className="btn btn-danger btn-sm" onClick={() => removeShot(selected.id)}>✕</button>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
 
         {/* Assets Panel */}
         {assetsOpen && (
@@ -769,25 +685,11 @@ function App() {
         </div>
       )}
 
-      {/* ═══ DOCK ═══ */}
-      <footer className="dock">
-        <div className="dock-tabs">
-          <button className={`dock-tab${dockTab==='queue'?' on':''}`} onClick={()=>setDockTab('queue')}>Queue</button>
-        </div>
-        <div className="dock-sep" />
-        <div className="dock-queue">
-          {generating && <span className="q-pulse" />}
-          <span className="dock-info">{genLabel}</span>
-          <div className="q-bar"><div className="q-fill" style={{width:`${genProgress}%`}} /></div>
-        </div>
-        <div className="dock-stats">
-          <span className="dock-stat"><span className="stat-dot bg-ok" />{shots.filter(s=>s.status==='done').length} approved</span>
-          <span className="dock-stat"><span className="stat-dot bg-warn" />{shots.filter(s=>s.status==='pending').length} pending</span>
-        </div>
-        {/* P54 FIX: QuotaWidget now rendered in dock — users can see storage usage */}
+      {/* Session cost + quota in a minimal status strip */}
+      <div style={{position:'fixed',bottom:0,left:'var(--rail-w,56px)',right:0,height:'28px',background:'var(--bg1)',borderTop:'1px solid var(--t4)',display:'flex',alignItems:'center',justifyContent:'flex-end',padding:'0 16px',gap:'16px',zIndex:20,fontSize:'10px',color:'var(--t3)'}}>
         <QuotaWidget session={session} />
-        <span className="dock-cost">Session: ${sessionCost.toFixed(2)}</span>
-      </footer>
+        <span style={{fontFamily:'monospace',color:'var(--t2)'}}>Session: ${sessionCost.toFixed(2)}</span>
+      </div>
     </div>
   )
 
@@ -807,45 +709,7 @@ function App() {
     })
     setSelectedShot(null); setInspectorOpen(false)
   }
-  function handlePromptSend() {
-    if (!promptText.trim()) return
-    const cat = MODE_TO_CAT[mode] || 'image'
-    const defaultModels = {
-      'image': 'fal-ai/flux-pro/v1.1',
-      'video': 'fal-ai/kling-video/v1/standard/text-to-video',
-      'audio': 'fal-ai/stable-audio',
-      'tts': 'fal-ai/f5-tts',
-      '3d': 'fal-ai/trellis'
-    };
-    const defaultModel = defaultModels[cat] || 'fal-ai/flux-pro/v1.1';
 
-    const newShot = {
-      id: genId('SHOT'), title: promptText.substring(0,40), prompt: promptText,
-      model: defaultModel, modelId: defaultModel, modality: cat, cat,
-      status:'pending', res:'1080p', dur: cat==='video'?'5s':'\u2014', ar:'16:9', entities:[]
-    }
-    setContract(prev => {
-      const updated = {...prev, shots:[...prev.shots, newShot]}
-      persistContract(updated)
-      return updated
-    })
-    setPromptText('')
-    addLog('ok','✓',`Shot #${shots.length+1} created — ${formatCost(calculatePreviewCost(newShot.model))}`)
-  }
-  async function handleEnhance() {
-    if (!promptText.trim()) return
-    setEnhancing(true) // P49 FIX: Loading feedback
-    try {
-      // VULNERABILITY FIXED: Use the active shot's model for enhancement to provide context-aware results
-      const currentModel = selectedShot ? contract.shots.find(s => s.id === selectedShot)?.model : 'fal-ai/flux-pro/v1.1';
-      const enhanced = await enhancePrompt(promptText, null, currentModel)
-      setPromptText(enhanced)
-      addLog('ok','✦','Prompt enhanced')
-      // P51 FIX: Track Gemini call cost (~$0.002 per enhance)
-      setSessionCost(prev => prev + 0.002)
-    } catch(e) { toast.error(e.message) }
-    setEnhancing(false)
-  }
   async function handleInvite() {
     if (!inviteEmail.trim() || !activeProject) return
     // P18 FIX: Basic email validation before Supabase insert

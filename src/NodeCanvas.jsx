@@ -4,7 +4,7 @@ import '@xyflow/react/dist/style.css';
 import { getModelOptions, MODEL_REGISTRY } from './config/modelRegistry';
 import { calculatePreviewCost, formatCost } from './pricing/PricingEngine';
 import { X, CheckCircle, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
-import { genId, getDriveDisplayUrl } from './utils/assetUtils';
+import { N8N_UPLOAD_WEBHOOK_URL } from './config/constants';
 import { supabase } from './supabase';
 import EnhanceButton from './components/EnhanceButton';
 
@@ -654,10 +654,10 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
              <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }} onClick={() => setSelectedNode(null)}><X size={16} className="lucide-icon" /></button>
            </div>
            
-           <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', flex: 1, overflowY: 'auto' }}>
+           <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, overflowY: 'auto' }}>
              <div className="form-group">
-               <label>ID</label>
-               <input disabled className="input-field mono" value={selectedNode.id} />
+               <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#666' }}>ID</label>
+               <input disabled className="input-field mono" value={selectedNode.id} style={{ fontSize: '11px' }} />
              </div>
 
              {selectedNode.data.typeLabel !== 'Shot' && selectedNode.data.typeLabel !== 'Video' && (
@@ -667,15 +667,16 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
                </div>
              )}
 
+             {/* ── Prompt + AI Enhance ── */}
              <div className="form-group">
-               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                  <label style={{ margin: 0 }}>{selectedNode.data.typeLabel === 'Shot' ? 'Beat / Action' : 'Prompt'}</label>
                  <EnhanceButton 
                    value={selectedNode.data.rawData.prompt || selectedNode.data.rawData.beat || ''}
                    onChange={(val) => handleUpdateNode('prompt', val)}
                    modelId={selectedNode.data.rawData.modelId || 'fal-ai/flux-pro/v1.1'}
                    entityType={selectedNode.data.typeLabel.toLowerCase()}
-                   modality="t2i"
+                   modality={selectedNode.data.rawData.modality || 't2i'}
                  />
                </div>
                <textarea rows={5} className="script-textarea" value={selectedNode.data.rawData.prompt || selectedNode.data.rawData.beat || ''} onChange={(e) => handleUpdateNode('prompt', e.target.value)} />
@@ -686,83 +687,171 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
                  <label>Camera Move</label>
                  <input className="input-field" value={selectedNode.data.rawData.cameraMove || ''} onChange={(e) => handleUpdateNode('cameraMove', e.target.value)} />
                </div>
-              )}
-              {/* P66: Reference Images Upload */}
-              <div style={{ marginTop: '10px' }}>
-                <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#888', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <ImageIcon size={12} /> Reference Images
-                </label>
-                
-                {/* Upload drop zone */}
-                <div 
-                  style={{ 
-                    border: '2px dashed #333', borderRadius: '8px', padding: '16px', 
-                    textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
-                    background: uploading ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.02)'
-                  }}
-                  onClick={() => !uploading && fileInputRef.current?.click()}
-                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#6366f1'; }}
-                  onDragLeave={(e) => { e.currentTarget.style.borderColor = '#333'; }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.style.borderColor = '#333';
-                    const file = e.dataTransfer.files[0];
-                    if (file && file.type.startsWith('image/')) handleReferenceUpload(file);
-                  }}
-                >
-                  <input 
-                    ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }}
-                    onChange={(e) => { if (e.target.files[0]) handleReferenceUpload(e.target.files[0]); e.target.value = ''; }}
-                  />
-                  {uploading ? (
-                    <div style={{ color: '#6366f1', fontSize: '11px' }}>
-                      <div style={{ animation: 'pulse 1s infinite' }}>Uploading...</div>
-                    </div>
-                  ) : (
-                    <>
-                      <Upload size={20} style={{ color: '#555', marginBottom: '4px' }} />
-                      <div style={{ fontSize: '10px', color: '#666' }}>Drop image or click to upload</div>
-                      <div style={{ fontSize: '8px', color: '#444', marginTop: '2px' }}>PNG, JPG, WebP</div>
-                      {uploadError && <div style={{ fontSize: '9px', color: '#ff4444', marginTop: '4px', textAlign: 'center' }}>⚠ {uploadError}</div>}
-                    </>
-                  )}
-                </div>
+             )}
 
-                {/* Uploaded references grid */}
-                {(selectedNode.data.rawData?.references || []).length > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginTop: '10px' }}>
-                    {(selectedNode.data.rawData?.references || []).map((ref, i) => (
-                      <div key={i} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #333', aspectRatio: '1' }}>
-                        <img src={ref.thumbnailUrl || ref.url} alt={ref.fileName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        <button 
-                          onClick={() => handleRemoveReference(i)}
-                          style={{ 
-                            position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', 
-                            border: 'none', borderRadius: '3px', padding: '2px', cursor: 'pointer', color: '#ff6b6b',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                          }}
-                        >
-                          <Trash2 size={10} />
-                        </button>
-                        <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.7)', padding: '2px 4px', fontSize: '7px', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {ref.fileName}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+             {/* ── Model Selection: Modality → Company → Model ── */}
+             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #222', borderRadius: '10px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+               <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#666', letterSpacing: '1px' }}>Model Configuration</label>
+               
+               {/* Modality */}
+               <div>
+                 <label style={{ fontSize: '9px', color: '#555', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Type</label>
+                 <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                   {MODALITY_OPTS.map(m => (
+                     <button key={m.key}
+                       style={{ padding: '4px 10px', fontSize: '10px', fontWeight: 600, borderRadius: '6px', border: '1px solid', cursor: 'pointer', transition: '.15s',
+                         background: (selectedNode.data.rawData.modality || DEF_MOD[selectedNode.data.typeLabel] || 'image') === m.key ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.04)',
+                         borderColor: (selectedNode.data.rawData.modality || DEF_MOD[selectedNode.data.typeLabel] || 'image') === m.key ? '#6366f1' : '#333',
+                         color: (selectedNode.data.rawData.modality || DEF_MOD[selectedNode.data.typeLabel] || 'image') === m.key ? '#a5b4fc' : '#888',
+                       }}
+                       onClick={() => {
+                         const mod = m.key;
+                         const firstCat = (MODEL_REGISTRY[mod] || []).find(c => c.company !== 'Loading...');
+                         const firstModel = firstCat?.models?.[0]?.id || '';
+                         handleUpdateNode('modality', mod);
+                         handleUpdateNode('company', firstCat?.company || '');
+                         handleUpdateNode('modelId', firstModel);
+                         // Also update visual node
+                         selectedNode.data.onChangeNodeModality(selectedNode.id, selectedNode.data.typeLabel, mod);
+                       }}
+                     >{m.label}</button>
+                   ))}
+                 </div>
+               </div>
 
+               {/* Company */}
+               {(() => {
+                 const mod = selectedNode.data.rawData.modality || DEF_MOD[selectedNode.data.typeLabel] || 'image';
+                 const companies = (MODEL_REGISTRY[mod] || []).filter(c => c.company !== 'Loading...');
+                 const currentCompany = selectedNode.data.rawData.company || companies[0]?.company || '';
+                 const companyModels = companies.find(c => c.company === currentCompany)?.models || companies[0]?.models || [];
+                 return (
+                   <>
+                     <div>
+                       <label style={{ fontSize: '9px', color: '#555', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Provider</label>
+                       <select className="input-field" style={{ fontSize: '11px' }} value={currentCompany}
+                         onChange={(e) => {
+                           const newCo = e.target.value;
+                           const coModels = companies.find(c => c.company === newCo)?.models || [];
+                           handleUpdateNode('company', newCo);
+                           if (coModels[0]) handleUpdateNode('modelId', coModels[0].id);
+                           selectedNode.data.onChangeNodeCompany(selectedNode.id, selectedNode.data.typeLabel, newCo);
+                         }}>
+                         {companies.map(c => <option key={c.company} value={c.company}>{c.company}</option>)}
+                       </select>
+                     </div>
+                     <div>
+                       <label style={{ fontSize: '9px', color: '#555', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Model</label>
+                       <select className="input-field" style={{ fontSize: '11px' }} value={selectedNode.data.rawData.modelId || selectedNode.data.modelId || ''}
+                         onChange={(e) => {
+                           handleUpdateNode('modelId', e.target.value);
+                           selectedNode.data.onChangeNodeModel(selectedNode.id, selectedNode.data.typeLabel, e.target.value);
+                         }}>
+                         {companyModels.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                       </select>
+                     </div>
+                   </>
+                 );
+               })()}
+             </div>
+
+             {/* ── Dynamic Model Parameters ── */}
+             {(() => {
+               const modelId = selectedNode.data.rawData.modelId || selectedNode.data.modelId || '';
+               const kind = selectedNode.data.typeLabel?.toLowerCase();
+               const opts = getModelOptions(modelId, kind);
+               if (opts.length === 0) return null;
+               return (
+                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #222', borderRadius: '10px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                   <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#666', letterSpacing: '1px' }}>Parameters</label>
+                   {opts.map(opt => (
+                     <div key={opt.key}>
+                       <label style={{ fontSize: '9px', color: '#555', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>{opt.label}</label>
+                       <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                         {(opt.options || []).map(v => {
+                           const current = selectedNode.data.rawData?.settings?.[opt.key] || opt.default;
+                           return (
+                             <button key={v}
+                               style={{ padding: '4px 10px', fontSize: '10px', borderRadius: '6px', border: '1px solid', cursor: 'pointer', transition: '.15s',
+                                 background: current === v ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.04)',
+                                 borderColor: current === v ? '#10b981' : '#333',
+                                 color: current === v ? '#6ee7b7' : '#888',
+                               }}
+                               onClick={() => {
+                                 const newSettings = { ...(selectedNode.data.rawData?.settings || {}), [opt.key]: v };
+                                 handleUpdateNode('settings', newSettings);
+                                 selectedNode.data.onChangeNodeSettings(selectedNode.id, selectedNode.data.typeLabel, newSettings);
+                               }}
+                             >{v}</button>
+                           );
+                         })}
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               );
+             })()}
+
+             {/* P66: Reference Images Upload */}
+             <div style={{ marginTop: '4px' }}>
+               <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#888', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                 <ImageIcon size={12} /> Reference Images
+               </label>
+               <div 
+                 style={{ border: '2px dashed #333', borderRadius: '8px', padding: '16px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
+                   background: uploading ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.02)' }}
+                 onClick={() => !uploading && fileInputRef.current?.click()}
+                 onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#6366f1'; }}
+                 onDragLeave={(e) => { e.currentTarget.style.borderColor = '#333'; }}
+                 onDrop={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#333'; const file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) handleReferenceUpload(file); }}
+               >
+                 <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }}
+                   onChange={(e) => { if (e.target.files[0]) handleReferenceUpload(e.target.files[0]); e.target.value = ''; }} />
+                 {uploading ? (
+                   <div style={{ color: '#6366f1', fontSize: '11px' }}><div style={{ animation: 'pulse 1s infinite' }}>Uploading...</div></div>
+                 ) : (
+                   <>
+                     <Upload size={20} style={{ color: '#555', marginBottom: '4px' }} />
+                     <div style={{ fontSize: '10px', color: '#666' }}>Drop image or click to upload</div>
+                     <div style={{ fontSize: '8px', color: '#444', marginTop: '2px' }}>PNG, JPG, WebP</div>
+                     {uploadError && <div style={{ fontSize: '9px', color: '#ff4444', marginTop: '4px' }}>⚠ {uploadError}</div>}
+                   </>
+                 )}
+               </div>
+               {(selectedNode.data.rawData?.references || []).length > 0 && (
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginTop: '10px' }}>
+                   {(selectedNode.data.rawData?.references || []).map((ref, i) => (
+                     <div key={i} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #333', aspectRatio: '1' }}>
+                       <img src={ref.thumbnailUrl || ref.url} alt={ref.fileName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                       <button onClick={() => handleRemoveReference(i)}
+                         style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', border: 'none', borderRadius: '3px', padding: '2px', cursor: 'pointer', color: '#ff6b6b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                         <Trash2 size={10} />
+                       </button>
+                       <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.7)', padding: '2px 4px', fontSize: '7px', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ref.fileName}</div>
+                     </div>
+                   ))}
+                 </div>
+               )}
+             </div>
+
+             {/* Current Render Preview */}
              {selectedNode.data.media?.thumbnailLink && (
-               <div style={{ marginTop: '10px' }}>
+               <div>
                  <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#888', marginBottom: '8px', display: 'block' }}>Current Render</label>
                  <img src={getDriveDisplayUrl(selectedNode.data.media.thumbnailLink)} style={{ width: '100%', borderRadius: '8px', border: '1px solid #333' }} />
                </div>
              )}
              
-             <div style={{ marginTop: 'auto', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button className="btn-primary" style={{ width: '100%', background: selectedNode.data.color }} onClick={() => onGenerateNode ? onGenerateNode(selectedNode) : alert('Generator not attached.')}>ACTION PREVIEW</button>
-                <button className="btn-primary" style={{ width: '100%', background: 'rgba(255, 77, 79, 0.2)', color: '#ff4d4f', border: '1px solid rgba(255, 77, 79, 0.5)' }} onClick={() => onNodesDelete([selectedNode])}>DELETE {selectedNode.data.typeLabel.toUpperCase()}</button>
+             {/* ── Footer: Cost + Actions ── */}
+             <div style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid #222' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: '#888', padding: '0 4px' }}>
+                  <span>Estimated cost</span>
+                  <span style={{ color: '#10b981', fontWeight: 700, fontFamily: 'monospace' }}>{formatCost(calculatePreviewCost(selectedNode.data.rawData.modelId || selectedNode.data.modelId, { ...(selectedNode.data.rawData?.settings || {}), prompt: selectedNode.data.rawData.prompt }))}</span>
+                </div>
+                <button className="btn-primary" style={{ width: '100%', background: selectedNode.data.color, padding: '10px', fontSize: '13px', fontWeight: 700 }} onClick={() => onGenerateNode ? onGenerateNode(selectedNode) : alert('Generator not attached.')}>
+                  ⚡ Generate — {formatCost(calculatePreviewCost(selectedNode.data.rawData.modelId || selectedNode.data.modelId, { ...(selectedNode.data.rawData?.settings || {}), prompt: selectedNode.data.rawData.prompt }))}
+                </button>
+                <button className="btn-primary" style={{ width: '100%', background: 'rgba(255, 77, 79, 0.1)', color: '#ff4d4f', border: '1px solid rgba(255, 77, 79, 0.3)', fontSize: '11px' }} onClick={() => onNodesDelete([selectedNode])}>DELETE {selectedNode.data.typeLabel.toUpperCase()}</button>
              </div>
            </div>
         </div>
