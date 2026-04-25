@@ -493,7 +493,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // P66: Reference image upload handler
+  // P66+P68: Reference image upload handler — sends as multipart/form-data for n8n binary compatibility
   const handleReferenceUpload = useCallback(async (file) => {
     if (!selectedNode || !file) return;
     setUploading(true);
@@ -501,33 +501,27 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       
-      // Convert file to base64 for webhook
-      const reader = new FileReader();
-      const base64 = await new Promise((resolve) => {
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
+      // Build multipart form — n8n webhook auto-parses this into binary 'data'
+      const formData = new FormData();
+      formData.append('data', file, file.name);  // 'data' = n8n's expected binary property name
+      formData.append('nodeId', selectedNode.id);
+      formData.append('nodeType', selectedNode.data.typeLabel);
+      formData.append('purpose', 'reference');
 
       const res = await fetch(N8N_UPLOAD_WEBHOOK_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
-        body: JSON.stringify({
-          nodeId: selectedNode.id,
-          nodeType: selectedNode.data.typeLabel,
-          fileName: file.name,
-          mimeType: file.type,
-          fileData: base64,
-          purpose: 'reference'
-        })
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+        // Do NOT set Content-Type — browser sets it automatically with boundary for FormData
+        body: formData
       });
       
       const result = await res.json();
       
       // Store reference in node data
       const newRef = {
-        url: result.driveUrl || result.url || base64,
-        thumbnailUrl: result.thumbnailUrl || result.url || base64,
-        driveFileId: result.driveFileId || null,
+        url: result.driveUrl || result.webViewLink || result.url || '',
+        thumbnailUrl: result.thumbnailUrl || result.thumbnailLink || result.url || '',
+        driveFileId: result.driveFileId || result.id || null,
         fileName: file.name,
         uploadedAt: new Date().toISOString()
       };
@@ -536,10 +530,10 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       handleUpdateNode('references', [...currentRefs, newRef]);
     } catch (err) {
       console.error('Reference upload failed:', err);
-      // Fallback: store as local base64 preview
+      // Fallback: store as local base64 preview so user sees their image even if n8n is down
       const reader = new FileReader();
       reader.onload = () => {
-        const newRef = { url: reader.result, thumbnailUrl: reader.result, fileName: file.name, uploadedAt: new Date().toISOString() };
+        const newRef = { url: reader.result, thumbnailUrl: reader.result, fileName: file.name, uploadedAt: new Date().toISOString(), local: true };
         const currentRefs = selectedNode.data.rawData?.references || [];
         handleUpdateNode('references', [...currentRefs, newRef]);
       };
