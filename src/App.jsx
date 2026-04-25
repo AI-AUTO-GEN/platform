@@ -42,7 +42,7 @@ function App() {
   const [genProgress, setGenProgress] = useState(0)
   const [genLabel, setGenLabel] = useState('No active jobs')
   const [sessionCost, setSessionCost] = useState(0)
-  const [glogOpen, setGlogOpen] = useState(true)
+  const [glogOpen, setGlogOpen] = useState(false)
   const [showNewProject, setShowNewProject] = useState(false)
   const [newProjectName, setNewProjectName] = useState('')
   const [dockTab, setDockTab] = useState('queue')
@@ -349,6 +349,28 @@ function App() {
           {/* P53 FIX: Guard share button when no project */}
           <button className="top-btn" title={activeProject ? 'Share' : 'Create a project first'} onClick={() => { if(activeProject) setShareOpen(true); else toast.error('Create a project first') }} style={!activeProject ? {opacity:.4} : {}} aria-label="Share project">🔗</button>
           <WalletWidget session={session} />
+
+          {/* P72: System status dot + dropdown */}
+          <div style={{position:'relative'}}>
+            <button className="status-dot-btn" onClick={() => setGlogOpen(!glogOpen)} title={generating ? 'Processing…' : 'System Ready'}>
+              <span className={`status-dot${generating ? ' processing' : ''}`} />
+            </button>
+            {glogOpen && (
+              <div className="status-dropdown" onClick={e => e.stopPropagation()}>
+                <div className="status-dropdown-head">
+                  <span className="status-dot" style={{width:6,height:6,background:generating?'var(--warn)':'var(--ok)'}} />
+                  <span style={{fontSize:11,fontWeight:600,flex:1}}>{generating ? 'Processing…' : 'Ready'}</span>
+                  <button style={{background:'none',border:'none',color:'var(--t3)',fontSize:10,cursor:'pointer'}} onClick={() => setGlogOpen(false)}>✕</button>
+                </div>
+                <div className="status-dropdown-body">
+                  {logs.slice(-10).map((l,i) => (
+                    <div key={i} className={`gstep ${l.type}`}><span className="gstep-i">{l.icon}</span><span>{l.msg}</span></div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* P52 FIX: Avatar dropdown with visible logout */}
           <div style={{position:'relative'}}>
             <div className="top-avatar" onClick={() => setUserMenuOpen(!userMenuOpen)}>
@@ -503,19 +525,7 @@ function App() {
           </div>
         )}
 
-        {/* Generation Log */}
-        <div className={`glog${glogOpen?'':' collapsed'}`}>
-          <div className="glog-head" onClick={() => setGlogOpen(!glogOpen)}>
-            <span className="glog-dot" style={{background:generating?'var(--warn)':'var(--ok)'}} />
-            <span className="glog-lbl">{generating?'Processing…':'Ready'}</span>
-            <button className="glog-x">{glogOpen?'▾':'▸'}</button>
-          </div>
-          <div className="glog-body">
-            {logs.slice(-10).map((l,i) => (
-              <div key={i} className={`gstep ${l.type}`}><span className="gstep-i">{l.icon}</span><span>{l.msg}</span></div>
-            ))}
-          </div>
-        </div>
+        {/* P72: Generation log moved to header status dot dropdown */}
 
         {/* Inspector */}
         <div className={`inspector${inspectorOpen?' open':''}`}>

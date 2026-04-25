@@ -77,14 +77,17 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .shot-ents{display:flex;gap:3px;margin-top:6px}
 .shot-ent{font-size:8px;padding:2px 6px;border-radius:10px;background:var(--bg4);color:var(--t2)}
 
-/* ═══ GLOG ═══ */
-.glog{position:fixed;top:56px;right:16px;width:260px;background:var(--bg2);border:1px solid var(--t4);border-radius:var(--r2);z-index:90;overflow:hidden;transition:.3s}
-.glog.collapsed .glog-body{display:none}
-.glog-head{display:flex;align-items:center;gap:6px;padding:8px 12px;cursor:pointer}
-.glog-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
-.glog-lbl{font-size:10px;font-weight:600;flex:1}
-.glog-x{background:none;border:none;color:var(--t3);font-size:10px;cursor:pointer;transition:.15s}
-.glog-body{padding:0 12px 10px;display:flex;flex-direction:column;gap:3px}
+/* ═══ P72: STATUS DOT + DROPDOWN ═══ */
+.status-dot-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:.2s}
+.status-dot-btn:hover{background:rgba(255,255,255,.08)}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok);animation:status-pulse 2s infinite}
+.status-dot.processing{background:var(--warn);box-shadow:0 0 6px var(--warn);animation:status-pulse-warn 1s infinite}
+@keyframes status-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+@keyframes status-pulse-warn{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.status-dropdown{position:absolute;top:100%;right:0;margin-top:8px;width:260px;background:var(--bg2);border:1px solid var(--t4);border-radius:var(--r2);z-index:300;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:dropdown-in .15s ease-out}
+@keyframes dropdown-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.status-dropdown-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--t4)}
+.status-dropdown-body{padding:8px 14px;display:flex;flex-direction:column;gap:3px;max-height:200px;overflow-y:auto}
 .gstep{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t2);padding:3px 0}
 .gstep-i{font-size:10px;width:16px;text-align:center}
 .gstep.ok .gstep-i{color:var(--ok)}
