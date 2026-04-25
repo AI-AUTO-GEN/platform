@@ -72,7 +72,7 @@ function App() {
     if (modelsLoadedRef.current) return
     modelsLoadedRef.current = true
     ;(async () => {
-      const { data } = await supabase.from('ai_models').select('id,title,category,provider,pricing_base,pricing_type,pricing_desc,pricing_multipliers,variables_schema').eq('is_active', true)
+      const { data } = await supabase.from('ai_models').select('id,title,category,provider,company,pricing_base,pricing_type,pricing_desc,pricing_multipliers,variables_schema').eq('is_active', true)
       if (!data) { modelsLoadedRef.current = false; return }
       const cats = {}
       data.forEach(m => {
@@ -103,62 +103,10 @@ function App() {
       Object.keys(merged).forEach(regKey => {
         const byCompany = {}
         merged[regKey].forEach(m => {
-          // P64: Extract real developer company from model ID path
-          const parts = (m.id || '').split('/')
-          let company = parts[0] || 'Other'
-          // If model ID starts with fal-ai, the real company may be in the path
-          if (company === 'fal-ai' && parts.length >= 3) {
-            company = parts[1] // e.g., fal-ai/bytedance/... → bytedance
-          }
-          // Known developer mappings
-          const devMap = {
-            'flux': 'Black Forest Labs', 'flux-pro': 'Black Forest Labs', 'flux-2-pro': 'Black Forest Labs',
-            'flux-lora': 'Black Forest Labs', 'flux-realism': 'Black Forest Labs', 'flux-schnell': 'Black Forest Labs',
-            'bytedance': 'ByteDance', 'seedance': 'ByteDance',
-            'stable-diffusion': 'Stability AI', 'aura': 'Stability AI',
-            'minimax': 'MiniMax', 'hailuo': 'MiniMax',
-            'kling': 'Kuaishou', 'kolors': 'Kuaishou',
-            'cogvideox': 'Zhipu AI', 'cogview': 'Zhipu AI',
-            'ideogram': 'Ideogram', 'recraft': 'Recraft',
-            'gpt-image': 'OpenAI', 'omnigen': 'OpenAI',
-            'nano-banana': 'Banana', 'whisper': 'OpenAI',
-            'xai': 'xAI', 'grok': 'xAI',
-            'google': 'Google', 'imagen': 'Google', 'veo': 'Google',
-            'meta': 'Meta', 'llama': 'Meta',
-            'runway': 'Runway', 'luma': 'Luma AI', 'dreamina': 'ByteDance',
-            'hyper': 'Hyper', 'mmaudio': 'MMAudio', 'ace': 'ACE',
-            'ltx-video': 'Lightricks', 'wan': 'Alibaba', 'hunyuan': 'Tencent',
-          }
-          // Check if company or any id part matches a known dev
-          if (company === 'fal-ai') {
-            const idLower = m.id.toLowerCase()
-            for (const [key, dev] of Object.entries(devMap)) {
-              if (idLower.includes(key)) { company = dev; break }
-            }
-            if (company === 'fal-ai') company = 'fal-ai'
-          } else {
-            company = devMap[company.toLowerCase()] || company
-          }
+          // P67: company + title come clean from the DB — no frontend parsing needed
+          const company = m.company || 'Other'
           if (!byCompany[company]) byCompany[company] = { company, models: [] }
-          // P65: Generate descriptive display name from model ID when title is generic
-          let displayName = m.title
-          const titleLower = (m.title || '').toLowerCase().replace(/[^a-z0-9]/g, '')
-          const companyLower = company.toLowerCase().replace(/[^a-z0-9]/g, '')
-          // If title is just the company name or very generic, build from ID
-          if (titleLower === companyLower || titleLower.length <= 3 || !m.title) {
-            const idParts = (m.id || '').replace(/^fal-ai\//, '').replace(/^bytedance\//, '').replace(/^xai\//, '').split('/')
-            // Remove company prefix if it matches
-            const filtered = idParts.filter(p => p.toLowerCase() !== companyLower && p.toLowerCase() !== 'fal-ai')
-            displayName = filtered.map(p => p.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')).join(' ') || m.title
-          }
-          // Append category suffix if name still not unique-looking
-          const catSuffix = { 'text-to-image': 'T2I', 'image-to-image': 'I2I', 'text-to-video': 'T2V', 'image-to-video': 'I2V', 'video-to-video': 'V2V', 'text-to-audio': 'T2A', 'text-to-speech': 'TTS', 'image-to-3d': 'I2-3D', 'text-to-3d': 'T2-3D' }
-          const suffix = catSuffix[m.category] || ''
-          // Only add suffix if the display name doesn't already hint at the capability
-          if (suffix && !displayName.toLowerCase().includes(suffix.toLowerCase().replace('-','')) && !displayName.toLowerCase().includes('to')) {
-            displayName = `${displayName} [${suffix}]`
-          }
-          byCompany[company].models.push({ id: m.id, name: displayName })
+          byCompany[company].models.push({ id: m.id, name: m.title })
         })
         MODEL_REGISTRY[regKey] = Object.values(byCompany)
       })
