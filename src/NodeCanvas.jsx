@@ -4,8 +4,9 @@ import '@xyflow/react/dist/style.css';
 import { getModelOptions, MODEL_REGISTRY } from './config/modelRegistry';
 import { calculatePreviewCost, formatCost } from './pricing/PricingEngine';
 import { X, CheckCircle, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
-import { N8N_UPLOAD_WEBHOOK_URL } from './config/constants';
+import { genId, getDriveDisplayUrl } from './utils/assetUtils';
 import { supabase } from './supabase';
+import EnhanceButton from './components/EnhanceButton';
 
 const getDriveDisplayUrl = (url) => {
   if (!url) return '';
@@ -667,7 +668,16 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
              )}
 
              <div className="form-group">
-               <label>{selectedNode.data.typeLabel === 'Shot' ? 'Beat / Action' : 'Prompt'}</label>
+               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                 <label style={{ margin: 0 }}>{selectedNode.data.typeLabel === 'Shot' ? 'Beat / Action' : 'Prompt'}</label>
+                 <EnhanceButton 
+                   value={selectedNode.data.rawData.prompt || selectedNode.data.rawData.beat || ''}
+                   onChange={(val) => handleUpdateNode('prompt', val)}
+                   modelId={selectedNode.data.rawData.modelId || 'fal-ai/flux-pro/v1.1'}
+                   entityType={selectedNode.data.typeLabel.toLowerCase()}
+                   modality="t2i"
+                 />
+               </div>
                <textarea rows={5} className="script-textarea" value={selectedNode.data.rawData.prompt || selectedNode.data.rawData.beat || ''} onChange={(e) => handleUpdateNode('prompt', e.target.value)} />
              </div>
 

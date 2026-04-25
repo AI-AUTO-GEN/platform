@@ -50,9 +50,10 @@ export const geminiDirector = async (systemPrompt, userPrompt) => {
 export const enhancePrompt = async (currentPrompt, preset, modelId, modality = 't2i') => {
   const modelHint = getModelHint(modelId)
   const presetHint = preset?.hint || 'Enhance the prompt with professional detail.'
-  const fullPrompt = `You are an expert AI prompt engineer specializing in generative AI.\n\nTARGET MODEL: ${modelHint}\n\nPRESET STYLE: ${presetHint}\n\nRules:\n- Output ONLY the enhanced prompt text, no explanations, no quotes, no labels\n- Keep it concise but rich in detail (max 180 words)\n- Preserve the user's core subject/intent completely\n- Optimize prompt structure for the specific target model\n- Apply the preset style direction naturally\n- Add professional-grade visual/audio/3D descriptors appropriate to the medium\n- If the input is very short (1-3 words), creatively expand it following the preset direction\n- Never output markdown formatting, bullet points, or labels\n\nUser prompt:\n"${currentPrompt}"`
+  const fullPrompt = `You are an expert AI prompt engineer specializing in generative AI.\n\nTARGET MODEL: ${modelHint}\n\nPRESET STYLE: ${presetHint}\n\nRules:\n- Output ONLY the enhanced prompt text, no explanations, no quotes, no labels\n- You MUST write a complete, grammatically correct paragraph (at least 30-50 words).\n- NEVER leave sentences unfinished or truncated.\n- Preserve the user's core subject/intent completely\n- Optimize prompt structure for the specific target model\n- Apply the preset style direction naturally\n- Add professional-grade visual/audio/3D descriptors appropriate to the medium\n- If the input is very short, creatively expand it following the preset direction\n- Never output markdown formatting, bullet points, or labels\n\nUser prompt:\n"${currentPrompt}"`
 
-  const text = await callGeminiProxy(fullPrompt, 0.85, 400)
+  let text = await callGeminiProxy(fullPrompt, 0.85, 2000)
+  if (text) text = text.replace(/^"|"$/g, '').trim()
   return text || currentPrompt
 }
 
