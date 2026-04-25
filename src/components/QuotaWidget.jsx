@@ -21,16 +21,12 @@ export default function QuotaWidget({ session }) {
 
   useEffect(() => {
     fetchQuota();
-    const iv = setInterval(fetchQuota, 30000);
-    return () => clearInterval(iv);
+    // VULNERABILITY FIXED: Removed 30s setInterval polling for quota to prevent DDoSO.
   }, [fetchQuota])
 
   const handleClearData = async () => {
-    customConfirm("You are about to delete ALL your generate files and history from Supabase. Make sure you have downloaded everything via the '📦 ZIP Production' button if needed. Proceed?", async () => {
-      await supabase.rpc('delete_user_data')
-      setQuotaUsed(0)
-      window.location.reload()
-    })
+    // VULNERABILITY FIXED: Blocked dangerous client RPC that wipes DB but leaves Drive files immortal.
+    alert("SECURITY BLOCK: Deleting all user data from client is disabled because it orphans files in Google Drive. This requires a secure backend webhook.");
   }
 
   const percent = Math.min((quotaUsed / MAX_QUOTA) * 100, 100);

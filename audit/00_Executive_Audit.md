@@ -16,6 +16,8 @@ Este es el alcance funcional completo y exhaustivo de lo que la plataforma permi
 - **Generación de Guiones:** Transforma una idea cruda de 2 líneas en un guion profesional completo (formato industria).
 - **Desglose en Shotlist:** Analiza el guion y lo fragmenta automáticamente en planos individuales (Tipo de plano, acción, cámara, diálogos).
 - **Extracción de Entidades:** Identifica y extrae automáticamente Personajes, Props (Atrezzo) y Entornos del shotlist para mantener la coherencia visual.
+- **Lienzo Visual de Nodos (NodeCanvas):** Editor visual basado en grafos interactivos donde el usuario puede arrastrar, conectar y visualizar la relación espacial entre Personajes, Entornos y Planos mediante cables lógicos, controlando el flujo narrativo y sus costes de renderizado en tiempo real.
+- **Gestión Avanzada de Entidades (Entity Cards):** Tarjetas de trabajo que actúan como "mini-estudios" permitiendo mantener un historial de hasta 8 versiones de render por entidad, telemetría de tiempos y lightboxes a pantalla completa.
 - **Asistente de Dirección Interactivo:** Permite al usuario dar directrices naturales ("Haz este plano más oscuro") y la IA reescribe el plano manteniendo el contexto de la historia.
 - **Optimización de Prompts (Prompt Enhancement):** Toma una descripción sencilla y la convierte en un prompt de nivel ingeniería adaptado específicamente al modelo de IA seleccionado (inyectando presets visuales).
 

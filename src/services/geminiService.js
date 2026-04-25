@@ -7,7 +7,12 @@ import { getModelHint } from '../config/modelRegistry'
 
 export const callGeminiProxy = async (prompt, temperature = 0.8, maxOutputTokens = 8000) => {
   const { data: { session } } = await supabase.auth.getSession()
-  const token = session?.access_token || 'sb_publishable_3s2AlbIMwdlU5VvGngkqPw_VTqi2Q4t'
+  // VULNERABILITY FIXED: Removed insecure fallback to the public anon key.
+  // The backend gemini-proxy now correctly expects a valid signed user JWT.
+  if (!session?.access_token) {
+    throw new Error('Authentication required: You must be logged in to use AI tools.')
+  }
+  const token = session.access_token
 
   const res = await fetch(GEMINI_PROXY_URL, {
     method: 'POST',

@@ -15,9 +15,15 @@ export async function triggerN8NExport(projectName, section, onStatus, onComplet
   onStatus(`Requesting ${section.replace('_', '')} export from N8N...`);
   
   try {
+    // VULNERABILITY FIXED: Retrieve user session to securely authenticate the export webhook
+    const { data: { session } } = await supabase.auth.getSession();
+    
     const res = await fetch(N8N_EXPORT_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': session ? `Bearer ${session.access_token}` : ''
+      },
       body: JSON.stringify({ projectName, section })
     });
     
@@ -29,12 +35,14 @@ export async function triggerN8NExport(projectName, section, onStatus, onComplet
     let attempts = 0;
     const poll = setInterval(async () => {
       attempts++;
-      const { data: p } = await supabase.from('projects').select('export_url').eq('name', projectName).single();
+      // FIX: Used .limit(1) and selected the first element instead of .single() which crashes on multiple projects with same name
+      const { data: pData } = await supabase.from('projects').select('id, export_url').eq('name', projectName).limit(1);
+      const p = pData && pData.length > 0 ? pData[0] : null;
       
       if (p && p.export_url) {
         clearInterval(poll);
-        // Clear the URL so it can be re-exported later without immediate trigger
-        await supabase.from('projects').update({ export_url: null }).eq('name', projectName);
+        // Clear the URL so it can be re-exported later without immediate trigger, using ID instead of name
+        await supabase.from('projects').update({ export_url: null }).eq('id', p.id);
         onComplete(p.export_url);
       } else if (attempts > 120) {
         clearInterval(poll);

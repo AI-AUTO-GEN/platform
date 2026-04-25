@@ -15,11 +15,13 @@ serve(async (req) => {
     // SECURITY CHECK: Verify that the caller has the correct authorization.
     // N8N must send the Edge Function Secret to call this securely.
     const authHeader = req.headers.get('Authorization');
-    const expectedSecret = Deno.env.get('N8N_WEBHOOK_SECRET') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const expectedSecret = Deno.env.get('N8N_WEBHOOK_SECRET');
     
-    if (!authHeader || !authHeader.includes(expectedSecret)) {
+    // VULNERABILITY FIXED: No longer falling back to SUPABASE_SERVICE_ROLE_KEY.
+    // N8N_WEBHOOK_SECRET must be explicitly set to accept requests.
+    if (!expectedSecret || !authHeader || !authHeader.includes(expectedSecret)) {
       console.warn("Unauthorized access attempt to renderfarm-billing");
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: 'Unauthorized or missing secret configuration' }), { status: 401, headers: corsHeaders });
     }
 
     const { action, user_id, model_id, transaction_id, actual_cost, settings } = await req.json();

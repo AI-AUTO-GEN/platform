@@ -22,6 +22,11 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // VULNERABILITY FIXED: Block users from passing the public anon key as their Auth header
+    if (authHeader.replace('Bearer ', '').trim() === Deno.env.get('SUPABASE_ANON_KEY')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: Cannot use anonymous key as session token' }), { status: 401, headers: corsHeaders });
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -35,6 +40,20 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // VULNERABILITY FIXED: Verify user has balance > 0 before consuming Gemini API
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+    const { data: wallet } = await supabaseAdmin.from('user_wallets').select('balance').eq('profile_id', user.id).single();
+    if (!wallet || wallet.balance <= 0) {
+      return new Response(JSON.stringify({ error: 'Payment Required: Insufficient funds in wallet' }), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { prompt, temperature = 0.8, maxOutputTokens = 8000 } = await req.json();
 
     if (!prompt) {

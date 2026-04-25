@@ -15,7 +15,7 @@ export const triggerNativeDownload = (blob, filename) => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 15000);
+  setTimeout(() => URL.revokeObjectURL(url), 3600000); // FIX: 1 hour timeout instead of 15s
 };
 
 // Safe converter for Google Drive previews using wsrv.nl CDN proxy
@@ -49,7 +49,7 @@ export const downloadAsset = async (variant) => {
         iframe.style.display = 'none';
         iframe.src = `https://drive.google.com/uc?export=download&id=${m[1]}`;
         document.body.appendChild(iframe);
-        setTimeout(() => document.body.removeChild(iframe), 15000);
+        setTimeout(() => document.body.removeChild(iframe), 3600000); // FIX: 1 hour timeout instead of 15s
         return;
       }
     }
@@ -82,14 +82,22 @@ export const deleteVariant = async (variant) => {
     if (variant.webViewLink && variant.webViewLink.includes('drive.google.com')) {
       const driveMatch = variant.webViewLink.match(/\/file\/d\/(.+?)\//) || variant.webViewLink.match(/id=(.+?)(?:&|$)/);
       if (driveMatch && driveMatch[1]) {
+        // VULNERABILITY FIXED: Get the session token to authenticate the delete webhook to n8n
+        const { data: { session } } = await supabase.auth.getSession();
         fetch(N8N_WEBHOOK_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': session ? `Bearer ${session.access_token}` : ''
+          },
           body: JSON.stringify({ action: 'delete_file', file_id: driveMatch[1], task_id: variant.task_id })
         }).catch(err => console.error('Drive delete webhook error:', err));
       }
     }
-    const { error, data } = await supabase.from('renderfarm_outputs').delete().eq('id', variant.id).select();
+    // VULNERABILITY FIXED: Verify the user ID explicitly during deletion to prevent ID-guessing attacks
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+    const { error, data } = await supabase.from('renderfarm_outputs').delete().eq('id', variant.id).eq('profile_id', user.id).select();
     if (error) { toast.error('Failed to delete DB record: ' + error.message); return false; }
     if (!data || data.length === 0) { toast.error('Warning: Row not found or RLS prevented deletion.'); return false; }
     return true;
@@ -158,7 +166,24 @@ export const parseContract = (json) => {
           const relatedCharacters = chars.filter(c => c.name && beatLower.includes(c.name.toLowerCase())).map(c => c.id);
           const relatedProps = props.filter(p => p.name && beatLower.includes(p.name.toLowerCase())).map(p => p.id);
           const relatedEnvironments = environments.filter(e => e.name && beatLower.includes(e.name.toLowerCase())).map(e => e.id);
-          return { id: s_id, beat: ms.description || '', cameraMove, shotSize: 'MS', duration: 5, modelId: 'fal-ai/flux-pro/v1.1-ultra', relatedCharacters, relatedProps, relatedEnvironments }
+          // VULNERABILITY FIXED: Respect imported model/cat if present, do not forcibly overwrite with image model
+          return { 
+            id: s_id, 
+            title: ms.description?.substring(0,40) || `Shot ${index+1}`,
+            prompt: ms.description || '',
+            beat: ms.description || '', 
+            cameraMove, 
+            shotSize: 'MS', 
+            dur: ms.dur || '5s',
+            res: ms.res || '1080p',
+            ar: ms.ar || '16:9',
+            model: ms.model || 'fal-ai/flux-pro/v1.1', 
+            cat: ms.cat || 'image',
+            status: 'pending',
+            relatedCharacters, 
+            relatedProps, 
+            relatedEnvironments 
+          }
        });
     }
     return { projectName: json.project?.title || json.title || '', format: json.project?.format || json.format || 'film_essay_montage', characters: chars, props, environments, shots };

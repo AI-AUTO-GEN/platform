@@ -22,9 +22,17 @@ export function WalletWidget({ session }) {
 
   useEffect(() => {
     fetchBalance();
-    const iv = setInterval(fetchBalance, 10000); // refresh every 10s
-    return () => clearInterval(iv);
-  }, [fetchBalance]);
+    if (!session?.user?.id) return;
+    
+    // VULNERABILITY FIXED: Replaced expensive setInterval polling with WebSocket realtime subscription
+    const channel = supabase.channel('wallet_sync')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_wallets', filter: `profile_id=eq.${session.user.id}` }, (payload) => {
+        setBalance(payload.new.balance);
+      })
+      .subscribe();
+      
+    return () => supabase.removeChannel(channel);
+  }, [fetchBalance, session]);
 
   if (balance === null) return <div className="wallet-widget loading"><span className="pulse-dot"></span></div>;
 
@@ -73,10 +81,9 @@ function WalletModal({ session, balance, onClose, onRefresh }) {
     if (amount <= 0) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc('dev_add_funds', { p_amount: amount, p_user_id: session.user.id });
-      if (error) throw error;
-      await onRefresh();
-      setView('history');
+      // VULNERABILITY FIXED: Blocked client-side RPC dev_add_funds call.
+      // A genuine integration with Stripe via secure Edge Functions is required.
+      alert("SECURITY BLOCK: Direct funding via client RPC 'dev_add_funds' is disabled to prevent infinite money exploits.");
     } catch (e) {
       alert("Error adding funds: " + e.message);
     }

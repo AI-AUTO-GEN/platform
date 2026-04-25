@@ -66,15 +66,39 @@ export function useDriveMedia(projectNameOrId, category, session) {
     
     const filter = session?.user?.id ? `profile_id=eq.${session.user.id}` : undefined;
     const channel = supabase.channel(`media_sync_${category}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'renderfarm_outputs', filter }, () => {
-        refresh()
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'renderfarm_outputs', filter }, (payload) => {
+        // VULNERABILITY FIXED: Instead of calling refresh() (which triggers a SELECT * N+1 DDOS), update only the modified row
+        if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+          const o = payload.new;
+          const formattedItem = {
+            id: o.id, task_id: o.task_id, name: o.file_name || o.task_id,
+            webViewLink: o.hq_url || o.url || '#', thumbnailLink: o.thumbnail_url || o.url || '#',
+            mimeType: o.kind?.includes('video') ? 'video/mp4' : 'image/png',
+            status: o.status, createdAt: o.created_at, updatedAt: o.updated_at,
+            progress: o.progress || 0, statusMessage: o.status_message,
+            metadata: o.metadata || {}, kind: o.kind, estimated_cost: o.estimated_cost,
+            actual_cost: o.actual_cost, tokens_input: o.tokens_input,
+            tokens_output: o.tokens_output, inference_time: o.inference_time, file_name: o.file_name
+          };
+          setMedia(prev => {
+            const exists = prev.findIndex(m => m.id === o.id);
+            if (exists >= 0) {
+              const updated = [...prev];
+              updated[exists] = formattedItem;
+              return updated;
+            }
+            return [formattedItem, ...prev];
+          });
+        } else if (payload.eventType === 'DELETE') {
+          setMedia(prev => prev.filter(m => m.id !== payload.old.id));
+        }
       })
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [refresh, category])
+  }, [refresh, category, session])
   
   return { media, loading, refresh }
 }

@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, Handle, Position } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { getModelOptions, MODEL_REGISTRY } from './App';
+import { getModelOptions, MODEL_REGISTRY } from './config/modelRegistry';
 import { calculatePreviewCost, formatCost } from './pricing/PricingEngine';
 import { X, CheckCircle } from 'lucide-react';
 

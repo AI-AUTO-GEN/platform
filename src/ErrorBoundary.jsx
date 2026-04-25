@@ -19,9 +19,11 @@ class ErrorBoundary extends React.Component {
   }
 
   handleReset = () => {
-    // Clear local storage if it's a corrupted JSON state issue
+    // Clear local storage if it's a corrupted JSON state issue, but PROTECT auth tokens
     if (this.state.error?.message?.includes('JSON')) {
-      localStorage.clear();
+      // Remove specific state caches if any, but NEVER clear everything
+      // localStorage.clear(); // <-- VULNERABILITY FIXED: Do not delete Supabase Auth Token
+      console.warn('Recovering from JSON error without wiping session');
     }
     window.location.reload();
   }

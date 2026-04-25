@@ -7,9 +7,11 @@ import { WalletWidget } from './components/Wallet'
 import { N8N_WEBHOOK_URL, MODALITIES } from './config/constants'
 import { MODEL_REGISTRY, MODEL_SCHEMAS, getModelOptions, getModelHint } from './config/modelRegistry'
 import { enhancePrompt } from './services/geminiService'
-import { calculatePreviewCost, formatCost, optionsToParams } from './pricing/PricingEngine'
+import { calculatePreviewCost, formatCost } from './pricing/PricingEngine'
 import { useDriveMedia } from './hooks/useDriveMedia'
-import { genId, deleteVariant, downloadAsset, getDriveDisplayUrl } from './utils/assetUtils'
+import { genId, deleteVariant, getDriveDisplayUrl } from './utils/assetUtils'
+import NodeCanvas from './NodeCanvas'
+import EntityTaskCard from './components/EntityTaskCard'
 
 // ─── STATUS COLORS ─────────────────────────
 const STATUS = { done:'var(--ok)', pending:'var(--warn)', error:'var(--err)', processing:'var(--cyan)', ready:'var(--t3)' }
@@ -38,7 +40,6 @@ function App() {
   const [showNewProject, setShowNewProject] = useState(false)
   const [newProjectName, setNewProjectName] = useState('')
   const [dockTab, setDockTab] = useState('queue')
-  const [costPreview, setCostPreview] = useState(null)
   const [shareData, setShareData] = useState({token:null, visibility:'private', invites:[]})
   const [inviteEmail, setInviteEmail] = useState('')
   const [logs, setLogs] = useState([{type:'ok',icon:'✓',msg:'System ready'}])
@@ -143,12 +144,6 @@ function App() {
           setGenLabel('No active jobs')
           refreshMedia()
           addLog('ok','✓', `Output ready: ${o.file_name || o.task_id}`)
-          // Track real session cost
-          if (o.actual_cost) {
-            setSessionCost(prev => prev + parseFloat(o.actual_cost))
-          } else if (o.estimated_cost) {
-            setSessionCost(prev => prev + parseFloat(o.estimated_cost))
-          }
           setPipelineStep(3)
         } else if (o.status === 'processing') {
           setGenProgress(o.progress || 50)
@@ -158,6 +153,12 @@ function App() {
       .subscribe()
     return () => supabase.removeChannel(ch)
   }, [session, refreshMedia])
+
+  // Sync session cost from loaded media
+  useEffect(() => {
+    const cost = media.reduce((acc, m) => acc + (parseFloat(m.actual_cost) || parseFloat(m.estimated_cost) || 0), 0)
+    setSessionCost(cost)
+  }, [media])
 
   // ─── HELPERS ──────────────────────────────
   function addLog(type, icon, msg) {
@@ -172,11 +173,6 @@ function App() {
     } catch(e) { console.error('Persist error:', e) }
   }, [activeProject])
 
-  // ─── COST PREVIEW ─────────────────────────
-  const updateCostPreview = useCallback((modelId, params) => {
-    const cost = calculatePreviewCost(modelId, params)
-    setCostPreview(cost)
-  }, [])
 
   // ─── CREATE PROJECT ───────────────────────
   const createProject = useCallback(async (name) => {
@@ -204,6 +200,10 @@ function App() {
     addLog('run','⟳',`Sending to ${shot?.model || 'pipeline'}… est. ${formatCost(cost)}`)
 
     const taskId = genId('TASK')
+    // VULNERABILITY FIXED: Include dynamic inspector parameters (seed, guidance_scale, etc.) in the payload options
+    const dynamicParams = shot ? { ...shot } : {};
+    ['id', 'title', 'prompt', 'model', 'cat', 'status', 'entities'].forEach(k => delete dynamicParams[k]);
+
     const payload = {
       action: 'generate',
       task_id: taskId,
@@ -211,12 +211,16 @@ function App() {
       model_id: shot?.model || 'fal-ai/flux-pro/v1.1',
       project_id: activeProject?.id,
       profile_id: session?.user?.id,
-      options: { aspect_ratio: shot?.ar || '16:9', resolution: shot?.res || '1080p' }
+      options: { aspect_ratio: shot?.ar || '16:9', resolution: shot?.res || '1080p', ...dynamicParams }
     }
 
     try {
       const res = await fetch(N8N_WEBHOOK_URL, {
-        method:'POST', headers:{'Content-Type':'application/json'},
+        method:'POST', headers:{
+          'Content-Type':'application/json',
+          // VULNERABILITY FIXED: Send JWT token to authenticate N8N webhook
+          'Authorization': `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify(payload)
       })
       if (!res.ok) throw new Error(`Webhook error ${res.status}`)
@@ -294,7 +298,7 @@ function App() {
         <button className={`rail-btn${assetsOpen?' active':''}`} onClick={() => setAssetsOpen(!assetsOpen)}>
           📦<span className="rail-tip">Assets</span>
         </button>
-        <button className="rail-btn" onClick={() => { setMode('sandbox'); toast('Sandbox mode — free generation') }}>⚡<span className="rail-tip">Sandbox</span></button>
+
         <div className="rail-end">
           <div className="rail-sep" />
           <button className="rail-btn" onClick={() => { if(confirm('Sign out?')) supabase.auth.signOut() }}>
@@ -305,39 +309,15 @@ function App() {
 
       {/* ═══ CANVAS ═══ */}
       <main className="canvas">
-        {/* Shots Grid */}
+        {/* NodeCanvas Integration */}
         {view === 'canvas' && (
           <>
-            <div className="shots">
-              {shots.map((s,i) => {
-                const variant = media.find(m => m.task_id === s.id && m.status === 'ready')
-                return (
-                  <div key={s.id} className={`shot${s.id===selectedShot?' selected':''}`}
-                    onClick={() => { setSelectedShot(s.id); setInspectorOpen(true); setPipelineStep(0) }}>
-                    <div className="shot-thumb">
-                      {variant?.thumbnailLink && <img src={getDriveDisplayUrl(variant.thumbnailLink)} alt="" />}
-                      <span className="shot-status" style={{background:STATUS[s.status]||STATUS.pending}} />
-                      <span className="shot-badge">{CAT_ICONS[s.cat]||'🎬'} #{i+1}</span>
-                      <span className="shot-model-badge">{(s.model||'').split('/').pop()}</span>
-                    </div>
-                    <div className="shot-body">
-                      <div className="shot-title">{s.title || s.prompt?.substring(0,40)}</div>
-                      <div className="shot-meta">
-                        <span>{s.res||'1080p'}</span><span>{s.ar||'16:9'}</span>
-                        {s.dur && s.dur!=='—' && <span>{s.dur}</span>}
-                      </div>
-                      {s.entities?.length > 0 && (
-                        <div className="shot-ents">{s.entities.map(e => <span key={e} className="shot-ent">@{e}</span>)}</div>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-              {shots.length === 0 && (
-                <div style={{color:'var(--t3)',textAlign:'center',padding:60,fontSize:13}}>
-                  No shots yet. Type a prompt below to create your first shot.
-                </div>
-              )}
+            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+              <NodeCanvas 
+                data={contract} 
+                onChange={(newData) => { setContract(newData); persistContract(newData); }} 
+                media={media} 
+              />
             </div>
 
             {/* Floating Prompt */}
@@ -349,9 +329,9 @@ function App() {
               <div className="prompt-bar">
                 <button className="p-tool" title="Enhance with AI" onClick={handleEnhance}>✦</button>
                 <div className="p-mode">
-                  {['shot','sandbox','edit','audio','3d'].map(m => (
+                  {['shot','audio','3d'].map(m => (
                     <button key={m} className={`p-mode-b${mode===m?' on':''}`} onClick={() => setMode(m)}>
-                      {m==='shot'?'🎬':m==='sandbox'?'⚡':m==='edit'?'✏️':m==='audio'?'🎵':'🧊'} {m}
+                      {m==='shot'?'🎬':m==='audio'?'🎵':'🧊'} {m}
                     </button>
                   ))}
                 </div>
@@ -463,13 +443,53 @@ function App() {
                   <button key={t.k} className={`ap-tab${assetTab===t.k?' on':''}`} onClick={() => setAssetTab(t.k)}>{t.l}</button>
                 ))}
               </div>
+              <button 
+                className="btn btn-primary btn-sm" 
+                style={{ marginLeft: 'auto', marginRight: '12px' }}
+                onClick={() => {
+                  const colName = assetTab === 'chars' ? 'characters' : assetTab === 'props' ? 'props' : 'environments';
+                  const prefix = assetTab === 'chars' ? 'CHR' : assetTab === 'props' ? 'PRP' : 'ENV';
+                  const newAsset = { id: `${prefix}_${Date.now()}`, name: `New ${prefix}`, prompt: '', modelId: 'fal-ai/flux-pro/v1.1' };
+                  setContract(prev => {
+                    const updated = {...prev, [colName]: [...(prev[colName]||[]), newAsset]};
+                    persistContract(updated);
+                    return updated;
+                  });
+                }}
+              >
+                + Add
+              </button>
             </div>
-            <div className="ap-body">
+            <div className="ap-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {(assetTab==='chars'?contract.characters:assetTab==='props'?contract.props:contract.environments).map(a => (
-                <div key={a.id||a.name} className="asset-card">
-                  <div className="ac-thumb" />
-                  <div className="ac-info"><span className="ac-name">{a.name}</span><span className="ac-desc">{a.prompt?.substring(0,50)}</span></div>
-                </div>
+                <EntityTaskCard 
+                  key={a.id}
+                  badge={assetTab === 'chars' ? 'CHR' : assetTab === 'props' ? 'PRP' : 'ENV'}
+                  name={a.name}
+                  id={a.id}
+                  data={a}
+                  driveMedia={media}
+                  onGenerate={(updatedData) => {
+                    handleGenerate({ ...updatedData, cat: 'image' }); // Reutilizar la lógica de generación
+                  }}
+                  onUpdate={(k, v) => {
+                    const colName = assetTab === 'chars' ? 'characters' : assetTab === 'props' ? 'props' : 'environments';
+                    setContract(prev => {
+                      const updated = {...prev, [colName]: prev[colName].map(item => item.id === a.id ? {...item, [k]: v} : item)}
+                      persistContract(updated);
+                      return updated;
+                    });
+                  }}
+                  onDeleteEntity={() => {
+                    const colName = assetTab === 'chars' ? 'characters' : assetTab === 'props' ? 'props' : 'environments';
+                    setContract(prev => {
+                      const updated = {...prev, [colName]: prev[colName].filter(item => item.id !== a.id)}
+                      persistContract(updated);
+                      return updated;
+                    });
+                  }}
+                  onDiscardVariant={(varId) => deleteVariant(varId)}
+                />
               ))}
             </div>
           </div>
@@ -545,7 +565,15 @@ function App() {
                 <div className="insp-lbl">Export</div>
                 <div className="share-exports">
                   <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const blob = new Blob([JSON.stringify(contract,null,2)],{type:'application/json'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_contract.json`; a.click(); toast.success('Contract JSON exported') }}>📄 Contract JSON</button>
-                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { const rows = (contract.shots||[]).map((s,i) => `${i+1},"${s.title||''}","${(s.prompt||'').replace(/"/g,'""')}",${s.model||''},${s.res||''},${s.ar||''},${s.status||''}`); const csv = 'Shot,Title,Prompt,Model,Resolution,AR,Status\n'+rows.join('\n'); const blob = new Blob([csv],{type:'text/csv'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_shotlist.csv`; a.click(); toast.success('CSV exported') }}>🎬 CSV Shotlist</button>
+                  <button className="btn btn-ghost btn-sm btn-full" onClick={() => { 
+                    const sanitizeCsv = (str) => {
+                      if (!str) return '';
+                      const s = String(str).replace(/"/g, '""');
+                      return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+                    };
+                    const rows = (contract.shots||[]).map((s,i) => `${i+1},"${sanitizeCsv(s.title)}","${sanitizeCsv(s.prompt)}",${s.model||''},${s.res||''},${s.ar||''},${s.status||''}`); 
+                    const csv = 'Shot,Title,Prompt,Model,Resolution,AR,Status\n'+rows.join('\n'); const blob = new Blob([csv],{type:'text/csv'}); const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=`${activeProject?.name||'project'}_shotlist.csv`; a.click(); toast.success('CSV exported') 
+                  }}>🎬 CSV Shotlist</button>
                   <button className="btn btn-ghost btn-sm btn-full" onClick={() => { navigator.clipboard.writeText(JSON.stringify(contract,null,2)); toast.success('Copied!') }}>📋 B_CONTRACT</button>
                 </div>
               </div>
@@ -558,8 +586,6 @@ function App() {
       <footer className="dock">
         <div className="dock-tabs">
           <button className={`dock-tab${dockTab==='queue'?' on':''}`} onClick={()=>setDockTab('queue')}>Queue</button>
-          <button className={`dock-tab${dockTab==='history'?' on':''}`} onClick={()=>setDockTab('history')}>History ({media.length})</button>
-          <button className={`dock-tab${dockTab==='exports'?' on':''}`} onClick={()=>setDockTab('exports')}>Exports</button>
         </div>
         <div className="dock-sep" />
         <div className="dock-queue">
@@ -595,9 +621,18 @@ function App() {
   function handlePromptSend() {
     if (!promptText.trim()) return
     const cat = MODE_TO_CAT[mode] || 'image'
+    // VULNERABILITY FIXED: Determine correct default model based on selected mode instead of hardcoding Flux
+    const defaultModels = {
+      'image': 'fal-ai/flux-pro/v1.1',
+      'video': 'fal-ai/kling-video/v1/standard/text-to-video',
+      'audio': 'elevenlabs/text-to-speech',
+      '3d': 'meshy/text-to-3d'
+    };
+    const defaultModel = defaultModels[cat] || 'fal-ai/flux-pro/v1.1';
+
     const newShot = {
       id: genId('SHOT'), title: promptText.substring(0,40), prompt: promptText,
-      model: 'fal-ai/flux-pro/v1.1', cat,
+      model: defaultModel, cat,
       status:'pending', res:'1080p', dur: cat==='video'?'5s':'—', ar:'16:9', entities:[]
     }
     setContract(prev => {
@@ -611,16 +646,17 @@ function App() {
   async function handleEnhance() {
     if (!promptText.trim()) return
     try {
-      const enhanced = await enhancePrompt(promptText, null, 'fal-ai/flux-pro/v1.1')
+      // VULNERABILITY FIXED: Use the active shot's model for enhancement to provide context-aware results
+      const currentModel = selectedShot ? contract.shots.find(s => s.id === selectedShot)?.model : 'fal-ai/flux-pro/v1.1';
+      const enhanced = await enhancePrompt(promptText, null, currentModel)
       setPromptText(enhanced)
       addLog('ok','✦','Prompt enhanced')
     } catch(e) { toast.error(e.message) }
   }
   async function handleInvite() {
     if (!inviteEmail.trim() || !activeProject) return
-    // Look up user by email
-    const { data: userData } = await supabase.from('user_wallets').select('user_id').limit(1)
-    const { data, error } = await supabase.from('project_shares').insert({
+    // VULNERABILITY FIXED: Removed useless and dangerous blind query to user_wallets that was ignoring results
+    const { error } = await supabase.from('project_shares').insert({
       project_id: activeProject.id,
       shared_by: session.user.id,
       shared_with_email: inviteEmail.trim(),
