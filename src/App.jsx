@@ -348,34 +348,61 @@ function App() {
         <div className="top-right">
           {/* P53 FIX: Guard share button when no project */}
           <button className="top-btn" title={activeProject ? 'Share' : 'Create a project first'} onClick={() => { if(activeProject) setShareOpen(true); else toast.error('Create a project first') }} style={!activeProject ? {opacity:.4} : {}} aria-label="Share project">🔗</button>
-          <WalletWidget session={session} />
-          {/* P72: Single avatar → single unified dropdown */}
-          <div style={{position:'relative'}}>
-            <div className="top-avatar" onClick={() => { setUserMenuOpen(!userMenuOpen); setGlogOpen(false); }} style={{position:'relative',cursor:'pointer'}}>
-              {session.user.email?.[0]?.toUpperCase() || 'U'}
-              <span className={`avatar-status-dot${generating ? ' processing' : ''}`} />
-            </div>
 
-            {userMenuOpen && (
-              <div className="status-dropdown" onClick={e => e.stopPropagation()}>
-                {/* Status section */}
+          {/* P73: System Monitor pill — logs, progress, generation status */}
+          <div style={{position:'relative'}}>
+            <button className={`sysmon-pill${generating ? ' active' : ''}${logs.some(l=>l.type==='err') ? ' error' : ''}`} onClick={() => { setGlogOpen(!glogOpen); setUserMenuOpen(false); }}>
+              <span className={`sysmon-dot${generating ? ' processing' : ''}${logs.some(l=>l.type==='err') ? ' error' : ''}`} />
+              <span className="sysmon-label">{generating ? `${genLabel}` : 'Ready'}</span>
+            </button>
+            {glogOpen && (
+              <div className="status-dropdown" style={{right:'auto',left:'50%',transform:'translateX(-50%)'}} onClick={e => e.stopPropagation()}>
                 <div className="status-dropdown-head">
                   <span style={{width:6,height:6,borderRadius:'50%',background:generating?'var(--warn)':'var(--ok)',flexShrink:0}} />
                   <span style={{fontSize:11,fontWeight:600,flex:1}}>{generating ? 'Processing…' : 'System Ready'}</span>
+                  <button style={{background:'none',border:'none',color:'var(--t3)',fontSize:10,cursor:'pointer'}} onClick={() => setGlogOpen(false)}>✕</button>
                 </div>
+                {generating && (
+                  <div style={{padding:'6px 14px'}}>
+                    <div style={{background:'var(--bg4)',borderRadius:4,height:4,overflow:'hidden'}}>
+                      <div style={{height:'100%',background:'var(--accent)',borderRadius:4,width:`${genProgress}%`,transition:'width .3s'}} />
+                    </div>
+                    <div style={{fontSize:9,color:'var(--t3)',marginTop:3,textAlign:'right'}}>{genProgress}%</div>
+                  </div>
+                )}
                 <div className="status-dropdown-body">
-                  {logs.slice(-10).map((l,i) => (
+                  {logs.slice(-12).map((l,i) => (
                     <div key={i} className={`gstep ${l.type}`}><span className="gstep-i">{l.icon}</span><span>{l.msg}</span></div>
                   ))}
-                </div>
-                {/* User section */}
-                <div style={{borderTop:'1px solid var(--t4)',padding:'8px 14px',display:'flex',flexDirection:'column',gap:4}}>
-                  <div style={{fontSize:10,color:'var(--t3)',marginBottom:2}}>{session.user.email}</div>
-                  <button className="btn btn-ghost btn-sm" style={{justifyContent:'flex-start',fontSize:11}} onClick={() => { if(confirm('Sign out?')) supabase.auth.signOut() }}>🚪 Sign Out</button>
                 </div>
               </div>
             )}
           </div>
+
+          {/* P73: Avatar — account only */}
+          <div style={{position:'relative'}}>
+            <div className="top-avatar" onClick={() => { setUserMenuOpen(!userMenuOpen); setGlogOpen(false); }} style={{cursor:'pointer'}}>
+              {session.user.email?.[0]?.toUpperCase() || 'U'}
+            </div>
+            {userMenuOpen && (
+              <div className="account-dropdown" onClick={e => e.stopPropagation()}>
+                <div style={{padding:'10px 14px',borderBottom:'1px solid var(--t4)'}}>
+                  <div style={{fontSize:12,fontWeight:600,color:'var(--t1)'}}>{session.user.email?.split('@')[0]}</div>
+                  <div style={{fontSize:10,color:'var(--t3)',marginTop:2}}>{session.user.email}</div>
+                </div>
+                <div style={{padding:'6px 8px',display:'flex',flexDirection:'column',gap:1}}>
+                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); /* TODO: open account settings modal */ toast('Account settings coming soon') }}>⚙️ Account Settings</button>
+                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); document.querySelector('.wallet-widget')?.click(); }}>💳 Payments & Billing</button>
+                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); toast('Password change coming soon') }}>🔑 Change Password</button>
+                  <div style={{borderTop:'1px solid var(--t4)',margin:'4px 0'}} />
+                  <button className="acct-btn danger" onClick={() => { if(confirm('Sign out of your account?')) supabase.auth.signOut() }}>Sign Out</button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Hidden WalletWidget — only for modal + balance tracking */}
+          <div style={{display:'none'}}><WalletWidget session={session} /></div>
         </div>
       </header>
 
