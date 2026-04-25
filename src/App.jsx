@@ -349,36 +349,30 @@ function App() {
           {/* P53 FIX: Guard share button when no project */}
           <button className="top-btn" title={activeProject ? 'Share' : 'Create a project first'} onClick={() => { if(activeProject) setShareOpen(true); else toast.error('Create a project first') }} style={!activeProject ? {opacity:.4} : {}} aria-label="Share project">🔗</button>
           <WalletWidget session={session} />
-
-          {/* P72: Avatar with status dot overlay + system log dropdown */}
+          {/* P72: Single avatar → single unified dropdown */}
           <div style={{position:'relative'}}>
-            <div className="top-avatar" onClick={() => setUserMenuOpen(!userMenuOpen)} style={{position:'relative',cursor:'pointer'}}>
+            <div className="top-avatar" onClick={() => { setUserMenuOpen(!userMenuOpen); setGlogOpen(false); }} style={{position:'relative',cursor:'pointer'}}>
               {session.user.email?.[0]?.toUpperCase() || 'U'}
-              <span className={`avatar-status-dot${generating ? ' processing' : ''}`} onClick={e => { e.stopPropagation(); setGlogOpen(!glogOpen); setUserMenuOpen(false); }} />
+              <span className={`avatar-status-dot${generating ? ' processing' : ''}`} />
             </div>
 
-            {/* System status dropdown */}
-            {glogOpen && (
+            {userMenuOpen && (
               <div className="status-dropdown" onClick={e => e.stopPropagation()}>
+                {/* Status section */}
                 <div className="status-dropdown-head">
                   <span style={{width:6,height:6,borderRadius:'50%',background:generating?'var(--warn)':'var(--ok)',flexShrink:0}} />
                   <span style={{fontSize:11,fontWeight:600,flex:1}}>{generating ? 'Processing…' : 'System Ready'}</span>
-                  <button style={{background:'none',border:'none',color:'var(--t3)',fontSize:10,cursor:'pointer'}} onClick={() => setGlogOpen(false)}>✕</button>
                 </div>
                 <div className="status-dropdown-body">
                   {logs.slice(-10).map((l,i) => (
                     <div key={i} className={`gstep ${l.type}`}><span className="gstep-i">{l.icon}</span><span>{l.msg}</span></div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* User menu dropdown */}
-            {userMenuOpen && (
-              <div style={{position:'absolute',top:'100%',right:0,marginTop:6,background:'var(--bg2)',border:'1px solid var(--t4)',borderRadius:'var(--r2)',padding:6,zIndex:300,width:180,display:'flex',flexDirection:'column',gap:2}} onClick={()=>setUserMenuOpen(false)}>
-                <div style={{padding:'6px 10px',fontSize:11,color:'var(--t3)',borderBottom:'1px solid var(--t4)',marginBottom:2}}>{session.user.email}</div>
-                <button className="btn btn-ghost btn-sm" style={{justifyContent:'flex-start'}} onClick={() => setView('director')}>🎬 Director Studio</button>
-                <button className="btn btn-ghost btn-sm" style={{justifyContent:'flex-start'}} onClick={() => { if(confirm('Sign out?')) supabase.auth.signOut() }}>🚪 Sign Out</button>
+                {/* User section */}
+                <div style={{borderTop:'1px solid var(--t4)',padding:'8px 14px',display:'flex',flexDirection:'column',gap:4}}>
+                  <div style={{fontSize:10,color:'var(--t3)',marginBottom:2}}>{session.user.email}</div>
+                  <button className="btn btn-ghost btn-sm" style={{justifyContent:'flex-start',fontSize:11}} onClick={() => { if(confirm('Sign out?')) supabase.auth.signOut() }}>🚪 Sign Out</button>
+                </div>
               </div>
             )}
           </div>
