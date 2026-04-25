@@ -153,6 +153,19 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const newNodes = [];
     const newEdges = [];
 
+    const getNewNodePosition = (defaultX, defaultY) => {
+      if (selectedNode) {
+        let testX = selectedNode.position.x + 300;
+        let testY = selectedNode.position.y;
+        const checkCollision = (n) => Math.abs(n.position.x - testX) < 50 && Math.abs(n.position.y - testY) < 50;
+        while (newNodes.some(checkCollision) || nodes.some(checkCollision)) {
+          testX += 250;
+        }
+        return { x: testX, y: testY };
+      }
+      return { x: defaultX, y: defaultY };
+    };
+
     const onChangeNodeModel = (id, typeLabel, newModelId) => {
       const typeArgsMap = { 'Character': 'characters', 'Prop': 'props', 'Environment': 'environments', 'Shot': 'shots', 'Video': 'videos' };
       const collectionKey = typeArgsMap[typeLabel];
@@ -198,7 +211,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const addGroup = (items, typeLabel, color, isTarget, startX, startYPos) => {
       (items || []).forEach((item, idx) => {
         const existingNode = nodes.find(n => n.id === item.id);
-        const position = existingNode ? existingNode.position : { x: startX + (idx % 3) * 200, y: startYPos + Math.floor(idx / 3) * 150 };
+        const position = existingNode ? existingNode.position : getNewNodePosition(startX + (idx % 3) * 200, startYPos + Math.floor(idx / 3) * 150);
         
         newNodes.push({
           id: item.id,
@@ -220,7 +233,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const shotStartY = envStartY + Math.ceil((data.environments || []).length / 3) * 150 + 150;
     (data.shots || []).forEach((s, idx) => {
       const existingNode = nodes.find(n => n.id === s.id);
-      const position = existingNode ? existingNode.position : { x: 50 + (idx % 4) * 220, y: shotStartY + Math.floor(idx / 4) * 250 };
+      const position = existingNode ? existingNode.position : getNewNodePosition(50 + (idx % 4) * 220, shotStartY + Math.floor(idx / 4) * 250);
       
       newNodes.push({
         id: s.id,
@@ -234,7 +247,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const videoStartY = shotStartY + Math.ceil((data.shots || []).length / 4) * 250 + 150;
     (data.videos || []).forEach((v, idx) => {
       const existingNode = nodes.find(n => n.id === v.id);
-      const position = existingNode ? existingNode.position : { x: 50 + (idx % 4) * 220, y: videoStartY + Math.floor(idx / 4) * 250 };
+      const position = existingNode ? existingNode.position : getNewNodePosition(50 + (idx % 4) * 220, videoStartY + Math.floor(idx / 4) * 250);
       
       newNodes.push({
         id: v.id,
