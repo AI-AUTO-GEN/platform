@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import './App.css'
+import AccountPages from './components/AccountPages'
+import './components/AccountPages.css'
 import { supabase } from './supabase'
 import Auth from './Auth'
 import { WalletWidget } from './components/Wallet'
@@ -35,6 +37,7 @@ function App() {
   const [shareOpen, setShareOpen] = useState(false)
   const [view, setView] = useState('canvas')
   const [mode, setMode] = useState('shot')
+  const [accountPage, setAccountPage] = useState(null)
   const [promptText, setPromptText] = useState('')
   const [generating, setGenerating] = useState(false)
   const [enhancing, setEnhancing] = useState(false)
@@ -308,6 +311,7 @@ function App() {
   return (
     <div className="app">
       <Toaster position="bottom-right" toastOptions={{ style:{background:'#1a1a28',color:'#f0f0f5',border:'1px solid #333348'}}} />
+      {accountPage && <AccountPages session={session} page={accountPage} onBack={() => setAccountPage(null)} />}
       {/* P55 FIX: LogMonitor receives lastLog from the single subscription above */}
       <LogMonitor lastLog={lastRealtimeLog} />
 
@@ -391,9 +395,9 @@ function App() {
                   <div style={{fontSize:10,color:'var(--t3)',marginTop:2}}>{session.user.email}</div>
                 </div>
                 <div style={{padding:'6px 8px',display:'flex',flexDirection:'column',gap:1}}>
-                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); /* TODO: open account settings modal */ toast('Account settings coming soon') }}>⚙️ Account Settings</button>
-                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); document.querySelector('.wallet-widget')?.click(); }}>💳 Payments & Billing</button>
-                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); toast('Password change coming soon') }}>🔑 Change Password</button>
+                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); setAccountPage('settings'); }}>⚙️ Account Settings</button>
+                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); setAccountPage('payments'); }}>💳 Payments & Billing</button>
+                  <button className="acct-btn" onClick={() => { setUserMenuOpen(false); setAccountPage('password'); }}>🔑 Change Password</button>
                   <div style={{borderTop:'1px solid var(--t4)',margin:'4px 0'}} />
                   <button className="acct-btn danger" onClick={() => { if(confirm('Sign out of your account?')) supabase.auth.signOut() }}>Sign Out</button>
                 </div>

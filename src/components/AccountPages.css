@@ -1,0 +1,87 @@
+/* ═══════════════════════════════════════════════
+   P74: ACCOUNT PAGES STYLES
+   ═══════════════════════════════════════════════ */
+
+.acctpage{position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;animation:acctpage-in .2s ease-out}
+@keyframes acctpage-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+.acctpage-header{padding:24px 32px;border-bottom:1px solid var(--t4);display:flex;flex-direction:column;gap:16px}
+.acctpage-back{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;padding:6px 12px;border-radius:var(--r);transition:.15s;align-self:flex-start}
+.acctpage-back:hover{color:var(--t1);background:var(--bg3)}
+.acctpage-back span{font-size:16px}
+.acctpage-title{font-size:22px;font-weight:700;color:var(--t1);margin:0}
+.acctpage-sub{font-size:12px;color:var(--t3);margin:4px 0 0}
+
+.acctpage-body{padding:24px 32px;max-width:640px;display:flex;flex-direction:column;gap:20px;padding-bottom:80px}
+
+/* Sections */
+.acctpage-section{background:var(--bg2);border:1px solid var(--t4);border-radius:var(--r2);padding:20px 24px}
+.acctpage-section.danger{border-color:rgba(255,77,77,.25);background:rgba(255,77,77,.03)}
+.acctpage-section-title{font-size:13px;font-weight:700;color:var(--t1);margin:0 0 16px;text-transform:uppercase;letter-spacing:1px}
+
+/* Labels + Values */
+.acctpage-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
+.acctpage-value{font-size:13px;color:var(--t1);margin-top:2px}
+.acctpage-value.mono{font-family:var(--mono);font-size:10px;color:var(--t3);word-break:break-all}
+
+/* Field Groups */
+.acctpage-field-group{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+
+/* Avatar row */
+.acctpage-avatar-row{display:flex;gap:20px;align-items:center;margin-bottom:16px}
+.acctpage-avatar-big{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* Info grid */
+.acctpage-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Danger zone */
+.acctpage-danger-desc{font-size:12px;color:var(--t2);margin:0 0 12px;line-height:1.5}
+
+/* ═══ PAYMENTS ═══ */
+.pay-balance-hero{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.pay-balance-amount{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:4px}
+.pay-stats{display:flex;gap:24px}
+.pay-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pay-stat-val{font-size:18px;font-weight:700;color:var(--t1)}
+
+/* Amount cards */
+.pay-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.pay-amount-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 8px;background:var(--bg3);border:1px solid var(--t4);border-radius:var(--r2);cursor:pointer;transition:.2s}
+.pay-amount-card:hover{border-color:var(--t3);background:var(--bg4)}
+.pay-amount-card.selected{border-color:var(--accent);background:rgba(124,92,255,.08);box-shadow:0 0 12px rgba(124,92,255,.15)}
+.pay-amount-price{font-size:18px;font-weight:700;color:var(--t1)}
+.pay-amount-credits{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+
+/* Custom amount */
+.pay-custom-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pay-custom-input{display:flex;align-items:center;gap:4px;background:var(--bg4);border:1px solid var(--t4);border-radius:var(--r);padding:6px 10px}
+.pay-custom-input span{color:var(--t3);font-size:14px;font-weight:600}
+.pay-custom-input input{background:none;border:none;color:var(--t1);font:inherit;font-size:14px;width:80px;outline:none}
+
+/* Transaction list */
+.pay-tx-list{display:flex;flex-direction:column;gap:2px;max-height:320px;overflow-y:auto}
+.pay-tx{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--t4)}
+.pay-tx:last-child{border-bottom:none}
+.pay-tx-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.pay-tx-icon.deposit{background:rgba(78,203,113,.12);color:var(--ok)}
+.pay-tx-icon.withdrawal{background:rgba(255,77,77,.12);color:var(--err)}
+.pay-tx-icon.hold{background:rgba(245,166,35,.12);color:var(--warn)}
+.pay-tx-info{flex:1;display:flex;flex-direction:column;gap:1px}
+.pay-tx-desc{font-size:12px;color:var(--t1)}
+.pay-tx-date{font-size:9px;color:var(--t3)}
+.pay-tx-amount{font-size:13px;font-weight:600;font-family:var(--mono)}
+.pay-tx-amount.positive{color:var(--ok)}
+.pay-tx-amount.negative{color:var(--err)}
+.pay-empty{text-align:center;padding:24px;color:var(--t3);font-size:12px}
+
+/* ═══ PASSWORD ═══ */
+.pw-strength{display:flex;align-items:center;gap:8px;margin-top:6px}
+.pw-strength-bar{flex:1;height:3px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.pw-strength-fill{height:100%;border-radius:2px;transition:.3s}
+.pw-strength-label{font-size:10px;font-weight:600;min-width:60px}
+.pw-mismatch{font-size:10px;color:var(--err);margin-top:4px}
+.pw-requirements{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.pw-requirements li{font-size:11px;color:var(--t3);padding-left:18px;position:relative}
+.pw-requirements li::before{content:'○';position:absolute;left:0;font-size:10px}
+.pw-requirements li.met{color:var(--ok)}
+.pw-requirements li.met::before{content:'●'}
