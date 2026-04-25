@@ -18,129 +18,147 @@ const getDriveDisplayUrl = (url) => {
 
 // P62: Modality options for the type selector
 const MODALITY_OPTS = [
-  { key: 'image', label: '🖼 Image' }, { key: 'video', label: '🎬 Video' },
-  { key: 'tts', label: '🗣 Speech' }, { key: 't2a', label: '🔊 Audio' },
-  { key: 'i23d', label: '🧊 3D' },
+  { key: 'image', label: 'ðŸ–¼ Image' }, { key: 'video', label: 'ðŸŽ¬ Video' },
+  { key: 'tts', label: 'ðŸ—£ Speech' }, { key: 't2a', label: 'ðŸ”Š Audio' },
+  { key: 'i23d', label: 'ðŸ§Š 3D' },
 ];
 const DEF_MOD = { Character: 'image', Prop: 'image', Environment: 'image', Shot: 'image', Video: 'video' };
 
 const CustomNode = ({ id, data }) => {
   const modality = data.rawData?.modality || DEF_MOD[data.typeLabel] || 'image';
   const modelList = (MODEL_REGISTRY[modality] || []).filter(c => c.company !== 'Loading...');
+
+  // P63: Derive company list and current company
+  const companies = modelList.map(c => c.company);
+  const currentCompany = data.rawData?.company || companies[0] || '';
+  const companyModels = modelList.find(c => c.company === currentCompany)?.models || modelList[0]?.models || [];
+
+  const hasMedia = data.media && data.media.thumbnailLink;
+  const promptText = data.prompt || '';
+
   return (
     <div 
       style={{ 
-        background: '#050508', 
+        background: '#0a0a0f', 
         border: `1px solid ${data.color || '#333'}`, 
-        borderRadius: '8px', 
-        padding: '12px', 
-        minWidth: '180px', 
+        borderRadius: '10px', 
+        padding: '10px', 
+        width: '220px', 
         color: 'white', 
         display: 'flex', 
         flexDirection: 'column', 
-        gap: '8px',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
+        gap: '6px',
+        boxShadow: `0 4px 20px rgba(0,0,0,0.4), 0 0 1px ${data.color || '#333'}`
       }}
       className="custom-flow-node"
     >
-      <Handle type="target" position={Position.Left} style={{ background: '#fff', width: '12px', height: '12px', left: '-6px' }}>
+      <Handle type="target" position={Position.Left} style={{ background: '#fff', width: '10px', height: '10px', left: '-5px' }}>
          <div style={{ position: 'absolute', top: -10, left: -10, right: -10, bottom: -10, cursor: 'crosshair' }}></div>
       </Handle>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ fontSize: '10px', color: data.color || '#aaa', textTransform: 'uppercase', fontWeight: 600 }}>{data.typeLabel}</div>
-            {data.media?.actual_cost != null ? (
-              <span style={{ fontSize: '9px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '1px 4px', borderRadius: '3px', border: '1px solid rgba(16, 185, 129, 0.3)' }}><CheckCircle size={16} className="lucide-icon" /> {formatCost(data.media.actual_cost)}</span>
-            ) : (
-              <span style={{ fontSize: '9px', background: 'rgba(255,255,255,0.05)', color: '#888', padding: '1px 4px', borderRadius: '3px' }}>Est: {formatCost(calculatePreviewCost(data.modelId, { ...data.rawData?.settings, prompt: data.prompt }))}</span>
-            )}
-          </div>
-        </div>
-        {/* P62: Modality + Model selectors */}
-        <div style={{ display: 'flex', gap: '4px' }}>
-          <select className="select-mini nodrag" style={{ fontSize: '9px', padding: '2px 3px', background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', width: '58px', cursor: 'pointer' }}
-            value={modality} onChange={(e) => data.onChangeNodeModality(id, data.typeLabel, e.target.value)}>
-            {MODALITY_OPTS.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}
-          </select>
-          <select className="select-mini nodrag" style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', borderRadius: '4px', flex: 1, maxWidth: '130px', zIndex: 10 }}
-            value={data.modelId || ''} onChange={(e) => data.onChangeNodeModel(id, data.typeLabel, e.target.value)}>
-            {modelList.length === 0 && <option value="">No models</option>}
-            {modelList.map(cat => (
-              <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
-                {cat.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </optgroup>
-            ))}
-          </select>
-        </div>
-        
-        {getModelOptions(data.modelId, data.typeLabel?.toLowerCase()).length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
-            {getModelOptions(data.modelId, data.typeLabel?.toLowerCase()).map(opt => (
-              <div key={opt.key} style={{ display: 'flex', flexDirection: 'column' }}>
-                 <label style={{ fontSize: '8px', color: '#888', textTransform: 'uppercase', marginBottom: '2px' }}>{opt.label}</label>
-                 <select 
-                   className="nodrag"
-                   style={{ fontSize: '9px', padding: '2px', background: 'rgba(255,255,255,0.05)', color: '#ccc', border: '1px solid #333', borderRadius: '4px' }}
-                   value={data.rawData?.settings?.[opt.key] || opt.default}
-                   onChange={(e) => data.onChangeNodeSettings(id, data.typeLabel, { ...(data.rawData?.settings || {}), [opt.key]: e.target.value })}
-                 >
-                   {opt.options.map(o => <option key={o} value={o}>{o}</option>)}
-                 </select>
-              </div>
-            ))}
-          </div>
+
+      {/* Header: Type + Cost */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: '10px', color: data.color || '#aaa', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>{data.typeLabel}</div>
+        {data.media?.actual_cost != null ? (
+          <span style={{ fontSize: '8px', background: 'rgba(16,185,129,0.15)', color: '#10b981', padding: '2px 5px', borderRadius: '3px', border: '1px solid rgba(16,185,129,0.3)' }}><CheckCircle size={10} className="lucide-icon" /> {formatCost(data.media.actual_cost)}</span>
+        ) : (
+          <span style={{ fontSize: '8px', background: 'rgba(255,255,255,0.05)', color: '#666', padding: '2px 5px', borderRadius: '3px' }}>Est: {formatCost(calculatePreviewCost(data.modelId, { ...data.rawData?.settings, prompt: promptText }))}</span>
         )}
       </div>
-      {data.media && data.media.thumbnailLink ? (
-        <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '4px', overflow: 'hidden', border: '1px solid #333' }}>
-          {data.media.mimeType && data.media.mimeType.includes('video') ? (
-            <video src={getDriveDisplayUrl(data.media.webViewLink || data.media.thumbnailLink)} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            <img src={getDriveDisplayUrl(data.media.thumbnailLink)} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          )}
-          <a href={data.media.webViewLink || '#'} target="_blank" rel="noreferrer" style={{
-            position: 'absolute', bottom: '6px', right: '6px', background: 'rgba(0,0,0,0.7)', color: '#00f0ff', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', textDecoration: 'none', fontWeight: 'bold', border: '1px solid currentColor', display: 'flex', alignItems: 'center', gap: '4px'
-          }}>
-            HQ
-          </a>
+
+      {/* Triple Dropdown: Modality | Company | Model */}
+      <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+        <select className="select-mini nodrag" style={{ fontSize: '8px', padding: '2px 3px', background: 'rgba(255,255,255,0.12)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', width: '56px', cursor: 'pointer' }}
+          value={modality} onChange={(e) => data.onChangeNodeModality(id, data.typeLabel, e.target.value)}>
+          {MODALITY_OPTS.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}
+        </select>
+        <select className="select-mini nodrag" style={{ fontSize: '8px', padding: '2px 3px', background: 'rgba(255,255,255,0.08)', color: '#aaa', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', flex: 1, minWidth: '60px', cursor: 'pointer' }}
+          value={currentCompany} onChange={(e) => data.onChangeNodeCompany(id, data.typeLabel, e.target.value)}>
+          {companies.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <select className="select-mini nodrag" style={{ fontSize: '8px', padding: '2px 3px', background: 'rgba(255,255,255,0.06)', color: '#ccc', border: 'none', borderRadius: '4px', width: '100%', cursor: 'pointer' }}
+          value={data.modelId || ''} onChange={(e) => data.onChangeNodeModel(id, data.typeLabel, e.target.value)}>
+          {companyModels.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+        </select>
+      </div>
+
+      {/* Model options (aspect ratio, etc) */}
+      {getModelOptions(data.modelId, data.typeLabel?.toLowerCase()).length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+          {getModelOptions(data.modelId, data.typeLabel?.toLowerCase()).map(opt => (
+            <div key={opt.key} style={{ display: 'flex', flexDirection: 'column' }}>
+               <label style={{ fontSize: '7px', color: '#666', textTransform: 'uppercase', marginBottom: '1px' }}>{opt.label}</label>
+               <select className="nodrag" style={{ fontSize: '8px', padding: '2px', background: 'rgba(255,255,255,0.05)', color: '#ccc', border: '1px solid #222', borderRadius: '3px' }}
+                 value={data.rawData?.settings?.[opt.key] || opt.default}
+                 onChange={(e) => data.onChangeNodeSettings(id, data.typeLabel, { ...(data.rawData?.settings || {}), [opt.key]: e.target.value })}>
+                 {opt.options.map(o => <option key={o} value={o}>{o}</option>)}
+               </select>
+            </div>
+          ))}
         </div>
+      )}
+
+      {/* P63: Body â€” Prompt when no media, Image when rendered */}
+      {hasMedia ? (
+        <>
+          <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #222' }}>
+            {data.media.mimeType && data.media.mimeType.includes('video') ? (
+              <video src={getDriveDisplayUrl(data.media.webViewLink || data.media.thumbnailLink)} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <img src={getDriveDisplayUrl(data.media.thumbnailLink)} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            )}
+            <a href={data.media.webViewLink || '#'} target="_blank" rel="noreferrer" style={{
+              position: 'absolute', bottom: '4px', right: '4px', background: 'rgba(0,0,0,0.8)', color: '#00f0ff', padding: '3px 6px', borderRadius: '4px', fontSize: '9px', textDecoration: 'none', fontWeight: 'bold', border: '1px solid rgba(0,240,255,0.3)'
+            }}>HQ</a>
+          </div>
+          {/* Prompt shown below image as caption */}
+          {promptText && (
+            <div style={{ fontSize: '9px', color: '#555', fontStyle: 'italic', lineHeight: '1.3', padding: '0 2px', maxHeight: '36px', overflow: 'hidden', wordBreak: 'break-word' }}>
+              {promptText.length > 100 ? promptText.slice(0, 100) + 'â€¦' : promptText}
+            </div>
+          )}
+        </>
       ) : (
-        <div style={{ width: '100%', height: '140px', background: 'rgba(255,255,255,0.02)', borderRadius: '4px', border: '1px dashed #333', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '8px' }}>
-          <div style={{color: '#444', fontSize: '10px', textTransform: 'uppercase'}}>No Render Yet</div>
-          {data.prompt && (
-            <div style={{ fontSize: '9px', color: '#666', fontStyle: 'italic', maxHeight: '50px', overflow: 'hidden', padding: '0 10px', textAlign: 'center' }}>{data.prompt}</div>
-          )}
-        </div>
+        /* No render yet â€” show editable prompt area */
+        <textarea
+          className="nodrag nowheel"
+          placeholder="Describe what to generate..."
+          style={{ 
+            width: '100%', height: '80px', background: 'rgba(255,255,255,0.03)', border: '1px solid #222', borderRadius: '6px', 
+            color: '#ccc', fontSize: '10px', padding: '8px', resize: 'none', fontFamily: 'inherit', lineHeight: '1.4',
+            outline: 'none'
+          }}
+          value={promptText}
+          onChange={(e) => data.onChangeNodePrompt(id, data.typeLabel, e.target.value)}
+        />
       )}
-      
+
+      {/* Error bar */}
       {data.errorMedia && (
-        <div style={{ width: '100%', marginTop: '4px' }}>
-           <div style={{ fontSize: '9px', color: '#ff6b6b', marginBottom: '2px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-             <span style={{ flex: 1, wordBreak: 'break-word' }}><X size={16} className="lucide-icon" /> {data.errorMedia.statusMessage || 'Generation failed'}</span>
-           </div>
-           <div style={{ height: '4px', background: '#333', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', background: '#ff4444', width: '100%' }} />
-           </div>
+        <div style={{ fontSize: '8px', color: '#ff6b6b', background: 'rgba(255,77,79,0.08)', padding: '4px 6px', borderRadius: '4px', border: '1px solid rgba(255,77,79,0.2)', wordBreak: 'break-word' }}>
+          âœ• {data.errorMedia.statusMessage || 'Generation failed'}
         </div>
       )}
+      {/* Progress bar */}
       {data.processingMedia && !data.errorMedia && (
-        <div style={{ width: '100%', marginTop: '4px' }}>
-           <div style={{ fontSize: '9px', color: '#ccc', marginBottom: '2px', display: 'flex', justifyContent: 'space-between' }}>
-             <span>{data.processingMedia.statusMessage || 'Processing...'}</span>
-             <span>{data.processingMedia.progress}%</span>
-           </div>
-           <div style={{ height: '4px', background: '#333', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', background: data.color || '#1890ff', width: `${data.processingMedia.progress || 0}%`, transition: 'width 0.3s ease' }} />
-           </div>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '8px', color: '#aaa', marginBottom: '2px' }}>
+            <span>{data.processingMedia.statusMessage || 'Processing...'}</span>
+            <span>{data.processingMedia.progress}%</span>
+          </div>
+          <div style={{ height: '3px', background: '#222', borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', background: data.color || '#1890ff', width: `${data.processingMedia.progress || 0}%`, transition: 'width 0.3s ease' }} />
+          </div>
         </div>
       )}
-      <Handle type="source" position={Position.Right} style={{ background: '#fff', width: '12px', height: '12px', right: '-6px' }}>
+
+      <Handle type="source" position={Position.Right} style={{ background: '#fff', width: '10px', height: '10px', right: '-5px' }}>
          <div style={{ position: 'absolute', top: -10, left: -10, right: -10, bottom: -10, cursor: 'crosshair' }}></div>
       </Handle>
     </div>
   );
 };
+
 
 const nodeTypes = {
   custom: CustomNode,
@@ -160,7 +178,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
 
   const TYPE_MAP = { 'Character': 'characters', 'Prop': 'props', 'Environment': 'environments', 'Shot': 'shots', 'Video': 'videos' };
 
-  // P62 FIX: Stable callbacks that use refs — never go stale
+  // P62 FIX: Stable callbacks that use refs â€” never go stale
   const onChangeNodeModel = useCallback((id, typeLabel, newModelId) => {
     const d = dataRef.current;
     const key = TYPE_MAP[typeLabel];
@@ -204,6 +222,39 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       const firstModelId = firstCat?.models?.[0]?.id || '';
       return { ...n, data: { ...n.data, modelId: firstModelId, rawData: { ...n.data.rawData, modality: newModality, modelId: firstModelId } } };
     }));
+  }, [setNodes]);
+
+  const onChangeNodeCompany = useCallback((id, typeLabel, newCompany) => {
+    const d = dataRef.current;
+    const key = TYPE_MAP[typeLabel];
+    const col = [...(d[key] || [])];
+    const idx = col.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      const modality = col[idx].modality || DEF_MOD[typeLabel] || 'image';
+      const catModels = (MODEL_REGISTRY[modality] || []).find(c => c.company === newCompany);
+      const firstModelId = catModels?.models?.[0]?.id || col[idx].modelId;
+      col[idx] = { ...col[idx], company: newCompany, modelId: firstModelId };
+      onChangeRef.current({ ...d, [key]: col });
+    }
+    setNodes(nds => nds.map(n => {
+      if (n.id !== id) return n;
+      const modality = n.data.rawData?.modality || DEF_MOD[typeLabel] || 'image';
+      const catModels = (MODEL_REGISTRY[modality] || []).find(c => c.company === newCompany);
+      const firstModelId = catModels?.models?.[0]?.id || n.data.modelId;
+      return { ...n, data: { ...n.data, modelId: firstModelId, rawData: { ...n.data.rawData, company: newCompany, modelId: firstModelId } } };
+    }));
+  }, [setNodes]);
+
+  const onChangeNodePrompt = useCallback((id, typeLabel, newPrompt) => {
+    const d = dataRef.current;
+    const key = TYPE_MAP[typeLabel];
+    const col = [...(d[key] || [])];
+    const idx = col.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      col[idx] = { ...col[idx], prompt: newPrompt };
+      onChangeRef.current({ ...d, [key]: col });
+    }
+    setNodes(nds => nds.map(n => n.id === id ? { ...n, data: { ...n.data, prompt: newPrompt, rawData: { ...n.data.rawData, prompt: newPrompt } } } : n));
   }, [setNodes]);
 
   useEffect(() => {
@@ -269,7 +320,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
           id: item.id,
           type: 'custom',
           position,
-          data: { label: item.name || item.id, typeLabel, color, media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: item.prompt || item.beat, isTarget, rawData: item, modelId: item.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality }
+          data: { label: item.name || item.id, typeLabel, color, media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: item.prompt || item.beat, isTarget, rawData: item, modelId: item.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality, onChangeNodeCompany, onChangeNodePrompt }
         });
 
         extractEdges(item, color);
@@ -291,7 +342,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: s.id,
         type: 'custom',
         position,
-        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.prompt || s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality }
+        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.prompt || s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality, onChangeNodeCompany, onChangeNodePrompt }
       });
       extractEdges(s, '#1890ff');
     });
@@ -305,7 +356,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: v.id,
         type: 'custom',
         position,
-        data: { label: v.id, typeLabel: 'Video', color: '#9254de', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: v.prompt, isTarget: true, rawData: v, modelId: v.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality }
+        data: { label: v.id, typeLabel: 'Video', color: '#9254de', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: v.prompt, isTarget: true, rawData: v, modelId: v.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality, onChangeNodeCompany, onChangeNodePrompt }
       });
       extractEdges(v, '#9254de');
     });
@@ -484,7 +535,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
           <Controls />
           <Background color="#333" gap={16} />
           
-          {/* Top Panel for Toolbar — P50 FIX: Added tooltips */}
+          {/* Top Panel for Toolbar â€” P50 FIX: Added tooltips */}
           <div style={{ position: 'absolute', top: 20, left: 20, background: 'rgba(20,20,20,0.8)', padding: '10px', borderRadius: '8px', zIndex: 5, border: '1px solid #333', display: 'flex', gap: '8px' }}>
              <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#ff4d4f' }} onClick={() => addNewNode('Character')} title="Add a character entity node" aria-label="Add Character">+ CHARACTER</button>
              <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', background: '#d4b106' }} onClick={() => addNewNode('Prop')} title="Add a prop entity node" aria-label="Add Prop">+ PROP</button>
