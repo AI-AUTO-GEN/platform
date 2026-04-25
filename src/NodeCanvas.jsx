@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge, Handle, Position } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { getModelOptions, MODEL_REGISTRY } from './config/modelRegistry';
@@ -52,16 +52,14 @@ const CustomNode = ({ data }) => {
             value={data.modelId || ''}
             onChange={(e) => data.onChangeNodeModel(data.id, data.typeLabel, e.target.value)}
           >
-            {data.typeLabel !== 'Video' && MODEL_REGISTRY.image.map(cat => (
-              <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
-                {cat.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </optgroup>
-            ))}
-            {data.typeLabel === 'Video' && MODEL_REGISTRY.video.map(cat => (
-              <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
-                {cat.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </optgroup>
-            ))}
+            {(() => {
+              const regKey = data.typeLabel === 'Video' ? 'video' : data.typeLabel === 'Shot' ? 'image' : 'image';
+              return (MODEL_REGISTRY[regKey] || MODEL_REGISTRY.image || []).map(cat => (
+                <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
+                  {cat.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                </optgroup>
+              ));
+            })()}
           </select>
         </div>
         
@@ -141,6 +139,8 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState(null);
+  const selectedNodeRef = useRef(null);
+  useEffect(() => { selectedNodeRef.current = selectedNode; }, [selectedNode]);
 
   useEffect(() => {
     // Only rebuild if the number of items changes to avoid destroying pan/zoom while editing
@@ -154,7 +154,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const newEdges = [];
 
     const getNewNodePosition = (defaultX, defaultY) => {
-      let refNode = selectedNode;
+      let refNode = selectedNodeRef.current;
       if (!refNode) {
         const allNodes = [...nodes, ...newNodes];
         if (allNodes.length > 0) {
@@ -402,7 +402,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     const collectionKey = typeArgsMap[typeLabel];
     
     let newItem = { id, name: `New ${typeLabel}`, prompt: '', modelId: 'fal-ai/flux-pro/v1.1-ultra' };
-    if (typeLabel === 'Shot') newItem = { id, beat: 'New Shot baes on inputs', modelId: 'fal-ai/flux-pro/v1.1-ultra' };
+    if (typeLabel === 'Shot') newItem = { id, prompt: 'New Shot based on inputs', modelId: 'fal-ai/flux-pro/v1.1-ultra' };
     if (typeLabel === 'Video') newItem = { id, prompt: 'Final output instructions', modelId: 'fal-ai/bytedance/seedance-2.0/image-to-video' };
 
     onChange({ ...data, [collectionKey]: [...(data[collectionKey] || []), newItem] });
@@ -474,7 +474,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
 
              <div className="form-group">
                <label>{selectedNode.data.typeLabel === 'Shot' ? 'Beat / Action' : 'Prompt'}</label>
-               <textarea rows={5} className="script-textarea" value={selectedNode.data.rawData.prompt || selectedNode.data.rawData.beat || ''} onChange={(e) => handleUpdateNode(selectedNode.data.typeLabel === 'Shot' ? 'beat' : 'prompt', e.target.value)} />
+               <textarea rows={5} className="script-textarea" value={selectedNode.data.rawData.prompt || selectedNode.data.rawData.beat || ''} onChange={(e) => handleUpdateNode('prompt', e.target.value)} />
              </div>
 
              {selectedNode.data.typeLabel === 'Shot' && (

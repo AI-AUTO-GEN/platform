@@ -12,6 +12,8 @@ import { useDriveMedia } from './hooks/useDriveMedia'
 import { genId, deleteVariant, getDriveDisplayUrl } from './utils/assetUtils'
 import NodeCanvas from './NodeCanvas'
 import EntityTaskCard from './components/EntityTaskCard'
+import LogMonitor from './components/LogMonitor'
+import useGlobalTactile from './hooks/useGlobalTactile'
 
 // ─── STATUS COLORS ─────────────────────────
 const STATUS = { done:'var(--ok)', pending:'var(--warn)', error:'var(--err)', processing:'var(--cyan)', ready:'var(--t3)' }
@@ -46,6 +48,9 @@ function App() {
   const [modelCategories, setModelCategories] = useState({})
   const [pipelineStep, setPipelineStep] = useState(0)
   const promptRef = useRef(null)
+
+  // ─── GLOBAL TACTILE HAPTICS (P13 FIX) ────
+  useGlobalTactile();
 
   // ─── AUTH ─────────────────────────────────
   useEffect(() => {
@@ -254,6 +259,7 @@ function App() {
   return (
     <div className="app">
       <Toaster position="bottom-right" toastOptions={{ style:{background:'#1a1a28',color:'#f0f0f5',border:'1px solid #333348'}}} />
+      <LogMonitor />
 
       {/* ═══ TOPBAR ═══ */}
       <header className="topbar">
@@ -328,6 +334,10 @@ function App() {
                 data={contract} 
                 onChange={(newData) => { setContract(newData); persistContract(newData); }} 
                 media={media} 
+                onGenerateNode={(node) => {
+                  const shotData = node.data?.rawData || {};
+                  handleGenerate({ ...shotData, prompt: shotData.prompt || shotData.beat, model: shotData.modelId, cat: node.data?.typeLabel?.toLowerCase() === 'video' ? 'video' : 'image' });
+                }}
               />
             </div>
 
@@ -481,7 +491,7 @@ function App() {
                   data={a}
                   driveMedia={media}
                   onGenerate={(updatedData) => {
-                    handleGenerate({ ...updatedData, cat: 'image' }); // Reutilizar la lógica de generación
+                    handleGenerate({ ...updatedData, cat: 'image' });
                   }}
                   onUpdate={(k, v) => {
                     const colName = assetTab === 'chars' ? 'characters' : assetTab === 'props' ? 'props' : 'environments';
@@ -500,6 +510,8 @@ function App() {
                     });
                   }}
                   onDiscardVariant={(varId) => deleteVariant(varId)}
+                  onSelectVersion={() => {}}
+                  selectedVersion={null}
                 />
               ))}
             </div>

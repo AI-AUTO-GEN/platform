@@ -81,11 +81,31 @@ function WalletModal({ session, balance, onClose, onRefresh }) {
     if (amount <= 0) return;
     setLoading(true);
     try {
-      // VULNERABILITY FIXED: Blocked client-side RPC dev_add_funds call.
-      // A genuine integration with Stripe via secure Edge Functions is required.
-      alert("SECURITY BLOCK: Direct funding via client RPC 'dev_add_funds' is disabled to prevent infinite money exploits.");
+      const { data: { session: authSession } } = await supabase.auth.getSession();
+      if (!authSession) throw new Error('Not authenticated');
+      
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL || 'https://nangyrlyayskchsjqymn.supabase.co'}/functions/v1/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authSession.access_token}`,
+        },
+        body: JSON.stringify({ amount: amount * 100, userId: authSession.user.id }),
+      });
+      
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Checkout failed (${res.status}). Stripe integration pending deployment.`);
+      }
+      
+      const { url } = await res.json();
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        throw new Error('No checkout URL returned. The create-checkout-session Edge Function needs to be deployed.');
+      }
     } catch (e) {
-      alert("Error adding funds: " + e.message);
+      alert("Stripe Checkout: " + e.message);
     }
     setLoading(false);
   };

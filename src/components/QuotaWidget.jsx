@@ -12,10 +12,14 @@ export default function QuotaWidget({ session }) {
   const fetchQuota = useCallback(async () => {
     if (!session?.user?.id) return
     try {
-      const { data } = await supabase.rpc('get_user_quota', { p_user_id: session.user.id })
-      if (data !== null) setQuotaUsed(Number(data))
+      // P07 FIX: Use direct aggregate query instead of non-existent RPC
+      const { data } = await supabase
+        .from('drive_media')
+        .select('file_size')
+        .eq('profile_id', session.user.id)
+      if (data) setQuotaUsed(data.reduce((sum, row) => sum + (row.file_size || 0), 0))
     } catch (e) {
-      // RPC may not exist yet — silently ignore
+      // Silently handle — quota display is non-critical
     }
   }, [session])
 

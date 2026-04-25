@@ -1,5 +1,5 @@
 /* ═══ V07 DESIGN SYSTEM ═══ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Reset handled in index.css */
 :root{
   --bg:#08080c;--bg2:#0e0e14;--bg3:#14141e;--bg4:#1a1a28;--bg5:#222236;
   --t1:#f0f0f5;--t2:#a0a0b8;--t3:#5a5a78;--t4:#333348;

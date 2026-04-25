@@ -34,7 +34,7 @@ export default function Auth({ session }) {
   return (
     <div className="auth-overlay glass slide-in">
       <div className="auth-card">
-        <h1 className="brand-title">AI <span className="gradient-text">AUTO GEN</span></h1>
+        <h1 className="brand-title"><span className="gradient-text">◈</span> RENDERFARM</h1>
         <p className="auth-subtitle">{isLogin ? 'Sign in to access your productions' : 'Create a new account'}</p>
         <form onSubmit={handleAuth} className="auth-form">
           <input 
