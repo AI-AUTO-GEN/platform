@@ -24,7 +24,7 @@ const MODALITY_OPTS = [
 ];
 const DEF_MOD = { Character: 'image', Prop: 'image', Environment: 'image', Shot: 'image', Video: 'video' };
 
-const CustomNode = ({ data }) => {
+const CustomNode = ({ id, data }) => {
   const modality = data.rawData?.modality || DEF_MOD[data.typeLabel] || 'image';
   const modelList = (MODEL_REGISTRY[modality] || []).filter(c => c.company !== 'Loading...');
   return (
@@ -60,11 +60,11 @@ const CustomNode = ({ data }) => {
         {/* P62: Modality + Model selectors */}
         <div style={{ display: 'flex', gap: '4px' }}>
           <select className="select-mini nodrag" style={{ fontSize: '9px', padding: '2px 3px', background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', width: '58px', cursor: 'pointer' }}
-            value={modality} onChange={(e) => data.onChangeNodeModality(data.id, data.typeLabel, e.target.value)}>
+            value={modality} onChange={(e) => data.onChangeNodeModality(id, data.typeLabel, e.target.value)}>
             {MODALITY_OPTS.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}
           </select>
           <select className="select-mini nodrag" style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', borderRadius: '4px', flex: 1, maxWidth: '130px', zIndex: 10 }}
-            value={data.modelId || ''} onChange={(e) => data.onChangeNodeModel(data.id, data.typeLabel, e.target.value)}>
+            value={data.modelId || ''} onChange={(e) => data.onChangeNodeModel(id, data.typeLabel, e.target.value)}>
             {modelList.length === 0 && <option value="">No models</option>}
             {modelList.map(cat => (
               <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
@@ -83,7 +83,7 @@ const CustomNode = ({ data }) => {
                    className="nodrag"
                    style={{ fontSize: '9px', padding: '2px', background: 'rgba(255,255,255,0.05)', color: '#ccc', border: '1px solid #333', borderRadius: '4px' }}
                    value={data.rawData?.settings?.[opt.key] || opt.default}
-                   onChange={(e) => data.onChangeNodeSettings(data.id, data.typeLabel, { ...(data.rawData?.settings || {}), [opt.key]: e.target.value })}
+                   onChange={(e) => data.onChangeNodeSettings(id, data.typeLabel, { ...(data.rawData?.settings || {}), [opt.key]: e.target.value })}
                  >
                    {opt.options.map(o => <option key={o} value={o}>{o}</option>)}
                  </select>
