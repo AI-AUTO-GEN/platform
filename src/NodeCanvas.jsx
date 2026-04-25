@@ -490,10 +490,34 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     onChange(newData);
   }, [nodes, data, onChange]);
 
+  // P69: Load references from Supabase when a node is selected (survives page reload)
+  useEffect(() => {
+    if (!selectedNode) return;
+    const existingRefs = selectedNode.data.rawData?.references;
+    if (existingRefs && existingRefs.length > 0) return; // already loaded
+    (async () => {
+      const { data: refs } = await supabase
+        .from('reference_assets')
+        .select('*')
+        .eq('node_id', selectedNode.id)
+        .order('created_at', { ascending: true });
+      if (refs && refs.length > 0) {
+        const mapped = refs.map(r => ({
+          url: r.drive_url || r.thumbnail_url || '',
+          thumbnailUrl: r.thumbnail_url || r.drive_url || '',
+          driveFileId: r.drive_file_id,
+          fileName: r.file_name,
+          uploadedAt: r.created_at
+        }));
+        handleUpdateNode('references', mapped);
+      }
+    })();
+  }, [selectedNode?.id]);
+
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // P66+P68: Reference image upload handler — sends as multipart/form-data for n8n binary compatibility
+  // P66+P68+P69: Reference image upload — multipart to n8n + persist metadata to Supabase
   const handleReferenceUpload = useCallback(async (file) => {
     if (!selectedNode || !file) return;
     setUploading(true);
@@ -501,9 +525,8 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       
-      // Build multipart form — n8n webhook auto-parses this into binary 'data'
       const formData = new FormData();
-      formData.append('data', file, file.name);  // 'data' = n8n's expected binary property name
+      formData.append('data', file, file.name);
       formData.append('nodeId', selectedNode.id);
       formData.append('nodeType', selectedNode.data.typeLabel);
       formData.append('purpose', 'reference');
@@ -511,26 +534,61 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       const res = await fetch(N8N_UPLOAD_WEBHOOK_URL, {
         method: 'POST',
         headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
-        // Do NOT set Content-Type — browser sets it automatically with boundary for FormData
         body: formData
       });
       
       const result = await res.json();
       
-      // Store reference in node data
-      const newRef = {
-        url: result.driveUrl || result.webViewLink || result.url || '',
-        thumbnailUrl: result.thumbnailUrl || result.thumbnailLink || result.url || '',
-        driveFileId: result.driveFileId || result.id || null,
-        fileName: file.name,
-        uploadedAt: new Date().toISOString()
-      };
+      // Build proper Google Drive thumbnail URL from file ID
+      const driveFileId = result.driveFileId || result.id || result.fileId || null;
+      const driveUrl = driveFileId 
+        ? `https://drive.google.com/file/d/${driveFileId}/view`
+        : (result.driveUrl || result.webViewLink || '');
+      const thumbnailUrl = driveFileId
+        ? `https://drive.google.com/thumbnail?id=${driveFileId}&sz=w400`
+        : (result.thumbnailUrl || result.thumbnailLink || '');
+      
+      const newRef = { url: driveUrl, thumbnailUrl, driveFileId, fileName: file.name, uploadedAt: new Date().toISOString() };
+      
+      // P69: Persist to reference_assets table in Supabase
+      if (session?.user?.id) {
+        await supabase.from('reference_assets').insert({
+          profile_id: session.user.id,
+          node_id: selectedNode.id,
+          node_type: selectedNode.data.typeLabel,
+          file_name: file.name,
+          mime_type: file.type,
+          drive_file_id: driveFileId,
+          drive_url: driveUrl,
+          thumbnail_url: thumbnailUrl,
+          purpose: 'reference'
+        });
+      }
       
       const currentRefs = selectedNode.data.rawData?.references || [];
       handleUpdateNode('references', [...currentRefs, newRef]);
     } catch (err) {
       console.error('Reference upload failed:', err);
-      // Fallback: store as local base64 preview so user sees their image even if n8n is down
+      // Fallback: upload directly to Supabase Storage
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const storagePath = `references/${selectedNode.id}/${Date.now()}_${file.name}`;
+        const { data: uploadData } = await supabase.storage.from('renderfarm-assets').upload(storagePath, file, { upsert: true });
+        if (uploadData) {
+          const { data: { publicUrl } } = supabase.storage.from('renderfarm-assets').getPublicUrl(storagePath);
+          const newRef = { url: publicUrl, thumbnailUrl: publicUrl, fileName: file.name, uploadedAt: new Date().toISOString() };
+          if (session?.user?.id) {
+            await supabase.from('reference_assets').insert({
+              profile_id: session.user.id, node_id: selectedNode.id, node_type: selectedNode.data.typeLabel,
+              file_name: file.name, mime_type: file.type, thumbnail_url: publicUrl, purpose: 'reference'
+            });
+          }
+          const currentRefs = selectedNode.data.rawData?.references || [];
+          handleUpdateNode('references', [...currentRefs, newRef]);
+          return;
+        }
+      } catch (storageErr) { console.error('Storage fallback also failed:', storageErr); }
+      // Last resort: local base64
       const reader = new FileReader();
       reader.onload = () => {
         const newRef = { url: reader.result, thumbnailUrl: reader.result, fileName: file.name, uploadedAt: new Date().toISOString(), local: true };
@@ -543,10 +601,13 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     }
   }, [selectedNode]);
 
-  const handleRemoveReference = useCallback((index) => {
+  const handleRemoveReference = useCallback(async (index) => {
     if (!selectedNode) return;
     const currentRefs = [...(selectedNode.data.rawData?.references || [])];
-    currentRefs.splice(index, 1);
+    const removed = currentRefs.splice(index, 1)[0];
+    if (removed?.driveFileId) {
+      await supabase.from('reference_assets').delete().eq('drive_file_id', removed.driveFileId);
+    }
     handleUpdateNode('references', currentRefs);
   }, [selectedNode]);
 
