@@ -259,19 +259,31 @@ function App() {
     setPipelineStep(2)
     addLog('run','⟳',`Sending to ${shot?.model || 'pipeline'}… est. ${formatCost(cost)}`)
 
-    const taskId = genId('TASK')
-    // VULNERABILITY FIXED: Include dynamic inspector parameters (seed, guidance_scale, etc.) in the payload options
-    const dynamicParams = shot ? { ...shot } : {};
-    ['id', 'title', 'prompt', 'model', 'cat', 'status', 'entities'].forEach(k => delete dynamicParams[k]);
+    // Sanitize: only send known fields, strip undefined values
+    const settings = shot?.settings || shot?.options || {};
+    const cleanOptions = {};
+    // Only include defined, non-null values in options
+    Object.entries({ 
+      aspect_ratio: shot?.ar || settings?.aspect_ratio || '16:9',
+      resolution: shot?.res || settings?.resolution || '1080p',
+      duration: settings?.duration,
+      video_size: settings?.video_size,
+      video_length: settings?.video_length,
+      image_size: settings?.image_size,
+      size: settings?.size,
+      output_format: settings?.output_format,
+      voice: settings?.voice,
+    }).forEach(([k, v]) => { if (v !== undefined && v !== null) cleanOptions[k] = v; });
 
     const payload = {
       action: 'generate',
       task_id: taskId,
       prompt: shot?.prompt || '',
-      model_id: shot?.model || 'fal-ai/flux-pro/v1.1',
+      model_id: shot?.model || shot?.modelId || 'fal-ai/flux-pro/v1.1',
       project_id: activeProject?.id,
       profile_id: session?.user?.id,
-      options: { aspect_ratio: shot?.ar || '16:9', resolution: shot?.res || '1080p', ...dynamicParams }
+      entity_type: shot?.cat || 'image',
+      options: cleanOptions
     }
 
     try {

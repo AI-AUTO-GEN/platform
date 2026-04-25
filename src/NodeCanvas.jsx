@@ -609,7 +609,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
   }, [onEdgesDelete]);
 
   return (
-    <div style={{ display: 'flex', width: '100%', height: 'calc(100vh - 56px)', background: '#050508' }}>
+    <div style={{ display: 'flex', width: '100%', height: 'calc(100vh - 84px)', background: '#050508' }}>
       <style>{`
         select.select-mini option { background-color: #1a1a1a; color: #fff; }
       `}</style>
@@ -648,7 +648,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       {/* Side Panel for Editing */}
       {/* P47 FIX: Side panel z-index elevated above LogMonitor overlay */}
       {selectedNode && (
-        <div style={{ width: '380px', background: '#111', borderLeft: '1px solid #333', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
+        <div style={{ width: '380px', minWidth: '380px', background: '#111', borderLeft: '1px solid #333', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10, height: '100%', maxHeight: '100%', overflow: 'hidden' }}>
            <div style={{ padding: '20px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between' }}>
              <h3 style={{ margin: 0, textTransform: 'uppercase', fontSize: '14px', color: selectedNode.data.color }}>{selectedNode.data.typeLabel} PROPERTIES</h3>
              <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }} onClick={() => setSelectedNode(null)}><X size={16} className="lucide-icon" /></button>
