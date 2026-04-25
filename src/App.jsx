@@ -368,7 +368,7 @@ function App() {
               <span className="sysmon-label">{generating ? `${genLabel}` : 'Ready'}</span>
             </button>
             {glogOpen && (
-              <div className="status-dropdown" style={{right:'auto',left:'50%',transform:'translateX(-50%)'}} onClick={e => e.stopPropagation()}>
+              <div className="status-dropdown" style={{right:0, left:'auto', maxWidth:'calc(100vw - 20px)'}} onClick={e => e.stopPropagation()}>
                 <div className="status-dropdown-head">
                   <span style={{width:6,height:6,borderRadius:'50%',background:generating?'var(--warn)':'var(--ok)',flexShrink:0}} />
                   <span style={{fontSize:11,fontWeight:600,flex:1}}>{generating ? 'Processing…' : 'System Ready'}</span>
@@ -384,7 +384,7 @@ function App() {
                 )}
                 <div className="status-dropdown-body">
                   {logs.slice(-12).map((l,i) => (
-                    <div key={i} className={`gstep ${l.type}`}><span className="gstep-i">{l.icon}</span><span>{l.msg}</span></div>
+                    <div key={i} className={`gstep ${l.type}`}><span className="gstep-i">{l.icon}</span><span style={{wordBreak:'break-word'}}>{l.msg}</span></div>
                   ))}
                 </div>
               </div>
