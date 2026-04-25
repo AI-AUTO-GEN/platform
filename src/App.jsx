@@ -267,7 +267,7 @@ function App() {
     const payload = {
       action: 'generate',
       task_id: taskId,
-      prompt: shot?.prompt || promptText,
+      prompt: shot?.prompt || '',
       model_id: shot?.model || 'fal-ai/flux-pro/v1.1',
       project_id: activeProject?.id,
       profile_id: session?.user?.id,
@@ -296,7 +296,7 @@ function App() {
       setGenProgress(0)
       setGenLabel('No active jobs')
     }
-  }, [generating, activeProject, session, promptText])
+  }, [generating, activeProject, session])
 
   // ─── RENDER ───────────────────────────────
   if (!session) return <><Auth session={session} /><Toaster position="bottom-right" /></>
