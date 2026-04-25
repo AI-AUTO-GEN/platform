@@ -16,7 +16,17 @@ const getDriveDisplayUrl = (url) => {
   return url;
 };
 
+// P62: Modality options for the type selector
+const MODALITY_OPTS = [
+  { key: 'image', label: '🖼 Image' }, { key: 'video', label: '🎬 Video' },
+  { key: 'tts', label: '🗣 Speech' }, { key: 't2a', label: '🔊 Audio' },
+  { key: 'i23d', label: '🧊 3D' },
+];
+const DEF_MOD = { Character: 'image', Prop: 'image', Environment: 'image', Shot: 'image', Video: 'video' };
+
 const CustomNode = ({ data }) => {
+  const modality = data.rawData?.modality || DEF_MOD[data.typeLabel] || 'image';
+  const modelList = (MODEL_REGISTRY[modality] || []).filter(c => c.company !== 'Loading...');
   return (
     <div 
       style={{ 
@@ -46,20 +56,21 @@ const CustomNode = ({ data }) => {
               <span style={{ fontSize: '9px', background: 'rgba(255,255,255,0.05)', color: '#888', padding: '1px 4px', borderRadius: '3px' }}>Est: {formatCost(calculatePreviewCost(data.modelId, { ...data.rawData?.settings, prompt: data.prompt }))}</span>
             )}
           </div>
-          <select 
-            className="select-mini nodrag" 
-            style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', borderRadius: '4px', maxWidth: '100px', position: 'relative', zIndex: 10 }}
-            value={data.modelId || ''}
-            onChange={(e) => data.onChangeNodeModel(data.id, data.typeLabel, e.target.value)}
-          >
-            {(() => {
-              const regKey = data.typeLabel === 'Video' ? 'video' : data.typeLabel === 'Shot' ? 'image' : 'image';
-              return (MODEL_REGISTRY[regKey] || MODEL_REGISTRY.image || []).map(cat => (
-                <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
-                  {cat.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </optgroup>
-              ));
-            })()}
+        </div>
+        {/* P62: Modality + Model selectors */}
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <select className="select-mini nodrag" style={{ fontSize: '9px', padding: '2px 3px', background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', width: '58px', cursor: 'pointer' }}
+            value={modality} onChange={(e) => data.onChangeNodeModality(data.id, data.typeLabel, e.target.value)}>
+            {MODALITY_OPTS.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}
+          </select>
+          <select className="select-mini nodrag" style={{ fontSize: '9px', padding: '2px 4px', background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', borderRadius: '4px', flex: 1, maxWidth: '130px', zIndex: 10 }}
+            value={data.modelId || ''} onChange={(e) => data.onChangeNodeModel(data.id, data.typeLabel, e.target.value)}>
+            {modelList.length === 0 && <option value="">No models</option>}
+            {modelList.map(cat => (
+              <optgroup key={cat.company} label={`[ ${cat.company} ]`}>
+                {cat.models.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </optgroup>
+            ))}
           </select>
         </div>
         
@@ -142,6 +153,59 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
   const selectedNodeRef = useRef(null);
   useEffect(() => { selectedNodeRef.current = selectedNode; }, [selectedNode]);
 
+  // P62 FIX: Use refs so callbacks always access current data (no stale closures)
+  const dataRef = useRef(data);
+  const onChangeRef = useRef(onChange);
+  useEffect(() => { dataRef.current = data; onChangeRef.current = onChange; }, [data, onChange]);
+
+  const TYPE_MAP = { 'Character': 'characters', 'Prop': 'props', 'Environment': 'environments', 'Shot': 'shots', 'Video': 'videos' };
+
+  // P62 FIX: Stable callbacks that use refs — never go stale
+  const onChangeNodeModel = useCallback((id, typeLabel, newModelId) => {
+    const d = dataRef.current;
+    const key = TYPE_MAP[typeLabel];
+    const col = [...(d[key] || [])];
+    const idx = col.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      col[idx] = { ...col[idx], modelId: newModelId };
+      onChangeRef.current({ ...d, [key]: col });
+    }
+    // Immediate visual update
+    setNodes(nds => nds.map(n => n.id === id ? { ...n, data: { ...n.data, modelId: newModelId } } : n));
+  }, [setNodes]);
+
+  const onChangeNodeSettings = useCallback((id, typeLabel, newSettings) => {
+    const d = dataRef.current;
+    const key = TYPE_MAP[typeLabel];
+    const col = [...(d[key] || [])];
+    const idx = col.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      col[idx] = { ...col[idx], settings: newSettings };
+      onChangeRef.current({ ...d, [key]: col });
+    }
+    setNodes(nds => nds.map(n => n.id === id ? { ...n, data: { ...n.data, rawData: { ...n.data.rawData, settings: newSettings } } } : n));
+  }, [setNodes]);
+
+  const onChangeNodeModality = useCallback((id, typeLabel, newModality) => {
+    const d = dataRef.current;
+    const key = TYPE_MAP[typeLabel];
+    const col = [...(d[key] || [])];
+    const idx = col.findIndex(item => item.id === id);
+    if (idx >= 0) {
+      // Pick first model of the new modality as default
+      const firstCat = (MODEL_REGISTRY[newModality] || []).find(c => c.company !== 'Loading...');
+      const firstModelId = firstCat?.models?.[0]?.id || '';
+      col[idx] = { ...col[idx], modality: newModality, modelId: firstModelId };
+      onChangeRef.current({ ...d, [key]: col });
+    }
+    setNodes(nds => nds.map(n => {
+      if (n.id !== id) return n;
+      const firstCat = (MODEL_REGISTRY[newModality] || []).find(c => c.company !== 'Loading...');
+      const firstModelId = firstCat?.models?.[0]?.id || '';
+      return { ...n, data: { ...n.data, modelId: firstModelId, rawData: { ...n.data.rawData, modality: newModality, modelId: firstModelId } } };
+    }));
+  }, [setNodes]);
+
   useEffect(() => {
     // Only rebuild if the number of items changes to avoid destroying pan/zoom while editing
     const currentTotal = nodes.length;
@@ -174,27 +238,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       return { x: defaultX, y: defaultY };
     };
 
-    const onChangeNodeModel = (id, typeLabel, newModelId) => {
-      const typeArgsMap = { 'Character': 'characters', 'Prop': 'props', 'Environment': 'environments', 'Shot': 'shots', 'Video': 'videos' };
-      const collectionKey = typeArgsMap[typeLabel];
-      const newCollection = [...data[collectionKey]];
-      const idx = newCollection.findIndex(item => item.id === id);
-      if (idx >= 0) {
-        newCollection[idx] = { ...newCollection[idx], modelId: newModelId };
-        onChange({ ...data, [collectionKey]: newCollection });
-      }
-    };
-
-    const onChangeNodeSettings = (id, typeLabel, newSettings) => {
-      const typeArgsMap = { 'Character': 'characters', 'Prop': 'props', 'Environment': 'environments', 'Shot': 'shots', 'Video': 'videos' };
-      const collectionKey = typeArgsMap[typeLabel];
-      const newCollection = [...data[collectionKey]];
-      const idx = newCollection.findIndex(item => item.id === id);
-      if (idx >= 0) {
-        newCollection[idx] = { ...newCollection[idx], settings: newSettings };
-        onChange({ ...data, [collectionKey]: newCollection });
-      }
-    };
+    // P62: handlers moved above useEffect as useCallback
 
     const extractEdges = (item, color) => {
       const deps = [
@@ -225,7 +269,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
           id: item.id,
           type: 'custom',
           position,
-          data: { label: item.name || item.id, typeLabel, color, media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: item.prompt || item.beat, isTarget, rawData: item, modelId: item.modelId, onChangeNodeModel, onChangeNodeSettings }
+          data: { label: item.name || item.id, typeLabel, color, media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: item.prompt || item.beat, isTarget, rawData: item, modelId: item.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality }
         });
 
         extractEdges(item, color);
@@ -247,7 +291,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: s.id,
         type: 'custom',
         position,
-        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.prompt || s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings }
+        data: { label: s.id, typeLabel: 'Shot', color: '#1890ff', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: s.prompt || s.beat, isTarget: true, rawData: s, modelId: s.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality }
       });
       extractEdges(s, '#1890ff');
     });
@@ -261,7 +305,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
         id: v.id,
         type: 'custom',
         position,
-        data: { label: v.id, typeLabel: 'Video', color: '#9254de', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: v.prompt, isTarget: true, rawData: v, modelId: v.modelId, onChangeNodeModel, onChangeNodeSettings }
+        data: { label: v.id, typeLabel: 'Video', color: '#9254de', media: existingNode?.data?.media, processingMedia: existingNode?.data?.processingMedia, errorMedia: existingNode?.data?.errorMedia, prompt: v.prompt, isTarget: true, rawData: v, modelId: v.modelId, onChangeNodeModel, onChangeNodeSettings, onChangeNodeModality }
       });
       extractEdges(v, '#9254de');
     });
