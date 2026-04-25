@@ -397,8 +397,8 @@ function App() {
               {session.user.email?.[0]?.toUpperCase() || 'U'}
             </div>
             {userMenuOpen && (
-              <div className="account-dropdown" onClick={e => e.stopPropagation()}>
-                <div style={{padding:'10px 14px',borderBottom:'1px solid var(--t4)'}}>
+              <div className="account-dropdown" style={{right:0, left:'auto', maxWidth:'calc(100vw - 20px)'}} onClick={e => e.stopPropagation()}>
+                <div style={{padding:'10px 14px',borderBottom:'1px solid var(--t4)', wordBreak:'break-all'}}>
                   <div style={{fontSize:12,fontWeight:600,color:'var(--t1)'}}>{session.user.email?.split('@')[0]}</div>
                   <div style={{fontSize:10,color:'var(--t3)',marginTop:2}}>{session.user.email}</div>
                 </div>
