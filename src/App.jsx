@@ -361,6 +361,9 @@ function App() {
           {/* P53 FIX: Guard share button when no project */}
           <button className="top-btn" title={activeProject ? 'Share' : 'Create a project first'} onClick={() => { if(activeProject) setShareOpen(true); else toast.error('Create a project first') }} style={!activeProject ? {opacity:.4} : {}} aria-label="Share project">🔗</button>
 
+          {/* User Wallet Balance Display */}
+          <WalletWidget session={session} />
+
           {/* P73: System Monitor pill — logs, progress, generation status */}
           <div style={{position:'relative'}}>
             <button className={`sysmon-pill${generating ? ' active' : ''}${logs.some(l=>l.type==='err') ? ' error' : ''}`} onClick={() => { setGlogOpen(!glogOpen); setUserMenuOpen(false); }}>
