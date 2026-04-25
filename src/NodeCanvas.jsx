@@ -18,9 +18,9 @@ const getDriveDisplayUrl = (url) => {
 
 // P62: Modality options for the type selector
 const MODALITY_OPTS = [
-  { key: 'image', label: 'ðŸ–¼ Image' }, { key: 'video', label: 'ðŸŽ¬ Video' },
-  { key: 'tts', label: 'ðŸ—£ Speech' }, { key: 't2a', label: 'ðŸ”Š Audio' },
-  { key: 'i23d', label: 'ðŸ§Š 3D' },
+  { key: 'image', label: 'IMG' }, { key: 'video', label: 'VID' },
+  { key: 'tts', label: 'TTS' }, { key: 't2a', label: 'SFX' },
+  { key: 'i23d', label: '3D' },
 ];
 const DEF_MOD = { Character: 'image', Prop: 'image', Environment: 'image', Shot: 'image', Video: 'video' };
 

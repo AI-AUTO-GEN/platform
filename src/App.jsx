@@ -20,7 +20,7 @@ import DirectorPanel from './components/DirectorPanel'
 // ─── STATUS COLORS ─────────────────────────
 const STATUS = { done:'var(--ok)', pending:'var(--warn)', error:'var(--err)', processing:'var(--cyan)', ready:'var(--t3)' }
 const CAT_ICONS = { image:'🖼', video:'🎬', audio:'🎵', '3d':'🧊', lipsync:'💋' }
-const MODE_TO_CAT = { shot:'image', sandbox:'image', edit:'image', audio:'audio', '3d':'3d' }
+const MODE_TO_CAT = { shot:'image', sandbox:'image', edit:'image', video:'video', audio:'audio', tts:'tts', '3d':'3d' }
 
 // ─── MAIN APP ──────────────────────────────
 function App() {
@@ -101,13 +101,48 @@ function App() {
         merged[regKey].push(...cats[cat])
       })
       Object.keys(merged).forEach(regKey => {
-        const byProvider = {}
+        const byCompany = {}
         merged[regKey].forEach(m => {
-          const p = m.provider || 'fal-ai'
-          if (!byProvider[p]) byProvider[p] = { company: p, models: [] }
-          byProvider[p].models.push({ id: m.id, name: m.title })
+          // P64: Extract real developer company from model ID path
+          const parts = (m.id || '').split('/')
+          let company = parts[0] || 'Other'
+          // If model ID starts with fal-ai, the real company may be in the path
+          if (company === 'fal-ai' && parts.length >= 3) {
+            company = parts[1] // e.g., fal-ai/bytedance/... → bytedance
+          }
+          // Known developer mappings
+          const devMap = {
+            'flux': 'Black Forest Labs', 'flux-pro': 'Black Forest Labs', 'flux-2-pro': 'Black Forest Labs',
+            'flux-lora': 'Black Forest Labs', 'flux-realism': 'Black Forest Labs', 'flux-schnell': 'Black Forest Labs',
+            'bytedance': 'ByteDance', 'seedance': 'ByteDance',
+            'stable-diffusion': 'Stability AI', 'aura': 'Stability AI',
+            'minimax': 'MiniMax', 'hailuo': 'MiniMax',
+            'kling': 'Kuaishou', 'kolors': 'Kuaishou',
+            'cogvideox': 'Zhipu AI', 'cogview': 'Zhipu AI',
+            'ideogram': 'Ideogram', 'recraft': 'Recraft',
+            'gpt-image': 'OpenAI', 'omnigen': 'OpenAI',
+            'nano-banana': 'Banana', 'whisper': 'OpenAI',
+            'xai': 'xAI', 'grok': 'xAI',
+            'google': 'Google', 'imagen': 'Google', 'veo': 'Google',
+            'meta': 'Meta', 'llama': 'Meta',
+            'runway': 'Runway', 'luma': 'Luma AI', 'dreamina': 'ByteDance',
+            'hyper': 'Hyper', 'mmaudio': 'MMAudio', 'ace': 'ACE',
+            'ltx-video': 'Lightricks', 'wan': 'Alibaba', 'hunyuan': 'Tencent',
+          }
+          // Check if company or any id part matches a known dev
+          if (company === 'fal-ai') {
+            const idLower = m.id.toLowerCase()
+            for (const [key, dev] of Object.entries(devMap)) {
+              if (idLower.includes(key)) { company = dev; break }
+            }
+            if (company === 'fal-ai') company = 'fal-ai'
+          } else {
+            company = devMap[company.toLowerCase()] || company
+          }
+          if (!byCompany[company]) byCompany[company] = { company, models: [] }
+          byCompany[company].models.push({ id: m.id, name: m.title })
         })
-        MODEL_REGISTRY[regKey] = Object.values(byProvider)
+        MODEL_REGISTRY[regKey] = Object.values(byCompany)
       })
       // Populate schemas
       data.forEach(m => {
@@ -411,9 +446,9 @@ function App() {
               <div className="prompt-bar">
                 <button className="p-tool" title="Enhance with AI" onClick={handleEnhance} disabled={enhancing} style={enhancing ? {animation:'pulse 1s infinite'} : {}}>{enhancing ? '⟳' : '✦'}</button>
                 <div className="p-mode">
-                  {['shot','audio','3d'].map(m => (
-                    <button key={m} className={`p-mode-b${mode===m?' on':''}`} onClick={() => setMode(m)}>
-                      {m==='shot'?'🎬':m==='audio'?'🎵':'🧊'} {m}
+                  {[{k:'shot',l:'IMG'},{k:'video',l:'VID'},{k:'audio',l:'SFX'},{k:'tts',l:'TTS'},{k:'3d',l:'3D'}].map(m => (
+                    <button key={m.k} className={`p-mode-b${mode===m.k?' on':''}`} onClick={() => setMode(m.k)}>
+                      {m.l}
                     </button>
                   ))}
                 </div>
@@ -776,19 +811,19 @@ function App() {
   function handlePromptSend() {
     if (!promptText.trim()) return
     const cat = MODE_TO_CAT[mode] || 'image'
-    // VULNERABILITY FIXED: Determine correct default model based on selected mode instead of hardcoding Flux
     const defaultModels = {
       'image': 'fal-ai/flux-pro/v1.1',
       'video': 'fal-ai/kling-video/v1/standard/text-to-video',
-      'audio': 'elevenlabs/text-to-speech',
-      '3d': 'meshy/text-to-3d'
+      'audio': 'fal-ai/stable-audio',
+      'tts': 'fal-ai/f5-tts',
+      '3d': 'fal-ai/trellis'
     };
     const defaultModel = defaultModels[cat] || 'fal-ai/flux-pro/v1.1';
 
     const newShot = {
       id: genId('SHOT'), title: promptText.substring(0,40), prompt: promptText,
-      model: defaultModel, cat,
-      status:'pending', res:'1080p', dur: cat==='video'?'5s':'—', ar:'16:9', entities:[]
+      model: defaultModel, modelId: defaultModel, modality: cat, cat,
+      status:'pending', res:'1080p', dur: cat==='video'?'5s':'\u2014', ar:'16:9', entities:[]
     }
     setContract(prev => {
       const updated = {...prev, shots:[...prev.shots, newShot]}
