@@ -65,9 +65,9 @@ const CustomNode = ({ data }) => {
           </select>
         </div>
         
-        {getModelOptions(data.modelId).length > 0 && (
+        {getModelOptions(data.modelId, data.typeLabel?.toLowerCase()).length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
-            {getModelOptions(data.modelId).map(opt => (
+            {getModelOptions(data.modelId, data.typeLabel?.toLowerCase()).map(opt => (
               <div key={opt.key} style={{ display: 'flex', flexDirection: 'column' }}>
                  <label style={{ fontSize: '8px', color: '#888', textTransform: 'uppercase', marginBottom: '2px' }}>{opt.label}</label>
                  <select 

@@ -408,7 +408,7 @@ function App() {
                   <div style={{fontSize:10,color:'var(--t3)',marginTop:4}}>{getModelHint(selected.model).substring(0,80)}…</div>
                 </div>
                 {/* Dynamic params from model schema */}
-                {getModelOptions(selected.model).map(opt => (
+                {getModelOptions(selected.model, selected.cat).map(opt => (
                   <div className="insp-sec" key={opt.key}>
                     <div className="insp-lbl">{opt.label}</div>
                     <div className="chips">
@@ -420,7 +420,7 @@ function App() {
                     </div>
                   </div>
                 ))}
-                {getModelOptions(selected.model).length === 0 && (
+                {getModelOptions(selected.model, selected.cat).length === 0 && (
                   <div className="insp-sec">
                     <div style={{fontSize:11,color:'var(--t3)',fontStyle:'italic'}}>No configurable parameters for this model</div>
                   </div>

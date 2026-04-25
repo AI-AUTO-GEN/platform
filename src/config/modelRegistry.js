@@ -24,106 +24,95 @@ export let MODEL_REGISTRY = {
 export let MODEL_SCHEMAS = {};
 
 // Get UI options for a specific model (from schema or fallback heuristics)
-export function getModelOptions(modelId) {
+export function getModelOptions(modelId, kind) {
   if (!modelId) return [];
   if (MODEL_SCHEMAS[modelId] && Array.isArray(MODEL_SCHEMAS[modelId]) && MODEL_SCHEMAS[modelId].length > 0) {
      return MODEL_SCHEMAS[modelId];
   }
   const m = modelId.toLowerCase();
-  // Image models
-  if (m.includes('flux') || m.includes('luma')) {
-     return [
-       { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1', '4:3', '3:4'] }
-     ];
+  
+  if (kind && kind.includes('video')) {
+    if (m.includes('kling')) {
+       return [
+         { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
+         { key: 'duration', label: 'Duration', default: '5', options: ['5', '10'] }
+       ];
+    }
+    if (m.includes('seedance')) {
+       return [
+         { key: 'resolution', label: 'Resolution', default: '720p', options: ['720p', '1080p'] },
+         { key: 'duration', label: 'Duration (s)', default: '5', options: ['5', '10'] }
+       ];
+    }
+    if (m.includes('veo3')) {
+       return [
+         { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
+         { key: 'duration', label: 'Duration', default: '8s', options: ['5s', '8s'] }
+       ];
+    }
+    if (m.includes('sora')) {
+       return [
+         { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
+         { key: 'duration', label: 'Duration', default: '5s', options: ['5s', '10s', '20s'] }
+       ];
+    }
+    if (m.includes('pixverse') || m.includes('hailuo') || m.includes('minimax') || m.includes('ltx') || m.includes('wan')) {
+       return [
+         { key: 'resolution', label: 'Resolution', default: '720p', options: ['720p', '1080p'] }
+       ];
+    }
+    if (m.includes('hunyuan')) {
+       return [
+         { key: 'video_size', label: 'Video Size', default: 'landscape_16_9', options: ['landscape_16_9', 'portrait_9_16', 'square'] },
+         { key: 'video_length', label: 'Frames', default: '129', options: ['129', '65', '257'] }
+       ];
+    }
+    if (m.includes('vidu')) {
+       return [
+         { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
+         { key: 'duration', label: 'Duration', default: '4s', options: ['4s', '8s'] }
+       ];
+    }
+  } else if (kind && kind.includes('audio')) {
+    if (m.includes('tts') || m.includes('speech') || m.includes('chatterbox') || m.includes('inworld')) {
+       return [
+         { key: 'voice', label: 'Voice', default: 'default', options: ['default', 'male_1', 'female_1', 'narrator'] }
+       ];
+    }
+    if (m.includes('music') || m.includes('beatoven')) {
+       return [
+         { key: 'duration', label: 'Duration (s)', default: '30', options: ['15', '30', '60', '120'] }
+       ];
+    }
+  } else if (kind && kind.includes('3d')) {
+    if (m.includes('3d') || m.includes('tripo') || m.includes('reconvia')) {
+       return [
+          { key: 'output_format', label: 'Output', default: 'glb', options: ['glb', 'obj', 'fbx'] }
+       ];
+    }
+  } else if (!kind || kind.includes('image') || kind === 't2i' || kind === 'i2i') {
+    if (m.includes('flux') || m.includes('luma')) {
+       return [
+         { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1', '4:3', '3:4'] }
+       ];
+    }
+    if (m.includes('recraft')) {
+       return [
+         { key: 'size', label: 'Size', default: '1820x1024', options: ['1820x1024', '1024x1024', '1024x1820'] }
+       ];
+    }
+    if (m.includes('ideogram')) {
+       return [
+         { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1', '4:5', '5:4'] }
+       ];
+    }
+    if (m.includes('gpt-image') || m.includes('nano-banana') || m.includes('seedream')) {
+       return [
+         { key: 'image_size', label: 'Size', default: 'landscape_16_9', options: ['landscape_16_9', 'square_hd', 'portrait_4_3', 'landscape_4_3'] }
+       ];
+    }
   }
-  if (m.includes('recraft')) {
-     return [
-       { key: 'size', label: 'Size', default: '1820x1024', options: ['1820x1024', '1024x1024', '1024x1820'] }
-     ];
-  }
-  if (m.includes('ideogram')) {
-     return [
-       { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1', '4:5', '5:4'] }
-     ];
-  }
-  if (m.includes('gpt-image') || m.includes('nano-banana') || m.includes('seedream')) {
-     return [
-       { key: 'image_size', label: 'Size', default: 'landscape_16_9', options: ['landscape_16_9', 'square_hd', 'portrait_4_3', 'landscape_4_3'] }
-     ];
-  }
-  // Video models
-  if (m.includes('kling')) {
-     return [
-       { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
-       { key: 'duration', label: 'Duration', default: '5', options: ['5', '10'] }
-     ];
-  }
-  if (m.includes('seedance')) {
-     return [
-       { key: 'resolution', label: 'Resolution', default: '720p', options: ['720p', '1080p'] },
-       { key: 'duration', label: 'Duration (s)', default: '5', options: ['5', '10'] }
-     ];
-  }
-  if (m.includes('veo3')) {
-     return [
-       { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
-       { key: 'duration', label: 'Duration', default: '8s', options: ['5s', '8s'] }
-     ];
-  }
-  if (m.includes('sora')) {
-     return [
-       { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
-       { key: 'duration', label: 'Duration', default: '5s', options: ['5s', '10s', '20s'] }
-     ];
-  }
-  if (m.includes('pixverse')) {
-     return [
-       { key: 'resolution', label: 'Resolution', default: '720p', options: ['720p', '1080p'] }
-     ];
-  }
-  if (m.includes('hailuo') || m.includes('minimax/hailuo')) {
-     return [
-       { key: 'resolution', label: 'Resolution', default: '720p', options: ['720p', '1080p'] }
-     ];
-  }
-  if (m.includes('hunyuan')) {
-     return [
-       { key: 'video_size', label: 'Video Size', default: 'landscape_16_9', options: ['landscape_16_9', 'portrait_9_16', 'square'] },
-       { key: 'video_length', label: 'Frames', default: '129', options: ['129', '65', '257'] }
-     ];
-  }
-  if (m.includes('ltx') || m.includes('wan')) {
-     return [
-       { key: 'resolution', label: 'Resolution', default: '720p', options: ['720p', '1080p'] }
-     ];
-  }
-  if (m.includes('vidu')) {
-     return [
-       { key: 'aspect_ratio', label: 'Aspect Ratio', default: '16:9', options: ['16:9', '9:16', '1:1'] },
-       { key: 'duration', label: 'Duration', default: '4s', options: ['4s', '8s'] }
-     ];
-  }
-  // Audio models
-  if (m.includes('tts') || m.includes('speech') || m.includes('chatterbox') || m.includes('inworld')) {
-     return [
-       { key: 'voice', label: 'Voice', default: 'default', options: ['default', 'male_1', 'female_1', 'narrator'] }
-     ];
-  }
-  if (m.includes('music') || m.includes('beatoven')) {
-     return [
-       { key: 'duration', label: 'Duration (s)', default: '30', options: ['15', '30', '60', '120'] }
-     ];
-  }
-  // 3D models
-  if (m.includes('3d') || m.includes('tripo') || m.includes('reconvia')) {
-     return [
-        { key: 'output_format', label: 'Output', default: 'glb', options: ['glb', 'obj', 'fbx'] }
-     ];
-  }
-  // Lipsync
-  if (m.includes('lipsync') || m.includes('omnihuman') || m.includes('aurora') || m.includes('heygen')) {
-     return [];
-  }
+  
   return [];
 }
 

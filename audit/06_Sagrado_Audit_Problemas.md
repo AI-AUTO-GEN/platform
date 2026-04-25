@@ -122,6 +122,7 @@ Este documento detalla la inspección profunda "hasta debajo del protón" de la 
 ## 22. Esquizofrenia de Opciones (UI Ciega en `modelRegistry.js`)
 * **Problema:** El Inspector depende de `getModelOptions(modelId)` para mostrar campos de UI (como `Duration` para vídeos o `Resolution`). Esta función se basa ciegamente en hacer `includes()` al nombre del modelo.
 * **El Fallo Crítico:** Debido al Fallo 16 (donde se inyecta por fuerza bruta el modelo de imagen de Flux al importar guiones), cuando vayas a editar un Vídeo, la UI creerá que es una imagen. **Los controles de vídeo jamás se renderizarán** y será imposible cambiar la duración o los fps.
+✅ **[RESUELTO]:** La función getModelOptions(modelId, kind) ha sido refactorizada para requerir y respetar el campo category original del shot. Ahora discrimina limpiamente entre modelos de vídeo, audio, 3D e imagen antes de aplicar heurísticas de prefijo, garantizando que los controles de UI (como duraciones o fps) correspondan siempre al formato.
 
 ## 23. Vulnerabilidad de Inyección CSV (Excel Macro Injection)
 * **Problema:** En `App.jsx`, la exportación a CSV del Shotlist concatena strings directamente sin sanitizar.
