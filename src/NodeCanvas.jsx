@@ -517,31 +517,34 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // P66+P68+P69+P70: Reference upload — n8n handles full pipeline (Drive HQ → optimize → Supabase)
+  // P71: Reference upload — n8n is the ONLY path. No fallbacks.
+  // n8n: Webhook → Clone → Resize → Extract+Swap → Drive HQ → Supabase optimized → Respond
+  const [uploadError, setUploadError] = useState(null);
   const handleReferenceUpload = useCallback(async (file) => {
     if (!selectedNode || !file) return;
     setUploading(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      
-      const formData = new FormData();
-      formData.append('data', file, file.name);
-      formData.append('nodeId', selectedNode.id);
-      formData.append('nodeType', selectedNode.data.typeLabel);
-      formData.append('purpose', 'reference');
+    setUploadError(null);
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    
+    const formData = new FormData();
+    formData.append('data', file, file.name);
+    formData.append('nodeId', selectedNode.id);
+    formData.append('nodeType', selectedNode.data.typeLabel);
+    formData.append('purpose', 'reference');
 
+    try {
       const res = await fetch(N8N_UPLOAD_WEBHOOK_URL, {
         method: 'POST',
         headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
         body: formData
       });
-      
+      if (!res.ok) throw new Error(`Upload failed (${res.status})`);
       const result = await res.json();
       
-      // n8n returns: { driveFileId, drive_url, thumbnailUrl (optimized base64), fileName }
+      // n8n returns: { driveFileId, drive_url, thumbnailUrl (optimized), fileName }
       const newRef = {
-        url: result.drive_url || result.driveUrl || '',
+        url: result.drive_url || '',
         thumbnailUrl: result.thumbnailUrl || '',
         driveFileId: result.driveFileId || null,
         fileName: result.fileName || file.name,
@@ -552,22 +555,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
       handleUpdateNode('references', [...currentRefs, newRef]);
     } catch (err) {
       console.error('Reference upload failed:', err);
-      // Minimal fallback: small preview only (NOT saving HQ to Supabase)
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.onload = () => {
-        // Resize to max 200px for tiny preview (~10-20KB)
-        const scale = Math.min(200 / img.width, 200 / img.height, 1);
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const tinyThumb = canvas.toDataURL('image/jpeg', 0.5);
-        const newRef = { url: tinyThumb, thumbnailUrl: tinyThumb, fileName: file.name, uploadedAt: new Date().toISOString(), local: true };
-        const currentRefs = selectedNode.data.rawData?.references || [];
-        handleUpdateNode('references', [...currentRefs, newRef]);
-      };
-      img.src = URL.createObjectURL(file);
+      setUploadError(err.message || 'Upload pipeline error');
     } finally {
       setUploading(false);
     }
@@ -725,6 +713,7 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
                       <Upload size={20} style={{ color: '#555', marginBottom: '4px' }} />
                       <div style={{ fontSize: '10px', color: '#666' }}>Drop image or click to upload</div>
                       <div style={{ fontSize: '8px', color: '#444', marginTop: '2px' }}>PNG, JPG, WebP</div>
+                      {uploadError && <div style={{ fontSize: '9px', color: '#ff4444', marginTop: '4px', textAlign: 'center' }}>⚠ {uploadError}</div>}
                     </>
                   )}
                 </div>
