@@ -350,16 +350,19 @@ function App() {
           <button className="top-btn" title={activeProject ? 'Share' : 'Create a project first'} onClick={() => { if(activeProject) setShareOpen(true); else toast.error('Create a project first') }} style={!activeProject ? {opacity:.4} : {}} aria-label="Share project">🔗</button>
           <WalletWidget session={session} />
 
-          {/* P72: System status dot + dropdown */}
+          {/* P72: Avatar with status dot overlay + system log dropdown */}
           <div style={{position:'relative'}}>
-            <button className="status-dot-btn" onClick={() => setGlogOpen(!glogOpen)} title={generating ? 'Processing…' : 'System Ready'}>
-              <span className={`status-dot${generating ? ' processing' : ''}`} />
-            </button>
+            <div className="top-avatar" onClick={() => setUserMenuOpen(!userMenuOpen)} style={{position:'relative',cursor:'pointer'}}>
+              {session.user.email?.[0]?.toUpperCase() || 'U'}
+              <span className={`avatar-status-dot${generating ? ' processing' : ''}`} onClick={e => { e.stopPropagation(); setGlogOpen(!glogOpen); setUserMenuOpen(false); }} />
+            </div>
+
+            {/* System status dropdown */}
             {glogOpen && (
               <div className="status-dropdown" onClick={e => e.stopPropagation()}>
                 <div className="status-dropdown-head">
-                  <span className="status-dot" style={{width:6,height:6,background:generating?'var(--warn)':'var(--ok)'}} />
-                  <span style={{fontSize:11,fontWeight:600,flex:1}}>{generating ? 'Processing…' : 'Ready'}</span>
+                  <span style={{width:6,height:6,borderRadius:'50%',background:generating?'var(--warn)':'var(--ok)',flexShrink:0}} />
+                  <span style={{fontSize:11,fontWeight:600,flex:1}}>{generating ? 'Processing…' : 'System Ready'}</span>
                   <button style={{background:'none',border:'none',color:'var(--t3)',fontSize:10,cursor:'pointer'}} onClick={() => setGlogOpen(false)}>✕</button>
                 </div>
                 <div className="status-dropdown-body">
@@ -369,13 +372,8 @@ function App() {
                 </div>
               </div>
             )}
-          </div>
 
-          {/* P52 FIX: Avatar dropdown with visible logout */}
-          <div style={{position:'relative'}}>
-            <div className="top-avatar" onClick={() => setUserMenuOpen(!userMenuOpen)}>
-              {session.user.email?.[0]?.toUpperCase() || 'U'}
-            </div>
+            {/* User menu dropdown */}
             {userMenuOpen && (
               <div style={{position:'absolute',top:'100%',right:0,marginTop:6,background:'var(--bg2)',border:'1px solid var(--t4)',borderRadius:'var(--r2)',padding:6,zIndex:300,width:180,display:'flex',flexDirection:'column',gap:2}} onClick={()=>setUserMenuOpen(false)}>
                 <div style={{padding:'6px 10px',fontSize:11,color:'var(--t3)',borderBottom:'1px solid var(--t4)',marginBottom:2}}>{session.user.email}</div>
