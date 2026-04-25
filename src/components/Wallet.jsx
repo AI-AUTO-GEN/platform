@@ -25,7 +25,8 @@ export function WalletWidget({ session }) {
     if (!session?.user?.id) return;
     
     // VULNERABILITY FIXED: Replaced expensive setInterval polling with WebSocket realtime subscription
-    const channel = supabase.channel('wallet_sync')
+    const channelName = `wallet_sync_${session.user.id}_${Math.random()}`;
+    const channel = supabase.channel(channelName)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'user_wallets', filter: `profile_id=eq.${session.user.id}` }, (payload) => {
         setBalance(payload.new.balance);
       })
