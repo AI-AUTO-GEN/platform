@@ -3,7 +3,9 @@ import { ReactFlow, Controls, Background, useNodesState, useEdgesState, addEdge,
 import '@xyflow/react/dist/style.css';
 import { getModelOptions, MODEL_REGISTRY } from './config/modelRegistry';
 import { calculatePreviewCost, formatCost } from './pricing/PricingEngine';
-import { X, CheckCircle } from 'lucide-react';
+import { X, CheckCircle, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { N8N_UPLOAD_WEBHOOK_URL } from './config/constants';
+import { supabase } from './supabase';
 
 const getDriveDisplayUrl = (url) => {
   if (!url) return '';
@@ -98,7 +100,22 @@ const CustomNode = ({ id, data }) => {
         </div>
       )}
 
-      {/* P63: Body â€” Prompt when no media, Image when rendered */}
+      {/* P66: Reference images strip */}
+      {data.rawData?.references?.length > 0 && (
+        <div style={{ display: 'flex', gap: '3px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {data.rawData.references.slice(0, 4).map((ref, i) => (
+            <div key={i} style={{ width: '28px', height: '28px', borderRadius: '4px', overflow: 'hidden', border: '1px solid #333', flexShrink: 0 }}>
+              <img src={ref.thumbnailUrl || ref.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          ))}
+          {data.rawData.references.length > 4 && (
+            <span style={{ fontSize: '8px', color: '#666' }}>+{data.rawData.references.length - 4}</span>
+          )}
+          <span style={{ fontSize: '7px', color: '#555', marginLeft: 'auto' }}>REF</span>
+        </div>
+      )}
+
+      {/* P63: Body — Prompt when no media, Image when rendered */}
       {hasMedia ? (
         <>
           <div style={{ position: 'relative', width: '100%', height: '140px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #222' }}>
@@ -473,6 +490,72 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
     onChange(newData);
   }, [nodes, data, onChange]);
 
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // P66: Reference image upload handler
+  const handleReferenceUpload = useCallback(async (file) => {
+    if (!selectedNode || !file) return;
+    setUploading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      
+      // Convert file to base64 for webhook
+      const reader = new FileReader();
+      const base64 = await new Promise((resolve) => {
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+
+      const res = await fetch(N8N_UPLOAD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+        body: JSON.stringify({
+          nodeId: selectedNode.id,
+          nodeType: selectedNode.data.typeLabel,
+          fileName: file.name,
+          mimeType: file.type,
+          fileData: base64,
+          purpose: 'reference'
+        })
+      });
+      
+      const result = await res.json();
+      
+      // Store reference in node data
+      const newRef = {
+        url: result.driveUrl || result.url || base64,
+        thumbnailUrl: result.thumbnailUrl || result.url || base64,
+        driveFileId: result.driveFileId || null,
+        fileName: file.name,
+        uploadedAt: new Date().toISOString()
+      };
+      
+      const currentRefs = selectedNode.data.rawData?.references || [];
+      handleUpdateNode('references', [...currentRefs, newRef]);
+    } catch (err) {
+      console.error('Reference upload failed:', err);
+      // Fallback: store as local base64 preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newRef = { url: reader.result, thumbnailUrl: reader.result, fileName: file.name, uploadedAt: new Date().toISOString() };
+        const currentRefs = selectedNode.data.rawData?.references || [];
+        handleUpdateNode('references', [...currentRefs, newRef]);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploading(false);
+    }
+  }, [selectedNode]);
+
+  const handleRemoveReference = useCallback((index) => {
+    if (!selectedNode) return;
+    const currentRefs = [...(selectedNode.data.rawData?.references || [])];
+    currentRefs.splice(index, 1);
+    handleUpdateNode('references', currentRefs);
+  }, [selectedNode]);
+
   const handleUpdateNode = (field, value) => {
     if (!selectedNode) return;
     const typeArgsMap = {
@@ -578,7 +661,71 @@ export default function NodeCanvas({ data, media, onChange, onGenerateNode }) {
                  <label>Camera Move</label>
                  <input className="input-field" value={selectedNode.data.rawData.cameraMove || ''} onChange={(e) => handleUpdateNode('cameraMove', e.target.value)} />
                </div>
-             )}
+              )}
+              {/* P66: Reference Images Upload */}
+              <div style={{ marginTop: '10px' }}>
+                <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#888', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <ImageIcon size={12} /> Reference Images
+                </label>
+                
+                {/* Upload drop zone */}
+                <div 
+                  style={{ 
+                    border: '2px dashed #333', borderRadius: '8px', padding: '16px', 
+                    textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s',
+                    background: uploading ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.02)'
+                  }}
+                  onClick={() => !uploading && fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = '#6366f1'; }}
+                  onDragLeave={(e) => { e.currentTarget.style.borderColor = '#333'; }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.style.borderColor = '#333';
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) handleReferenceUpload(file);
+                  }}
+                >
+                  <input 
+                    ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }}
+                    onChange={(e) => { if (e.target.files[0]) handleReferenceUpload(e.target.files[0]); e.target.value = ''; }}
+                  />
+                  {uploading ? (
+                    <div style={{ color: '#6366f1', fontSize: '11px' }}>
+                      <div style={{ animation: 'pulse 1s infinite' }}>Uploading...</div>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload size={20} style={{ color: '#555', marginBottom: '4px' }} />
+                      <div style={{ fontSize: '10px', color: '#666' }}>Drop image or click to upload</div>
+                      <div style={{ fontSize: '8px', color: '#444', marginTop: '2px' }}>PNG, JPG, WebP</div>
+                    </>
+                  )}
+                </div>
+
+                {/* Uploaded references grid */}
+                {(selectedNode.data.rawData?.references || []).length > 0 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginTop: '10px' }}>
+                    {(selectedNode.data.rawData?.references || []).map((ref, i) => (
+                      <div key={i} style={{ position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid #333', aspectRatio: '1' }}>
+                        <img src={ref.thumbnailUrl || ref.url} alt={ref.fileName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button 
+                          onClick={() => handleRemoveReference(i)}
+                          style={{ 
+                            position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', 
+                            border: 'none', borderRadius: '3px', padding: '2px', cursor: 'pointer', color: '#ff6b6b',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}
+                        >
+                          <Trash2 size={10} />
+                        </button>
+                        <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.7)', padding: '2px 4px', fontSize: '7px', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {ref.fileName}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
              {selectedNode.data.media?.thumbnailLink && (
                <div style={{ marginTop: '10px' }}>
