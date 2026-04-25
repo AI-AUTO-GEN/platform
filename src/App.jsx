@@ -140,7 +140,25 @@ function App() {
             company = devMap[company.toLowerCase()] || company
           }
           if (!byCompany[company]) byCompany[company] = { company, models: [] }
-          byCompany[company].models.push({ id: m.id, name: m.title })
+          // P65: Generate descriptive display name from model ID when title is generic
+          let displayName = m.title
+          const titleLower = (m.title || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+          const companyLower = company.toLowerCase().replace(/[^a-z0-9]/g, '')
+          // If title is just the company name or very generic, build from ID
+          if (titleLower === companyLower || titleLower.length <= 3 || !m.title) {
+            const idParts = (m.id || '').replace(/^fal-ai\//, '').replace(/^bytedance\//, '').replace(/^xai\//, '').split('/')
+            // Remove company prefix if it matches
+            const filtered = idParts.filter(p => p.toLowerCase() !== companyLower && p.toLowerCase() !== 'fal-ai')
+            displayName = filtered.map(p => p.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')).join(' ') || m.title
+          }
+          // Append category suffix if name still not unique-looking
+          const catSuffix = { 'text-to-image': 'T2I', 'image-to-image': 'I2I', 'text-to-video': 'T2V', 'image-to-video': 'I2V', 'video-to-video': 'V2V', 'text-to-audio': 'T2A', 'text-to-speech': 'TTS', 'image-to-3d': 'I2-3D', 'text-to-3d': 'T2-3D' }
+          const suffix = catSuffix[m.category] || ''
+          // Only add suffix if the display name doesn't already hint at the capability
+          if (suffix && !displayName.toLowerCase().includes(suffix.toLowerCase().replace('-','')) && !displayName.toLowerCase().includes('to')) {
+            displayName = `${displayName} [${suffix}]`
+          }
+          byCompany[company].models.push({ id: m.id, name: displayName })
         })
         MODEL_REGISTRY[regKey] = Object.values(byCompany)
       })
