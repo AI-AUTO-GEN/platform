@@ -23,23 +23,20 @@ export const callGeminiProxy = async (prompt, temperature = 0.8, maxOutputTokens
     body: JSON.stringify({ prompt, temperature, maxOutputTokens })
   })
   if (!res.ok) {
-    if (res.status === 429) {
-      // One client-side retry after 2s for rate limits
-      await new Promise(r => setTimeout(r, 2000))
-      const retry = await fetch(GEMINI_PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ prompt, temperature, maxOutputTokens })
-      })
-      if (retry.ok) {
-        const d = await retry.json()
-        if (d.error) throw new Error(d.error)
-        return d.text || ''
-      }
-      throw new Error('AI is temporarily busy — please wait a moment and try again.')
-    }
     const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
-    throw new Error(err.error || `Gemini proxy error ${res.status}`)
+    
+    // Parse Google's exact error details if available from the proxy
+    let detailMsg = '';
+    if (err.details) {
+      try {
+        const d = JSON.parse(err.details);
+        detailMsg = d.error?.message || err.details;
+      } catch (e) {
+        detailMsg = err.details;
+      }
+    }
+    
+    throw new Error(detailMsg ? `Gemini Error: ${detailMsg}` : (err.error || `Gemini proxy error ${res.status}`))
   }
   const data = await res.json()
   if (data.error) throw new Error(data.error)
